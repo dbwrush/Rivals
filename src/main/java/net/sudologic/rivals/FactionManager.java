@@ -8,6 +8,21 @@ public class FactionManager implements ConfigurationSerializable {
     private Map<UUID, Faction> factions;
     private List<Invite> invites;
 
+    public FactionManager(Map<String, Object> serializedFactionManager) {
+        factions = new HashMap<>();
+        invites = new ArrayList<>();
+        List<Object> fObjects = (List<Object>) serializedFactionManager.get("factions");
+        for(Object o : fObjects) {
+            Faction f = new Faction((Map<String, Object>) o);
+            factions.put(f.getID(), f);
+        }
+        List<Object> iObjects = (List<Object>) serializedFactionManager.get("invites");
+        for(Object o : iObjects) {
+            Invite i = new Invite((Map<String, Object>) o);
+            invites.add(i);
+        }
+    }
+
     public FactionManager() {
         factions = new HashMap<>();
         invites = new ArrayList<>();
@@ -68,8 +83,16 @@ public class FactionManager implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         HashMap<String, Object> mapSerializer = new HashMap<>();
 
-        mapSerializer.put("factions", this.factions.toString());
-        mapSerializer.put("invites", this.invites.toString());
+        List<Object> fObjects = new ArrayList<>();
+        for(Faction f : factions.values()) {
+            fObjects.add(f.serialize());
+        }
+        List<Object> iObjects = new ArrayList<>();
+        for(Invite i : invites) {
+            iObjects.add(i.serialize());
+        }
+        mapSerializer.put("factions", fObjects);
+        mapSerializer.put("invites", iObjects);
 
         return mapSerializer;
     }
@@ -83,9 +106,14 @@ public class FactionManager implements ConfigurationSerializable {
         return false;
     }
 
-    private class Invite implements ConfigurationSerializable{
+    public class Invite implements ConfigurationSerializable{
         private UUID faction;
         private UUID player;
+
+        public Invite(Map<String, Object> serialized) {
+            this.faction = (UUID) serialized.get("faction");
+            this.player = (UUID) serialized.get("player");
+        }
         public Invite(UUID faction, UUID id) {
             this.faction = faction;
             this.player = id;
