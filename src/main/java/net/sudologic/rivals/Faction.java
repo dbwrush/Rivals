@@ -18,20 +18,44 @@ public class Faction implements ConfigurationSerializable {
 
         mapSerializer.put("factionID", factionID.toString());
         mapSerializer.put("factionName", factionName.toString());
-        mapSerializer.put("enemyFactions", enemyFactions.toString());
-        mapSerializer.put("allyFactions", allyFactions.toString());
-        mapSerializer.put("members", members.toString());
+        List<String> enemyStrings = new ArrayList<>();
+        for(UUID uuid : enemyFactions) {
+            enemyStrings.add(uuid.toString());
+        }
+        mapSerializer.put("enemyFactions", enemyStrings);
+        List<String> allyStrings = new ArrayList<>();
+        for(UUID uuid : allyFactions) {
+            allyStrings.add(uuid.toString());
+        }
+        mapSerializer.put("allyFactions", allyStrings);
+        List<String> memberStrings = new ArrayList<>();
+        for(UUID uuid : members) {
+            memberStrings.add(uuid.toString());
+        }
+        mapSerializer.put("members", memberStrings);
         mapSerializer.put("power", power);
 
         return mapSerializer;
     }
 
     public Faction(Map<String, Object> serializedFaction) {
-        this.factionID = (UUID) serializedFaction.get("factionID");
+        this.factionID = UUID.fromString((String) serializedFaction.get("factionID"));//(UUID) serializedFaction.get("factionID");
         this.factionName = (String) serializedFaction.get("factionName");
-        this.enemyFactions = (List<UUID>) serializedFaction.get("enemyFactions");
-        this.allyFactions = (List<UUID>) serializedFaction.get("allyFactions");
-        this.members = (List<UUID>) serializedFaction.get("members");
+        List<String> enemyStrings = (List<String>) serializedFaction.get("enemyFactions");
+        this.enemyFactions = new ArrayList<>();
+        for(String s : enemyStrings) {
+            enemyFactions.add(UUID.fromString(s));
+        }
+        List<String> allyStrings = (List<String>) serializedFaction.get("allyFactions");
+        this.allyFactions = new ArrayList<>();
+        for(String s : allyStrings) {
+            allyFactions.add(UUID.fromString(s));
+        }
+        List<String> memberStrings = (List<String>) serializedFaction.get("members");
+        this.members = new ArrayList<>();
+        for(String s : memberStrings) {
+            members.add(UUID.fromString(s));
+        }
         this.power = (double) serializedFaction.get("power");
     }
 

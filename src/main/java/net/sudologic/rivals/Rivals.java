@@ -23,7 +23,7 @@ TODO:
  */
 
 public final class Rivals extends JavaPlugin {
-    private static FileConfiguration customConfig, savedData;
+    private static FileConfiguration customConfig;
 
     private static FactionManager factionManager;
 
@@ -46,17 +46,14 @@ public final class Rivals extends JavaPlugin {
 
     public void saveData() {
         getConfig().set("data", factionManager);
-        System.out.println(getConfig().get("data"));
-        //{invites=[], factions={787d1337-5692-448f-9ae6-c49b5881b6e1=net.sudologic.rivals.Faction@42c39711}}
+        //System.out.println(getConfig().get("data"));
         saveConfig();
     }
 
     public FactionManager readData() {
         if(getConfig().get("data") != null) {
-            System.out.println(getConfig().get("data"));
-            //MemorySection[path='data', root='YamlConfiguration']
-            return (FactionManager) getConfig().get("data", FactionManager.class);//error is here
-            //java.lang.ClassCastException: class org.bukkit.configuration.MemorySection cannot be cast to clas java.util.Map
+            FactionManager manager = (FactionManager) getConfig().get("data", FactionManager.class);
+            return manager;
         } else {
             return new FactionManager();
         }
