@@ -10,7 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.logging.Level;
 
 /*
@@ -26,6 +25,7 @@ public final class Rivals extends JavaPlugin {
     private static FileConfiguration customConfig;
 
     private static FactionManager factionManager;
+    private static ClaimManager claimManager;
 
     @Override
     public void onEnable() {
@@ -36,6 +36,8 @@ public final class Rivals extends JavaPlugin {
 
         registerListeners();
         registerCommands();
+
+        claimManager = new ClaimManager();
     }
 
     @Override
@@ -91,10 +93,15 @@ public final class Rivals extends JavaPlugin {
     public void registerClasses() {
         ConfigurationSerialization.registerClass(Faction.class);
         ConfigurationSerialization.registerClass(FactionManager.class);
-        ConfigurationSerialization.registerClass(FactionManager.Invite.class);
+        ConfigurationSerialization.registerClass(FactionManager.MemberInvite.class);
+        ConfigurationSerialization.registerClass(FactionManager.AllyInvite.class);
     }
 
     public static FactionManager getFactionManager() {
         return factionManager;
+    }
+
+    public static ClaimManager getClaimManager() {
+        return claimManager;
     }
 }

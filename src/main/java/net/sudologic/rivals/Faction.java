@@ -1,55 +1,52 @@
 package net.sudologic.rivals;
 
+import com.sk89q.worldguard.WorldGuard;
+import org.bukkit.Chunk;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.*;
 
 public class Faction implements ConfigurationSerializable {
-    private UUID factionID;
+    private int factionID;
     private String factionName;
-    private List<UUID> enemyFactions;
-    private List<UUID> allyFactions;
+    private List<Integer> enemyFactions;
+    private List<Integer> allyFactions;
     private List<UUID> members;
     private double power;
+
+    private List<String> regions;
 
     @Override
     public Map<String, Object> serialize() {
         HashMap<String, Object> mapSerializer = new HashMap<>();
 
-        mapSerializer.put("factionID", factionID.toString());
+        mapSerializer.put("factionID", factionID);
         mapSerializer.put("factionName", factionName.toString());
-        List<String> enemyStrings = new ArrayList<>();
-        for(UUID uuid : enemyFactions) {
-            enemyStrings.add(uuid.toString());
-        }
-        mapSerializer.put("enemyFactions", enemyStrings);
-        List<String> allyStrings = new ArrayList<>();
-        for(UUID uuid : allyFactions) {
-            allyStrings.add(uuid.toString());
-        }
-        mapSerializer.put("allyFactions", allyStrings);
+        mapSerializer.put("enemyFactions", enemyFactions);
+        mapSerializer.put("allyFactions", allyFactions);
         List<String> memberStrings = new ArrayList<>();
         for(UUID uuid : members) {
             memberStrings.add(uuid.toString());
         }
         mapSerializer.put("members", memberStrings);
         mapSerializer.put("power", power);
+        mapSerializer.put("regions", regions);
 
         return mapSerializer;
     }
 
     public Faction(Map<String, Object> serializedFaction) {
-        this.factionID = UUID.fromString((String) serializedFaction.get("factionID"));//(UUID) serializedFaction.get("factionID");
+        this.factionID = (int) serializedFaction.get("factionID");//(UUID) serializedFaction.get("factionID");
         this.factionName = (String) serializedFaction.get("factionName");
         List<String> enemyStrings = (List<String>) serializedFaction.get("enemyFactions");
         this.enemyFactions = new ArrayList<>();
         for(String s : enemyStrings) {
-            enemyFactions.add(UUID.fromString(s));
+            enemyFactions.add(Integer.valueOf(s));
         }
         List<String> allyStrings = (List<String>) serializedFaction.get("allyFactions");
         this.allyFactions = new ArrayList<>();
         for(String s : allyStrings) {
-            allyFactions.add(UUID.fromString(s));
+            allyFactions.add(Integer.valueOf(s));
         }
         List<String> memberStrings = (List<String>) serializedFaction.get("members");
         this.members = new ArrayList<>();
@@ -57,67 +54,116 @@ public class Faction implements ConfigurationSerializable {
             members.add(UUID.fromString(s));
         }
         this.power = (double) serializedFaction.get("power");
+        this.regions = (List<String>) serializedFaction.get("regions");
     }
 
-    public Faction(UUID firstPlayer, String name) {
-        factionID = UUID.randomUUID();
-        while(Rivals.getFactionManager().getFactionByID(factionID) != null) {
-            factionID = UUID.randomUUID();
-        }
+    public Faction(UUID firstPlayer, String name, int id) {
+        factionID = id;
         factionName = name;
         enemyFactions = new ArrayList<>();
         allyFactions = new ArrayList<>();
         members = new ArrayList<>();
         members.add(firstPlayer);
         power = 10;
+        regions = new ArrayList<>();
     }
 
-    public void addMember(UUID member) {
+    public boolean addMember(UUID member) {
         if(!members.contains(member)) {
             members.add(member);
+            Rivals.getClaimManager().updateFactionMembers(this);
+            return true;
         }
+        return false;
     }
 
-    public void removeMember(UUID member) {
+    public boolean removeMember(UUID member) {
         if(members.contains(member)) {
             members.remove(member);
+            Rivals.getClaimManager().updateFactionMembers(this);
+            return true;
         }
+        return false;
     }
 
-    public void addAlly(UUID allyID, boolean recur) {
+    private boolean addAlly(int allyID, boolean recur) {
         if(!allyFactions.contains(allyID)) {
             allyFactions.add(allyID);
             if(recur) {
                 Rivals.getFactionManager().getFactionByID(allyID).addAlly(factionID, false);
             }
+            return true;
         }
+        return false;
     }
 
-    public void removeAlly(UUID allyID, boolean recur) {
+    public boolean addAlly(int allyID) {
+        if(!allyFactions.contains(allyID)) {
+            allyFactions.add(allyID);
+            Rivals.getFactionManager().getFactionByID(allyID).addAlly(factionID, false);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean removeAlly(int allyID, boolean recur) {
         if(allyFactions.contains(allyID)) {
             allyFactions.remove(allyID);
             if(recur) {
                 Rivals.getFactionManager().getFactionByID(allyID).removeAlly(factionID, false);
             }
+            return true;
         }
+        return false;
     }
 
-    public void addEnemy(UUID enemyID, boolean recur) {
+    public boolean removeAlly(int allyID) {
+        if(allyFactions.contains(allyID)) {
+            allyFactions.remove(allyID);
+            Rivals.getFactionManager().getFactionByID(allyID).removeAlly(factionID, false);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean addEnemy(int enemyID, boolean recur) {
         if(!enemyFactions.contains(enemyID)) {
             enemyFactions.add(enemyID);
             if(recur) {
                 Rivals.getFactionManager().getFactionByID(enemyID).addEnemy(factionID, false);
             }
+            return true;
         }
+        return false;
     }
 
-    public void removeEnemy(UUID enemyID, boolean recur) {
+    public boolean addEnemy(int enemyID) {
+        if(!enemyFactions.contains(enemyID)) {
+            enemyFactions.add(enemyID);
+            Rivals.getFactionManager().getFactionByID(enemyID).addEnemy(factionID, false);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean removeEnemy(int enemyID, boolean recur) {
         if(enemyFactions.contains(enemyID)) {
             enemyFactions.remove(enemyID);
             if(recur) {
                 Rivals.getFactionManager().getFactionByID(enemyID).removeEnemy(factionID, false);
             }
+            return true;
         }
+        return false;
+    }
+
+    public boolean removeEnemy(int enemyID) {
+        if(enemyFactions.contains(enemyID)) {
+            enemyFactions.remove(enemyID);
+            Rivals.getFactionManager().getFactionByID(enemyID).removeEnemy(factionID, false);
+            return true;
+        }
+        return false;
     }
 
     public void powerChange(double amount) {
@@ -128,11 +174,27 @@ public class Faction implements ConfigurationSerializable {
         return members;
     }
 
-    public UUID getID() {
+    public int getID() {
         return factionID;
     }
 
     public String getName() {
         return factionName;
+    }
+
+    public boolean addClaim(Chunk c) {
+        return Rivals.getClaimManager().createClaim(c, this);
+    }
+
+    public boolean removeClaim(Chunk c) {
+        return Rivals.getClaimManager().removeClaim(c, this);
+    }
+
+    public List<String> getRegions() {
+        return regions;
+    }
+
+    public String getClaimName(Chunk c) {
+        return "RFClaims-" + c.getWorld().getName() + "-" + factionID + "-" + c.getX() + "-" + c.getZ();
     }
 }

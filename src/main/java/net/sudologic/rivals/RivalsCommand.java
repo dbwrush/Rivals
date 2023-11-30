@@ -46,7 +46,7 @@ public class RivalsCommand implements CommandExecutor {
                 if(manager.nameAlreadyExists(name)) {
                     p.sendMessage("[Rivals] " + name + " already exists.");
                 }
-                manager.addFaction(new Faction(p.getUniqueId(), name));
+                manager.addFaction(new Faction(p.getUniqueId(), name, manager.getUnusedFactionID()));
                 p.sendMessage("[Rivals] Created the " + name + " faction.");
                 return true;
             }
@@ -78,8 +78,8 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 String fName = args[1];
-                List<UUID> invites = manager.getInvitesForPlayer(p.getUniqueId());
-                for(UUID f : invites) {
+                List<Integer> invites = manager.getInvitesForPlayer(p.getUniqueId());
+                for(int f : invites) {
                     if(manager.getFactionByID(f).getName().equals(fName)) {
                         manager.getFactionByID(f).addMember(p.getUniqueId());
                         p.sendMessage("[Rivals] You've joined " + fName);
@@ -88,7 +88,35 @@ public class RivalsCommand implements CommandExecutor {
                     }
                 }
                 p.sendMessage("[Rivals] That faction either hasn't invited you or doesn't exist.");
-            } else {
+            }
+            else if(args[0].equals("leave")) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be in a faction in order to leave it.");
+                    return true;
+                }
+                faction.removeMember(p.getUniqueId());
+                p.sendMessage("[Rivals] You are no longer a member of " + faction.getName());
+                return true;
+            }
+            else if(args[0].equals("enemy")) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be in a faction to declare war.");
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage("[Rivals] You must specify a faction to declare war on,");
+                    return true;
+                }
+                String enemyName = args[1];
+                Faction enemy = manager.getFactionByName(enemyName);
+                if(faction.addEnemy(enemy.getID())) {
+                    p.sendMessage("[Rivals] You are now enemies with " + enemyName);
+                } else {
+                    p.sendMessage("[Rivals] Could not declare war on " + enemyName + ", there might not be a faction by that name.");
+                }
+                return true;
+            }
+            else {
                 p.sendMessage("[Rivals] Invalid syntax");
             }
         }
