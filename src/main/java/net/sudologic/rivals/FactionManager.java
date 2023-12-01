@@ -37,13 +37,16 @@ public class FactionManager implements ConfigurationSerializable {
         }
     }
     public int getUnusedFactionID() {
-        int m = (int) factions.keySet().toArray()[factions.keySet().size() - 1];
-        for(int i = 0; i < m; i++) {
-            if(getFactionByID(i) == null) {
-                return i;
+        if(factions.size() > 0) {
+            int m = (int) factions.keySet().toArray()[factions.keySet().size() - 1];
+            for(int i = 0; i < m; i++) {
+                if(getFactionByID(i) == null) {
+                    return i;
+                }
             }
+            return m + 1;
         }
-        return m + 1;
+        return 0;
     }
 
     public FactionManager() {
@@ -156,6 +159,13 @@ public class FactionManager implements ConfigurationSerializable {
             }
         }
         return list;
+    }
+
+    public List<Faction> getFactions() {
+        if (factions.size() == 0) {
+            return new ArrayList<>();
+        }
+        return factions.values().stream().toList();
     }
 
     public List<Integer> getPeaceInvitesForFaction(int id) {

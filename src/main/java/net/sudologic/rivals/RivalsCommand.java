@@ -8,6 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -179,27 +181,52 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] Your faction is not powerful enough to claim this land.");
                     return true;
                 }
-                if(claimManager.createClaim(c, faction)) {
-                    faction.sendMessageToOnlineMembers("Claimed chunk X:" + c.getX() + " Z: " + c.getZ() + " in " + c.getWorld().getName() + ".");
+                if(faction.addClaim(c)) {
+                    faction.sendMessageToOnlineMembers("Claimed chunk X: " + c.getX() + " Z: " + c.getZ() + " in " + c.getWorld().getName() + ".");
                 } else {
                     ProtectedRegion existingClaim = claimManager.getExistingClaim(c);
                     if(existingClaim != null) {
                         String id = existingClaim.getId();
-                        Faction f = manager.getFactionByName(id.split("-")[2]);
-                        if(f != null && faction.getEnemies().contains(f.getID())) {
-                            double enemyStrength = claimManager.getClaimStrength(f);
-                            if(myStrength > enemyStrength * 1.5) {
-                                claimManager.removeClaim(c, f);
-                                claimManager.createClaim(c, faction);
-                                p.sendMessage("[Rivals] You have taken this chunk from " + f.getName());
-                                return true;
+                        Faction f = manager.getFactionByID(Integer.valueOf(id.split("_")[2]));
+                        if(f != null) {
+                            if(faction.getEnemies().contains(f.getID())) {
+                                double enemyStrength = claimManager.getClaimStrength(f);
+                                if(myStrength > enemyStrength * 1.5) {
+                                    claimManager.removeClaim(c, f);
+                                    claimManager.createClaim(c, faction);
+                                    p.sendMessage("[Rivals] You have taken this chunk from " + f.getName());
+                                } else {
+                                    p.sendMessage("[Rivals] Your faction is not powerful enough to take this claim from " + f.getName());
+                                }
                             } else {
-                                p.sendMessage("[Rivals] Your faction is not powerful enough to take this claim.");
-                                return true;
+                                if(f.equals(faction)) {
+                                    p.sendMessage("[Rivals] Your faction already claims this chunk.");
+                                } else {
+                                    p.sendMessage("[Rivals] This chunk is already claimed by " + f.getName());
+                                }
                             }
+                            return true;
                         }
                     }
+                    p.sendMessage("[Rivals] For unknown reasons, you cannot claim this chunk.");
+                    return true;
                 }
+            }
+            else if(args[0].equals("unclaim")) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be in a faction to unclaim land.");
+                    return true;
+                }
+                ClaimManager claimManager = Rivals.getClaimManager();
+                Chunk c = p.getLocation().getChunk();
+                ProtectedRegion region = claimManager.getExistingClaim(c);
+                if(region != null && region.getId().split("_")[2].equals(faction.getID())) {
+                    claimManager.removeClaim(c, faction);
+                    p.sendMessage("[Rivals] Claim removed.");
+                } else {
+                    p.sendMessage("[Rivals] Your faction doesn't have a claim here.");
+                }
+                return true;
             }
             else if(args[0].equals("info")) {
                 if(args.length < 2) {
@@ -208,6 +235,7 @@ public class RivalsCommand implements CommandExecutor {
                         return true;
                     }
                     sendFactionInfo(p, faction, "");
+                    return true;
                 }
                 String factionName = args[1];
                 Faction f = manager.getFactionByName(factionName);
@@ -220,6 +248,31 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 sendFactionInfo(p, f, "");
+            }
+            else if(args[0].equals("list")) {
+                int perPage = 8;
+                List<Faction> factions = manager.getFactions();
+                int numPages = (factions.size() / perPage) + 1;
+                int start = 0;
+                if(factions.size() == 0) {
+                    p.sendMessage("[Rivals] There aren't any factions yet.");
+                    return true;
+                }
+                String mess = "[Rivals] Factions List Page 1/" + numPages;
+                if(args.length >= 2) {
+                    Integer page = Integer.parseInt(args[1]);
+                    mess = "[Rivals] Factions List Page " + page + "/" + numPages;
+                    if (page > numPages) {
+                        p.sendMessage("[Rivals] There are only " + numPages + " pages.");
+                        return true;
+                    }
+                    start = (page - 1) * perPage;
+                }
+                for(int i = start; i < perPage + start && i < manager.getFactions().size(); i++) {
+                    mess += "\n" + factions.get(i).getName();
+                }
+                p.sendMessage(mess);
+                return true;
             }
             else {
                 p.sendMessage("[Rivals] Invalid syntax");
@@ -236,52 +289,61 @@ public class RivalsCommand implements CommandExecutor {
         String mess = "";
         if(s.equals("")) {
             mess = "[Rivals] Info on " + f.getName();
-            String members = "\n";
+            String members = "\nMembers: ";
             if(f.getMembers().size() > 3) {
                 for(int i = 0; i < 3; i++) {
-                    members += Bukkit.getPlayer(f.getMembers().get(i)) + ", ";
+                    members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
                 }
                 members += "+ " + (f.getMembers().size() - 3);
             } else if(f.getMembers().size() > 1){
                 for(int i = 0; i < f.getMembers().size() - 1; i++) {
-                    members += Bukkit.getPlayer(f.getMembers().get(i)) + ", ";
+                    members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
                 }
-                members += " and " + Bukkit.getPlayer(f.getMembers().get(2));
+                members += " and " + Bukkit.getPlayer(f.getMembers().get(2)).getName();
             } else {
-                members += Bukkit.getPlayer(f.getMembers().get(0));
+                members += Bukkit.getPlayer(f.getMembers().get(0)).getName();
             }
             mess += members;
 
-            String allies = "\n";
-            if(f.getAllies().size() > 3) {
-                for(int i = 0; i < 3; i++) {
-                    allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
+            String allies = "\nAllies: ";
+            if(f.getAllies().size() > 0) {
+                if(f.getAllies().size() > 3) {
+                    for(int i = 0; i < 3; i++) {
+                        allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
+                    }
+                    allies += "+ " + (f.getAllies().size() - 3);
+                } else if(f.getAllies().size() > 1){
+                    for(int i = 0; i < f.getAllies().size() - 1; i++) {
+                        allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
+                    }
+                    allies += " and " + manager.getFactionByID(f.getAllies().get(2));
+                } else {
+                    allies += manager.getFactionByID(f.getAllies().get(0));
                 }
-                allies += "+ " + (f.getAllies().size() - 3);
-            } else if(f.getAllies().size() > 1){
-                for(int i = 0; i < f.getAllies().size() - 1; i++) {
-                    allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
-                }
-                allies += " and " + manager.getFactionByID(f.getAllies().get(2));
             } else {
-                allies += manager.getFactionByID(f.getAllies().get(0));
+                allies += "None";
             }
             mess += allies;
 
-            String enemies = "\n";
-            if(f.getEnemies().size() > 3) {
-                for(int i = 0; i < 3; i++) {
-                    enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+            String enemies = "\nEnemies: ";
+            if(f.getEnemies().size() > 0) {
+                if(f.getEnemies().size() > 3) {
+                    for(int i = 0; i < 3; i++) {
+                        enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+                    }
+                    enemies += "+ " + (f.getEnemies().size() - 3);
+                } else if(f.getEnemies().size() > 1){
+                    for(int i = 0; i < f.getEnemies().size() - 1; i++) {
+                        enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+                    }
+                    enemies += " and " + manager.getFactionByID(f.getEnemies().get(2));
+                } else {
+                    enemies += manager.getFactionByID(f.getEnemies().get(0));
                 }
-                enemies += "+ " + (f.getEnemies().size() - 3);
-            } else if(f.getEnemies().size() > 1){
-                for(int i = 0; i < f.getEnemies().size() - 1; i++) {
-                    enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
-                }
-                enemies += " and " + manager.getFactionByID(f.getEnemies().get(2));
             } else {
-                enemies += manager.getFactionByID(f.getEnemies().get(0));
+                enemies += "None";
             }
+
             mess += enemies;
 
             String chunks = "\nChunks: " + f.getRegions().size();
@@ -289,32 +351,50 @@ public class RivalsCommand implements CommandExecutor {
             mess += chunks;
 
             String hint = "\nFor more info, add 'members', 'allies', or 'enemies' to the command.";
+
+            mess += hint;
         } else {
             if(s.equals("members")) {
                 mess = "[Rivals] Members of " + f.getName();
                 String members = "\n";
-                for(int i = 0; i < f.getMembers().size() - 1; i++) {
-                    members += Bukkit.getPlayer(f.getMembers().get(i)) + ", ";
+                if(f.getMembers().size() > 1) {
+                    for(int i = 0; i < f.getMembers().size() - 1; i++) {
+                        members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
+                    }
+                    members += "and " + Bukkit.getPlayer(f.getMembers().get(f.getMembers().size() - 1)).getName();
+                } else {
+                    members += Bukkit.getPlayer(f.getMembers().get(f.getMembers().size() - 1)).getName();
                 }
-                members += "and " + (f.getMembers().size() - 1);
                 mess += members;
             }
             else if(s.equals("allies")) {
                 mess = "[Rivals] Allies of " + f.getName();
                 String allies = "\n";
-                for(int i = 0; i < f.getAllies().size() - 1; i++) {
-                    allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
+                if(f.getAllies().size() > 1) {
+                    for(int i = 0; i < f.getAllies().size() - 1; i++) {
+                        allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
+                    }
+                    allies += "and " + manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1));
+                } else if(f.getAllies().size() > 0) {
+                    allies += manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1));
+                } else {
+                    allies += "None";
                 }
-                allies += "and " + manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1));
                 mess += allies;
             }
             else if(s.equals("enemies")) {
                 mess = "[Rivals] Enemies of " + f.getName();
                 String enemies = "\n";
-                for(int i = 0; i < f.getEnemies().size() - 1; i++) {
-                    enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+                if(f.getEnemies().size() > 1) {
+                    for (int i = 0; i < f.getEnemies().size() - 1; i++) {
+                        enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+                    }
+                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1));
+                } else if(f.getEnemies().size() > 0) {
+                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1));
+                } else {
+                    enemies += "None";
                 }
-                enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1));
                 mess += enemies;
             }
             else {

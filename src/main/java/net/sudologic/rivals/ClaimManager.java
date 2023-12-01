@@ -2,7 +2,6 @@ package net.sudologic.rivals;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -14,12 +13,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;;import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class ClaimManager {
-    private RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+    private RegionContainer container;
+
+    public ClaimManager() {
+        container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+    }
 
     public boolean createClaim(Chunk c, Faction f) {
         String name = f.getClaimName(c);
@@ -72,7 +76,7 @@ public class ClaimManager {
         ArrayList<ProtectedRegion> regions = new ArrayList<>();
         List<String> regionNames = f.getRegions();
         for(String s : regionNames) {
-            String world = s.split("-")[1];
+            String world = s.split("_")[1];
             RegionManager m = container.get(BukkitAdapter.adapt(Bukkit.getWorld(world)));
             regions.add(m.getRegion(s));
         }
@@ -88,9 +92,9 @@ public class ClaimManager {
         BlockVector3 max = BlockVector3.at(lMax.getX(), lMax.getY(), lMax.getZ());
         ProtectedRegion region = new ProtectedCuboidRegion(name, min, max);
         ApplicableRegionSet set = manager.getApplicableRegions(region);
-        ProtectedRegion[] regions = (ProtectedRegion[]) set.getRegions().toArray();
+        Set<ProtectedRegion> regions = set.getRegions();
         for(ProtectedRegion r : regions) {
-            if(r.getId().contains("RFClaims")) {
+            if(r.getId().contains("rfclaims")) {
                 return r;
             }
         }

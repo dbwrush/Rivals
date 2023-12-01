@@ -36,6 +36,7 @@ public class Faction implements ConfigurationSerializable {
         return mapSerializer;
     }
 
+
     public Faction(Map<String, Object> serializedFaction) {
         this.factionID = (int) serializedFaction.get("factionID");//(UUID) serializedFaction.get("factionID");
         this.factionName = (String) serializedFaction.get("factionName");
@@ -87,6 +88,10 @@ public class Faction implements ConfigurationSerializable {
         if(members.contains(member)) {
             members.remove(member);
             Rivals.getClaimManager().updateFactionMembers(this);
+            if(members.size() == 0) {
+                Rivals.getFactionManager().removeFaction(this);
+                return true;
+            }
             sendMessageToOnlineMembers(Bukkit.getPlayer(member).getName() + " has left your faction.");
             return true;
         }
@@ -198,11 +203,19 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public boolean addClaim(Chunk c) {
-        return Rivals.getClaimManager().createClaim(c, this);
+        if(Rivals.getClaimManager().createClaim(c, this)) {
+            regions.add(getClaimName(c));
+            return true;
+        }
+        return false;
     }
 
     public boolean removeClaim(Chunk c) {
-        return Rivals.getClaimManager().removeClaim(c, this);
+        if(Rivals.getClaimManager().removeClaim(c, this)) {
+            regions.remove(getClaimName(c));
+            return true;
+        }
+        return false;
     }
 
     public List<String> getRegions() {
@@ -210,7 +223,7 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public String getClaimName(Chunk c) {
-        return "RFClaims-" + c.getWorld().getName() + "-" + factionID + "-" + c.getX() + "-" + c.getZ();
+        return "rfclaims_" + c.getWorld().getName() + "_" + factionID + "_" + c.getX() + "_" + c.getZ();
     }
 
     public void sendMessageToOnlineMembers(String s) {
