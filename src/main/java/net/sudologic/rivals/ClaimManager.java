@@ -78,4 +78,22 @@ public class ClaimManager {
         }
         return regions;
     }
+
+    public ProtectedRegion getExistingClaim(Chunk c) {
+        String name = "test";
+        RegionManager manager = container.get(BukkitAdapter.adapt(c.getWorld()));
+        Location lMin = c.getBlock(0, c.getWorld().getMinHeight(), 0).getLocation();
+        Location lMax = c.getBlock(15, c.getWorld().getMaxHeight(), 15).getLocation();
+        BlockVector3 min = BlockVector3.at(lMin.getX(), lMin.getY(), lMin.getZ());
+        BlockVector3 max = BlockVector3.at(lMax.getX(), lMax.getY(), lMax.getZ());
+        ProtectedRegion region = new ProtectedCuboidRegion(name, min, max);
+        ApplicableRegionSet set = manager.getApplicableRegions(region);
+        ProtectedRegion[] regions = (ProtectedRegion[]) set.getRegions().toArray();
+        for(ProtectedRegion r : regions) {
+            if(r.getId().contains("RFClaims")) {
+                return r;
+            }
+        }
+        return null;
+    }
 }

@@ -8,6 +8,7 @@ public class FactionManager implements ConfigurationSerializable {
     private Map<Integer, Faction> factions;
     private List<MemberInvite> memberInvites;
     private List<AllyInvite> allyInvites;
+    private List<PeaceInvite> peaceInvites;
 
     public FactionManager(Map<String, Object> serializedFactionManager) {
         factions = new HashMap<>();
@@ -28,6 +29,12 @@ public class FactionManager implements ConfigurationSerializable {
             AllyInvite a = new AllyInvite((Map<String, Object>) o);
             allyInvites.add(a);
         }
+        peaceInvites = new ArrayList<>();
+        List<Object> pObjects = (List<Object>) serializedFactionManager.get("allyInvites");
+        for(Object o : pObjects) {
+            PeaceInvite a = new PeaceInvite((Map<String, Object>) o);
+            peaceInvites.add(a);
+        }
     }
     public int getUnusedFactionID() {
         int m = (int) factions.keySet().toArray()[factions.keySet().size() - 1];
@@ -42,6 +49,8 @@ public class FactionManager implements ConfigurationSerializable {
     public FactionManager() {
         factions = new HashMap<>();
         memberInvites = new ArrayList<>();
+        allyInvites = new ArrayList<>();
+        peaceInvites = new ArrayList<>();
     }
 
     public boolean addFaction(Faction f) {
@@ -82,11 +91,43 @@ public class FactionManager implements ConfigurationSerializable {
         return null;
     }
 
-    public void addInvite(UUID id, int f) {
+    public void addAllyInvite(int inviter, int invitee) {
+        allyInvites.add(new AllyInvite(inviter, invitee));
+    }
+
+    public void removeAllyInvite(int inviter, int invitee) {
+        AllyInvite a = null;
+        for(AllyInvite i : allyInvites) {
+            if(i.getInviter() == inviter && i.getInvitee() == invitee) {
+                a = i;
+            }
+        }
+        if(a != null) {
+            allyInvites.remove(a);
+        }
+    }
+
+    public void addPeaceInvite(int inviter, int invitee) {
+        peaceInvites.add(new PeaceInvite(inviter, invitee));
+    }
+
+    public void removePeaceInvite(int inviter, int invitee) {
+        PeaceInvite a = null;
+        for(PeaceInvite i : peaceInvites) {
+            if(i.getInviter() == inviter && i.getInvitee() == invitee) {
+                a = i;
+            }
+        }
+        if(a != null) {
+            peaceInvites.remove(a);
+        }
+    }
+
+    public void addMemberInvite(UUID id, int f) {
         memberInvites.add(new MemberInvite(f, id));
     }
 
-    public void removeInvite(UUID id, int f) {
+    public void removeMemberInvite(UUID id, int f) {
         MemberInvite s = null;
         for(MemberInvite i : memberInvites) {
             if(i.getFaction() == f && i.getPlayer() == id) {
@@ -104,7 +145,26 @@ public class FactionManager implements ConfigurationSerializable {
             if(i.getPlayer() == pId)
                 list.add(i.getFaction());
         }
+        return list;
+    }
 
+    public List<Integer> getAllyInvitesForFaction(int id) {
+        List list = new ArrayList();
+        for(AllyInvite i : allyInvites) {
+            if(i.getInvitee() == id) {
+                list.add(i.getInvitee());
+            }
+        }
+        return list;
+    }
+
+    public List<Integer> getPeaceInvitesForFaction(int id) {
+        List list = new ArrayList();
+        for(PeaceInvite i : peaceInvites) {
+            if(i.getInvitee() == id) {
+                list.add(i.getInvitee());
+            }
+        }
         return list;
     }
 
@@ -124,9 +184,14 @@ public class FactionManager implements ConfigurationSerializable {
         for(AllyInvite a : allyInvites) {
             aObjects.add(a.serialize());
         }
+        List<Object> pObjects = new ArrayList<>();
+        for(PeaceInvite p : peaceInvites) {
+            pObjects.add(p.serialize());
+        }
         mapSerializer.put("factions", fObjects);
         mapSerializer.put("memberInvites", iObjects);
         mapSerializer.put("allyInvites", aObjects);
+        mapSerializer.put("peaceInvites", pObjects);
         return mapSerializer;
     }
 
@@ -180,6 +245,38 @@ public class FactionManager implements ConfigurationSerializable {
             this.invitee = (int) serialized.get("invitee");
         }
         public AllyInvite(int inviter, int invitee) {
+            this.inviter = inviter;
+            this.invitee = invitee;
+        }
+
+        public int getInvitee() {
+            return invitee;
+        }
+
+        public int getInviter() {
+            return inviter;
+        }
+
+        @Override
+        public Map<String, Object> serialize() {
+            HashMap<String, Object> mapSerializer = new HashMap<>();
+
+            mapSerializer.put("inviter", inviter);
+            mapSerializer.put("invitee", invitee);
+
+            return mapSerializer;
+        }
+    }
+
+    public class PeaceInvite implements ConfigurationSerializable{
+        private int inviter;
+        private int invitee;
+
+        public PeaceInvite(Map<String, Object> serialized) {
+            this.inviter = (int) serialized.get("inviter");
+            this.invitee = (int) serialized.get("invitee");
+        }
+        public PeaceInvite(int inviter, int invitee) {
             this.inviter = inviter;
             this.invitee = invitee;
         }

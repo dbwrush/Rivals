@@ -1,6 +1,7 @@
 package net.sudologic.rivals;
 
 import com.sk89q.worldguard.WorldGuard;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -70,6 +71,7 @@ public class Faction implements ConfigurationSerializable {
 
     public boolean addMember(UUID member) {
         if(!members.contains(member)) {
+            sendMessageToOnlineMembers(Bukkit.getPlayer(member).getName() + " has joined your faction.");
             members.add(member);
             Rivals.getClaimManager().updateFactionMembers(this);
             return true;
@@ -81,6 +83,7 @@ public class Faction implements ConfigurationSerializable {
         if(members.contains(member)) {
             members.remove(member);
             Rivals.getClaimManager().updateFactionMembers(this);
+            sendMessageToOnlineMembers(Bukkit.getPlayer(member).getName() + " has left your faction.");
             return true;
         }
         return false;
@@ -89,8 +92,9 @@ public class Faction implements ConfigurationSerializable {
     private boolean addAlly(int allyID, boolean recur) {
         if(!allyFactions.contains(allyID)) {
             allyFactions.add(allyID);
+            sendMessageToOnlineMembers("You are now allied with " + Rivals.getFactionManager().getFactionByID(allyID).getName());
             if(recur) {
-                Rivals.getFactionManager().getFactionByID(allyID).addAlly(factionID, false);
+                Rivals.getFactionManager().getFactionByID(allyID).addAlly(factionID, true);
             }
             return true;
         }
@@ -99,8 +103,7 @@ public class Faction implements ConfigurationSerializable {
 
     public boolean addAlly(int allyID) {
         if(!allyFactions.contains(allyID)) {
-            allyFactions.add(allyID);
-            Rivals.getFactionManager().getFactionByID(allyID).addAlly(factionID, false);
+            addAlly(allyID, false);
             return true;
         }
         return false;
@@ -109,6 +112,7 @@ public class Faction implements ConfigurationSerializable {
     private boolean removeAlly(int allyID, boolean recur) {
         if(allyFactions.contains(allyID)) {
             allyFactions.remove(allyID);
+            sendMessageToOnlineMembers("You are no longer at allied with " + Rivals.getFactionManager().getFactionByID(allyID).getName());
             if(recur) {
                 Rivals.getFactionManager().getFactionByID(allyID).removeAlly(factionID, false);
             }
@@ -119,8 +123,7 @@ public class Faction implements ConfigurationSerializable {
 
     public boolean removeAlly(int allyID) {
         if(allyFactions.contains(allyID)) {
-            allyFactions.remove(allyID);
-            Rivals.getFactionManager().getFactionByID(allyID).removeAlly(factionID, false);
+            removeAlly(allyID, true);
             return true;
         }
         return false;
@@ -129,6 +132,7 @@ public class Faction implements ConfigurationSerializable {
     private boolean addEnemy(int enemyID, boolean recur) {
         if(!enemyFactions.contains(enemyID)) {
             enemyFactions.add(enemyID);
+            sendMessageToOnlineMembers("You are now war with " + Rivals.getFactionManager().getFactionByID(enemyID).getName());
             if(recur) {
                 Rivals.getFactionManager().getFactionByID(enemyID).addEnemy(factionID, false);
             }
@@ -139,8 +143,7 @@ public class Faction implements ConfigurationSerializable {
 
     public boolean addEnemy(int enemyID) {
         if(!enemyFactions.contains(enemyID)) {
-            enemyFactions.add(enemyID);
-            Rivals.getFactionManager().getFactionByID(enemyID).addEnemy(factionID, false);
+            addEnemy(enemyID, false);
             return true;
         }
         return false;
@@ -149,6 +152,7 @@ public class Faction implements ConfigurationSerializable {
     private boolean removeEnemy(int enemyID, boolean recur) {
         if(enemyFactions.contains(enemyID)) {
             enemyFactions.remove(enemyID);
+            sendMessageToOnlineMembers("You are no longer at war with " + Rivals.getFactionManager().getFactionByID(enemyID).getName());
             if(recur) {
                 Rivals.getFactionManager().getFactionByID(enemyID).removeEnemy(factionID, false);
             }
@@ -159,8 +163,7 @@ public class Faction implements ConfigurationSerializable {
 
     public boolean removeEnemy(int enemyID) {
         if(enemyFactions.contains(enemyID)) {
-            enemyFactions.remove(enemyID);
-            Rivals.getFactionManager().getFactionByID(enemyID).removeEnemy(factionID, false);
+            removeEnemy(enemyID, false);
             return true;
         }
         return false;
@@ -172,6 +175,14 @@ public class Faction implements ConfigurationSerializable {
 
     public List<UUID> getMembers() {
         return members;
+    }
+
+    public List<Integer> getEnemies() {
+        return enemyFactions;
+    }
+
+    public List<Integer> getAllies() {
+        return allyFactions;
     }
 
     public int getID() {
@@ -196,5 +207,13 @@ public class Faction implements ConfigurationSerializable {
 
     public String getClaimName(Chunk c) {
         return "RFClaims-" + c.getWorld().getName() + "-" + factionID + "-" + c.getX() + "-" + c.getZ();
+    }
+
+    public void sendMessageToOnlineMembers(String s) {
+        for(UUID id : members) {
+            if(Bukkit.getPlayer(id).isOnline()) {
+                Bukkit.getPlayer(id).sendMessage("[Rivals] " + s);
+            }
+        }
     }
 }
