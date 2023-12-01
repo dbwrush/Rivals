@@ -174,6 +174,11 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 ClaimManager claimManager = Rivals.getClaimManager();
                 Chunk c = p.getLocation().getChunk();
+                double myStrength = claimManager.getClaimStrength(faction);
+                if(myStrength < 1) {
+                    p.sendMessage("[Rivals] Your faction is not powerful enough to claim this land.");
+                    return true;
+                }
                 if(claimManager.createClaim(c, faction)) {
                     faction.sendMessageToOnlineMembers("Claimed chunk X:" + c.getX() + " Z: " + c.getZ() + " in " + c.getWorld().getName() + ".");
                 } else {
@@ -182,7 +187,16 @@ public class RivalsCommand implements CommandExecutor {
                         String id = existingClaim.getId();
                         Faction f = manager.getFactionByName(id.split("-")[2]);
                         if(f != null && faction.getEnemies().contains(f.getID())) {
-                            p.sendMessage("[Rivals] This chunk belongs to an enemy!");
+                            double enemyStrength = claimManager.getClaimStrength(f);
+                            if(myStrength > enemyStrength * 1.5) {
+                                claimManager.removeClaim(c, f);
+                                claimManager.createClaim(c, faction);
+                                p.sendMessage("[Rivals] You have taken this chunk from " + f.getName());
+                                return true;
+                            } else {
+                                p.sendMessage("[Rivals] Your faction is not powerful enough to take this claim.");
+                                return true;
+                            }
                         }
                     }
                 }

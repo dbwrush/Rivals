@@ -69,6 +69,10 @@ public class Faction implements ConfigurationSerializable {
         regions = new ArrayList<>();
     }
 
+    public double getPower() {
+        return power;
+    }
+
     public boolean addMember(UUID member) {
         if(!members.contains(member)) {
             sendMessageToOnlineMembers(Bukkit.getPlayer(member).getName() + " has joined your faction.");
