@@ -73,6 +73,9 @@ public class Faction implements ConfigurationSerializable {
         power = 10;
         regions = new ArrayList<>();
         color = ChatColor.values()[(int) (Math.random() * ChatColor.values().length)];
+        if(color.equals(ChatColor.MAGIC)) {
+            color = ChatColor.RESET;
+        }
     }
 
     public void setColor(ChatColor color) {

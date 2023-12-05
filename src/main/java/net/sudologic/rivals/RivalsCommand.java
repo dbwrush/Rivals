@@ -315,6 +315,10 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] Invalid color code. Example: " + ChatColor.COLOR_CHAR + ChatColor.RED + ChatColor.RED + " for red.");
                     return true;
                 }
+                if(c.equals(ChatColor.MAGIC)) {
+                    p.sendMessage("[Rivals] Cool idea, sorry I can't allow it.");
+                    return true;
+                }
                 faction.setColor(c);
                 return true;
             }
