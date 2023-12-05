@@ -2,6 +2,7 @@ package net.sudologic.rivals;
 
 import com.sk89q.worldguard.WorldGuard;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -14,6 +15,8 @@ public class Faction implements ConfigurationSerializable {
     private List<Integer> allyFactions;
     private List<UUID> members;
     private double power;
+
+    private ChatColor color;
 
     private List<String> regions;
 
@@ -32,13 +35,14 @@ public class Faction implements ConfigurationSerializable {
         mapSerializer.put("members", memberStrings);
         mapSerializer.put("power", power);
         mapSerializer.put("regions", regions);
+        mapSerializer.put("color", color.getChar());
 
         return mapSerializer;
     }
 
 
     public Faction(Map<String, Object> serializedFaction) {
-        this.factionID = (int) serializedFaction.get("factionID");//(UUID) serializedFaction.get("factionID");
+        this.factionID = (int) serializedFaction.get("factionID");
         this.factionName = (String) serializedFaction.get("factionName");
         List<String> enemyStrings = (List<String>) serializedFaction.get("enemyFactions");
         this.enemyFactions = new ArrayList<>();
@@ -57,6 +61,7 @@ public class Faction implements ConfigurationSerializable {
         }
         this.power = (double) serializedFaction.get("power");
         this.regions = (List<String>) serializedFaction.get("regions");
+        this.color = ChatColor.getByChar((String) serializedFaction.get("color"));
     }
 
     public Faction(UUID firstPlayer, String name, int id) {
@@ -68,6 +73,15 @@ public class Faction implements ConfigurationSerializable {
         members.add(firstPlayer);
         power = 10;
         regions = new ArrayList<>();
+        color = ChatColor.values()[(int) (Math.random() * ChatColor.values().length)];
+    }
+
+    public void setColor(ChatColor color) {
+        this.color = color;
+    }
+
+    public ChatColor getColor() {
+        return color;
     }
 
     public double getPower() {
@@ -140,6 +154,9 @@ public class Faction implements ConfigurationSerializable {
 
     private boolean addEnemy(int enemyID, boolean recur) {
         if(!enemyFactions.contains(enemyID)) {
+            if(Rivals.getFactionManager().getFactionByID(enemyID) == null) {
+                return false;
+            }
             enemyFactions.add(enemyID);
             sendMessageToOnlineMembers("You are now war with " + Rivals.getFactionManager().getFactionByID(enemyID).getName());
             if(recur) {

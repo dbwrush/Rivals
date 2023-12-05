@@ -36,6 +36,7 @@ public class FactionManager implements ConfigurationSerializable {
             peaceInvites.add(a);
         }
     }
+
     public int getUnusedFactionID() {
         if(factions.size() > 0) {
             int m = (int) factions.keySet().toArray()[factions.keySet().size() - 1];
@@ -47,6 +48,38 @@ public class FactionManager implements ConfigurationSerializable {
             return m + 1;
         }
         return 0;
+    }
+
+    public void removeInvitesForFaction(Faction f) {
+        List<MemberInvite> reM = new ArrayList<>();
+        for(MemberInvite m : memberInvites) {
+            if(m.getFaction() == f.getID()) {
+                reM.add(m);
+            }
+        }
+        for(MemberInvite m : reM) {
+            memberInvites.remove(m);
+        }
+
+        List<AllyInvite> reA = new ArrayList<>();
+        for(AllyInvite a : allyInvites) {
+            if(a.invitee == f.getID() || a.inviter == f.getID()) {
+                reA.add(a);
+            }
+        }
+        for(AllyInvite a : reA) {
+            allyInvites.remove(a);
+        }
+
+        List<PeaceInvite> reP = new ArrayList<>();
+        for(PeaceInvite p : peaceInvites) {
+            if(p.getInviter() == f.getID() || p.getInvitee() == f.getID()) {
+                reP.add(p);
+            }
+        }
+        for(PeaceInvite p : reP) {
+            peaceInvites.remove(p);
+        }
     }
 
     public FactionManager() {
@@ -67,6 +100,8 @@ public class FactionManager implements ConfigurationSerializable {
     public boolean removeFaction(Faction f) {
         if(factions.containsKey(f.getID())) {
             factions.remove(f.getID());
+            Rivals.getClaimManager().removeRegionsForFaction(f);
+            removeInvitesForFaction(f);
             return true;
         }
         return false;

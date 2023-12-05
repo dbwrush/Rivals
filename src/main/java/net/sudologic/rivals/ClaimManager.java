@@ -83,6 +83,15 @@ public class ClaimManager {
         return regions;
     }
 
+    public void removeRegionsForFaction(Faction f) {
+        List<String> regionNames = f.getRegions();
+        for(String s : regionNames) {
+            String world = s.split("_")[1];
+            RegionManager m = container.get(BukkitAdapter.adapt(Bukkit.getWorld(world)));
+            m.removeRegion(s);
+        }
+    }
+
     public ProtectedRegion getExistingClaim(Chunk c) {
         String name = "test";
         RegionManager manager = container.get(BukkitAdapter.adapt(c.getWorld()));

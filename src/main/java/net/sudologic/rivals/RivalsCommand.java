@@ -2,6 +2,7 @@ package net.sudologic.rivals;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -219,14 +220,12 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 ClaimManager claimManager = Rivals.getClaimManager();
                 Chunk c = p.getLocation().getChunk();
-                ProtectedRegion region = claimManager.getExistingClaim(c);
-                if(region != null && region.getId().split("_")[2].equals(faction.getID())) {
-                    claimManager.removeClaim(c, faction);
-                    p.sendMessage("[Rivals] Claim removed.");
+                if(claimManager.removeClaim(c, faction)) {
+                    p.sendMessage("[Rivals] Removed your claim to chunk " + c.getX() + " " + c.getZ());
+                    return true;
                 } else {
-                    p.sendMessage("[Rivals] Your faction doesn't have a claim here.");
+                    p.sendMessage("[Rivals] Your faction does not claim chunk " + c.getX() + " " + c.getZ());
                 }
-                return true;
             }
             else if(args[0].equals("info")) {
                 if(args.length < 2) {
@@ -269,17 +268,44 @@ public class RivalsCommand implements CommandExecutor {
                     start = (page - 1) * perPage;
                 }
                 for(int i = start; i < perPage + start && i < manager.getFactions().size(); i++) {
-                    mess += "\n" + factions.get(i).getName();
+                    mess += "\n" + ChatColor.COLOR_CHAR + factions.get(i).getColor().toString() + factions.get(i).getName();
                 }
                 p.sendMessage(mess);
                 return true;
+            }
+            else if(args[0].equals("map")) {
+                Chunk c = p.getLocation().getChunk();
+                String mess = "[Rivals] Map of your surroundings";
+                String facts = "\nFactions: ";
+                for(int x = 0; x < 9; x++) {
+                    String row = "\n| ";
+                    for(int z = 0; z < 9; z++) {
+                        Chunk loc = c.getWorld().getChunkAt(c.getX() - 4 + x, c.getZ() - 4 + z);
+                        ProtectedRegion claim = Rivals.getClaimManager().getExistingClaim(loc);
+                        if(claim != null) {
+                            Faction f = manager.getFactionByID(Integer.parseInt(claim.getId().split("_")[2]));
+                            row += ChatColor.COLOR_CHAR + f.getColor().toString() + "X " + ChatColor.COLOR_CHAR + ChatColor.RESET + "| ";
+                            if(!facts.contains(f.getName())) {
+                                facts += ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + ChatColor.COLOR_CHAR + ChatColor.RESET + " ";
+                            }
+                        } else {
+                            row += "  | ";
+                        }
+                    }
+                    mess += row;
+                }
+                if(facts.equals("\nFactions: ")) {
+                    facts = "There are no nearby factions";
+                }
+                mess += facts;
+                p.sendMessage(mess);
             }
             else {
                 p.sendMessage("[Rivals] Invalid syntax");
             }
         }
         else {
-            p.sendMessage("[Rivals] Incomplete syntax");
+            p.sendMessage("[Rivals] Pick a subcommand: invite, join, leave, enemy, ally, peace, unally, claim, info, list, map");
         }
         return true;
     }
@@ -288,8 +314,8 @@ public class RivalsCommand implements CommandExecutor {
         FactionManager manager = Rivals.getFactionManager();
         String mess = "";
         if(s.equals("")) {
-            mess = "[Rivals] Info on " + f.getName();
-            String members = "\nMembers: ";
+            mess = "[Rivals] Info on " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName();
+            String members = ChatColor.COLOR_CHAR + ChatColor.RESET.toString() + "\nMembers: ";
             if(f.getMembers().size() > 3) {
                 for(int i = 0; i < 3; i++) {
                     members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
@@ -299,7 +325,7 @@ public class RivalsCommand implements CommandExecutor {
                 for(int i = 0; i < f.getMembers().size() - 1; i++) {
                     members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
                 }
-                members += " and " + Bukkit.getPlayer(f.getMembers().get(2)).getName();
+                members += " and " + Bukkit.getPlayer(f.getMembers().get(1)).getName();
             } else {
                 members += Bukkit.getPlayer(f.getMembers().get(0)).getName();
             }
@@ -314,11 +340,11 @@ public class RivalsCommand implements CommandExecutor {
                     allies += "+ " + (f.getAllies().size() - 3);
                 } else if(f.getAllies().size() > 1){
                     for(int i = 0; i < f.getAllies().size() - 1; i++) {
-                        allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
+                        allies += manager.getFactionByID(f.getAllies().get(i)).getName() + ", ";
                     }
-                    allies += " and " + manager.getFactionByID(f.getAllies().get(2));
+                    allies += " and " + manager.getFactionByID(f.getAllies().get(1)).getName();
                 } else {
-                    allies += manager.getFactionByID(f.getAllies().get(0));
+                    allies += manager.getFactionByID(f.getAllies().get(0)).getName();
                 }
             } else {
                 allies += "None";
@@ -329,16 +355,16 @@ public class RivalsCommand implements CommandExecutor {
             if(f.getEnemies().size() > 0) {
                 if(f.getEnemies().size() > 3) {
                     for(int i = 0; i < 3; i++) {
-                        enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+                        enemies += manager.getFactionByID(f.getEnemies().get(i)).getName() + ", ";
                     }
                     enemies += "+ " + (f.getEnemies().size() - 3);
                 } else if(f.getEnemies().size() > 1){
                     for(int i = 0; i < f.getEnemies().size() - 1; i++) {
-                        enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+                        enemies += manager.getFactionByID(f.getEnemies().get(i)).getName() + ", ";
                     }
-                    enemies += " and " + manager.getFactionByID(f.getEnemies().get(2));
+                    enemies += " and " + manager.getFactionByID(f.getEnemies().get(1)).getName();
                 } else {
-                    enemies += manager.getFactionByID(f.getEnemies().get(0));
+                    enemies += manager.getFactionByID(f.getEnemies().get(0)).getName();
                 }
             } else {
                 enemies += "None";
@@ -372,11 +398,11 @@ public class RivalsCommand implements CommandExecutor {
                 String allies = "\n";
                 if(f.getAllies().size() > 1) {
                     for(int i = 0; i < f.getAllies().size() - 1; i++) {
-                        allies += manager.getFactionByID(f.getAllies().get(i)) + ", ";
+                        allies += manager.getFactionByID(f.getAllies().get(i)).getName() + ", ";
                     }
-                    allies += "and " + manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1));
+                    allies += "and " + manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1)).getName();
                 } else if(f.getAllies().size() > 0) {
-                    allies += manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1));
+                    allies += manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1)).getName();
                 } else {
                     allies += "None";
                 }
@@ -387,11 +413,11 @@ public class RivalsCommand implements CommandExecutor {
                 String enemies = "\n";
                 if(f.getEnemies().size() > 1) {
                     for (int i = 0; i < f.getEnemies().size() - 1; i++) {
-                        enemies += manager.getFactionByID(f.getEnemies().get(i)) + ", ";
+                        enemies += manager.getFactionByID(f.getEnemies().get(i)).getName() + ", ";
                     }
-                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1));
+                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1)).getName();
                 } else if(f.getEnemies().size() > 0) {
-                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1));
+                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1)).getName();
                 } else {
                     enemies += "None";
                 }
