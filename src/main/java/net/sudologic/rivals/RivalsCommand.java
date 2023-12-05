@@ -300,12 +300,30 @@ public class RivalsCommand implements CommandExecutor {
                 mess += facts;
                 p.sendMessage(mess);
             }
+            else if(args[0].equals("color")) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be on a faction to set the faction color.");
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage("[Rivals] You must include a color code to set your color. Example: " + ChatColor.COLOR_CHAR + ChatColor.RED + ChatColor.RED + " for red.");
+                    return true;
+                }
+                String colorString = args[1];
+                ChatColor c = ChatColor.getByChar(colorString);
+                if(c == null) {
+                    p.sendMessage("[Rivals] Invalid color code. Example: " + ChatColor.COLOR_CHAR + ChatColor.RED + ChatColor.RED + " for red.");
+                    return true;
+                }
+                faction.setColor(c);
+                return true;
+            }
             else {
                 p.sendMessage("[Rivals] Invalid syntax");
             }
         }
         else {
-            p.sendMessage("[Rivals] Pick a subcommand: invite, join, leave, enemy, ally, peace, unally, claim, info, list, map");
+            p.sendMessage("[Rivals] Pick a subcommand: invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
         }
         return true;
     }

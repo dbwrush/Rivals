@@ -40,7 +40,6 @@ public class Faction implements ConfigurationSerializable {
         return mapSerializer;
     }
 
-
     public Faction(Map<String, Object> serializedFaction) {
         this.factionID = (int) serializedFaction.get("factionID");
         this.factionName = (String) serializedFaction.get("factionName");
