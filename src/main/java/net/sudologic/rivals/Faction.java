@@ -198,7 +198,10 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public void powerChange(double amount) {
-        this.power += (amount / members.size());
+        power += (amount / members.size());
+        if(power < 0) {
+            power = 0;
+        }
     }
 
     public List<UUID> getMembers() {
