@@ -23,7 +23,6 @@ TODO:
 
 public final class Rivals extends JavaPlugin {
     private static FileConfiguration customConfig;
-
     private static FactionManager factionManager;
     private static ClaimManager claimManager;
 
@@ -84,6 +83,7 @@ public final class Rivals extends JavaPlugin {
 
     public void registerListeners() {
         PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new EventManager(), this);
     }
 
     public void registerCommands() {

@@ -1,14 +1,29 @@
 package net.sudologic.rivals;
 
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-public class EventManager {
+public class EventManager implements Listener {
+
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent e) {
-        Faction f = Rivals.getFactionManager().getFactionByPlayer(e.getEntity().getUniqueId());
-        if(f != null) {
-            f.powerChange(-2);
+    public void onEntityDeath(EntityDeathEvent e) {
+        FactionManager manager = Rivals.getFactionManager();
+        if(e.getEntity().getKiller() != null) {
+            Player killer = e.getEntity().getKiller();
+            double power = 1;
+            if(e.getEntity() instanceof Monster) {
+                power = 2;
+            } else if(e.getEntity() instanceof Player) {
+                power = 4;
+            }
+            manager.getFactionByPlayer(killer.getUniqueId()).powerChange(power);
+        }
+        if(e.getEntity() instanceof Player) {
+            manager.getFactionByPlayer(e.getEntity().getUniqueId()).powerChange(-4);
         }
     }
 }
