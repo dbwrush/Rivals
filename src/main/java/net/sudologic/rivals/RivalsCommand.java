@@ -38,8 +38,11 @@ public class RivalsCommand implements CommandExecutor {
                 if(manager.nameAlreadyExists(name)) {
                     p.sendMessage("[Rivals] " + name + " already exists.");
                 }
-                manager.addFaction(new Faction(p.getUniqueId(), name, manager.getUnusedFactionID()));
-                p.sendMessage("[Rivals] Created the " + name + " faction.");
+                Faction f = new Faction(p.getUniqueId(), name, manager.getUnusedFactionID());
+                manager.addFaction(f);
+                p.sendMessage("[Rivals] Created the " + f.getColor() + name + " faction.");
+                p.sendMessage("For a list of things to do, use /rivals help");
+                p.sendMessage("P.S., if you don't like your randomly chosen color, use /rivals color");
                 return true;
             }
             else if(args[0].equals("invite")) {
@@ -309,13 +312,13 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 if(args.length < 2) {
-                    p.sendMessage("[Rivals] You must include a color code to set your color. Example: c" + ChatColor.COLOR_CHAR + ChatColor.RED + ChatColor.RED + " for red.");
+                    p.sendMessage("[Rivals] You must include a color code to set your color. Example: c" + ChatColor.RED + " for red.");
                     return true;
                 }
                 String colorString = args[1];
                 ChatColor c = ChatColor.getByChar(colorString);
                 if(c == null) {
-                    p.sendMessage("[Rivals] Invalid color code. Example: c" + ChatColor.COLOR_CHAR + ChatColor.RED + " for red.");
+                    p.sendMessage("[Rivals] Invalid color code. Example: c" + ChatColor.RED + " for red.");
                     return true;
                 }
                 if(c.equals(ChatColor.MAGIC)) {
@@ -327,6 +330,7 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 faction.setColor(c);
+                p.sendMessage("[Rivals] Successfully changed faction color to " + faction.getColor() + faction.getName());
                 return true;
             }
             else if(args[0].equals("help")) {
