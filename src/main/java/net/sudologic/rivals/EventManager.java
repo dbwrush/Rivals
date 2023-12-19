@@ -6,6 +6,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.world.WorldSaveEvent;
+
+import java.util.List;
 
 public class EventManager implements Listener {
 
@@ -25,5 +29,24 @@ public class EventManager implements Listener {
         if(e.getEntity() instanceof Player) {
             manager.getFactionByPlayer(e.getEntity().getUniqueId()).powerChange(-4);
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        FactionManager manager = Rivals.getFactionManager();
+        List<Integer> invites = manager.getInvitesForPlayer(e.getPlayer().getUniqueId());
+        if(manager.getFactionByPlayer(e.getPlayer().getUniqueId()) == null) {
+            String inviteMess = "[Rivals] You're invited to join " + manager.getFactionByID(invites.get(0)).getColor() + manager.getFactionByID(invites.get(0)).getName();
+            e.getPlayer().sendMessage(inviteMess);
+        } else {
+            e.getPlayer().sendMessage("[Rivals] Faction status:");
+            Rivals.getCommand().sendFactionInfo(e.getPlayer(), manager.getFactionByPlayer(e.getPlayer().getUniqueId()), "");
+        }
+    }
+
+    @EventHandler
+    public void onWorldSave(WorldSaveEvent e) {
+        FactionManager manager = Rivals.getFactionManager();
+        manager.removeInvitesOver7Days();
     }
 }

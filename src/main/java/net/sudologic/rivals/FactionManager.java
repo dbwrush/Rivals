@@ -1,8 +1,10 @@
 package net.sudologic.rivals;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class FactionManager implements ConfigurationSerializable {
     private Map<Integer, Faction> factions;
@@ -19,22 +21,36 @@ public class FactionManager implements ConfigurationSerializable {
             factions.put(f.getID(), f);
         }
         List<Object> iObjects = (List<Object>) serializedFactionManager.get("memberInvites");
+        int removedInvites = 0;
         for(Object o : iObjects) {
             MemberInvite i = new MemberInvite((Map<String, Object>) o);
-            memberInvites.add(i);
+            if((System.currentTimeMillis() / 1000L) - 604800 > i.time) {//invite older than 7 days
+                removedInvites++;
+            } else {
+                memberInvites.add(i);
+            }
         }
         allyInvites = new ArrayList<>();
         List<Object> aObjects = (List<Object>) serializedFactionManager.get("allyInvites");
         for(Object o : aObjects) {
             AllyInvite a = new AllyInvite((Map<String, Object>) o);
-            allyInvites.add(a);
+            if((System.currentTimeMillis() / 1000L) - 604800 > a.time) {//invite older than 7 days
+                removedInvites++;
+            } else {
+                allyInvites.add(a);
+            }
         }
         peaceInvites = new ArrayList<>();
         List<Object> pObjects = (List<Object>) serializedFactionManager.get("allyInvites");
         for(Object o : pObjects) {
             PeaceInvite a = new PeaceInvite((Map<String, Object>) o);
-            peaceInvites.add(a);
+            if((System.currentTimeMillis() / 1000L) - 604800 > a.time) {//invite older than 7 days
+                removedInvites++;
+            } else {
+                peaceInvites.add(a);
+            }
         }
+        Bukkit.getLogger().log(Level.INFO, "Removed " + removedInvites + " invites because they were more than 7 days old.");
     }
 
     public int getUnusedFactionID() {
@@ -81,7 +97,6 @@ public class FactionManager implements ConfigurationSerializable {
             peaceInvites.remove(p);
         }
     }
-
     public FactionManager() {
         factions = new HashMap<>();
         memberInvites = new ArrayList<>();
@@ -249,17 +264,41 @@ public class FactionManager implements ConfigurationSerializable {
         return false;
     }
 
+    public void removeInvitesOver7Days() {
+        List<MemberInvite> m = new ArrayList<>(memberInvites);
+        for(MemberInvite i : m) {
+            if(i.time > System.currentTimeMillis() / 1000L + 604800) {
+                memberInvites.remove(i);
+            }
+        }
+        List<AllyInvite> a = new ArrayList<>(allyInvites);
+        for(AllyInvite i : a) {
+            if(i.time > System.currentTimeMillis() / 1000L + 604800) {
+                allyInvites.remove(i);
+            }
+        }
+        List<PeaceInvite> p = new ArrayList<>(peaceInvites);
+        for(PeaceInvite i : p) {
+            if(i.time > System.currentTimeMillis() / 1000L + 604800) {
+                peaceInvites.remove(i);
+            }
+        }
+    }
+
     public class MemberInvite implements ConfigurationSerializable{
         private int faction;
         private UUID player;
 
+        private long time;
         public MemberInvite(Map<String, Object> serialized) {
             this.faction = (int) serialized.get("faction");
             this.player = (UUID) serialized.get("player");
+            this.time = (long) serialized.get("time");
         }
         public MemberInvite(int faction, UUID id) {
             this.faction = faction;
             this.player = id;
+            this.time = System.currentTimeMillis() / 1000L;
         }
 
         public int getFaction() {
@@ -284,14 +323,17 @@ public class FactionManager implements ConfigurationSerializable {
     public class AllyInvite implements ConfigurationSerializable{
         private int inviter;
         private int invitee;
+        private long time;
 
         public AllyInvite(Map<String, Object> serialized) {
             this.inviter = (int) serialized.get("inviter");
             this.invitee = (int) serialized.get("invitee");
+            this.time = (long) serialized.get("time");
         }
         public AllyInvite(int inviter, int invitee) {
             this.inviter = inviter;
             this.invitee = invitee;
+            this.time = System.currentTimeMillis() / 1000L;
         }
 
         public int getInvitee() {
@@ -317,13 +359,17 @@ public class FactionManager implements ConfigurationSerializable {
         private int inviter;
         private int invitee;
 
+        private long time;
+
         public PeaceInvite(Map<String, Object> serialized) {
             this.inviter = (int) serialized.get("inviter");
             this.invitee = (int) serialized.get("invitee");
+            this.time = (long) serialized.get("time");
         }
         public PeaceInvite(int inviter, int invitee) {
             this.inviter = inviter;
             this.invitee = invitee;
+            this.time = System.currentTimeMillis() / 1000L;
         }
 
         public int getInvitee() {

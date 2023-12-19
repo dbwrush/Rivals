@@ -237,6 +237,7 @@ public class RivalsCommand implements CommandExecutor {
                         p.sendMessage("[Rivals] You must be in a faction to get info on your own faction. Add a faction name to look up their info.");
                         return true;
                     }
+                    p.sendMessage("[Rivals] Info on " + ChatColor.COLOR_CHAR + faction.getColor().toString() + faction.getName());
                     sendFactionInfo(p, faction, "");
                     return true;
                 }
@@ -247,12 +248,14 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 if(args.length == 3) {
+                    p.sendMessage("[Rivals] Info on " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName());
                     sendFactionInfo(p, f, args[2]);
                     if(faction == f) {//player has looked up their own faction by name
                         p.sendMessage("[Rivals] HINT You don't need to specify your own faction. You could have used /rivals info");
                     }
                     return true;
                 }
+                p.sendMessage("[Rivals] Info on " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName());
                 sendFactionInfo(p, f, "");
             }
             else if(args[0].equals("list")) {
@@ -398,7 +401,6 @@ public class RivalsCommand implements CommandExecutor {
         FactionManager manager = Rivals.getFactionManager();
         String mess = "";
         if(s.equals("")) {
-            mess = "[Rivals] Info on " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName();
             String members = ChatColor.COLOR_CHAR + ChatColor.RESET.toString() + "\nMembers: ";
             if(f.getMembers().size() > 3) {
                 for(int i = 0; i < 3; i++) {

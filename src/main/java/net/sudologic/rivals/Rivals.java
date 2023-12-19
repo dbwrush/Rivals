@@ -25,6 +25,7 @@ public final class Rivals extends JavaPlugin {
     private static FileConfiguration customConfig;
     private static FactionManager factionManager;
     private static ClaimManager claimManager;
+    private static RivalsCommand command;
 
     @Override
     public void onEnable() {
@@ -86,8 +87,13 @@ public final class Rivals extends JavaPlugin {
         pm.registerEvents(new EventManager(), this);
     }
 
+    public static RivalsCommand getCommand() {
+        return command;
+    }
+
     public void registerCommands() {
-        this.getCommand("rivals").setExecutor(new RivalsCommand());
+        command = new RivalsCommand();
+        this.getCommand("rivals").setExecutor(command);
     }
 
     public void registerClasses() {
