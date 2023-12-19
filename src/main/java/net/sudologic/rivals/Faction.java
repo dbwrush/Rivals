@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -108,6 +109,9 @@ public class Faction implements ConfigurationSerializable {
             members.remove(member);
             Rivals.getClaimManager().updateFactionMembers(this);
             if(members.size() == 0) {
+                for(Player player : Bukkit.getOnlinePlayers()) {
+                    player.sendMessage("[Rivals] Faction " + factionName + " has disbanded because all its players have left.");
+                }
                 Rivals.getFactionManager().removeFaction(this);
                 return true;
             }
