@@ -316,7 +316,11 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 if(c.equals(ChatColor.MAGIC)) {
-                    p.sendMessage("[Rivals] Cool idea, sorry I can't allow it.");
+                    p.sendMessage("[Rivals] Looks cool, sorry I can't allow it.");
+                    return true;
+                }
+                if(c.equals(ChatColor.BLACK)) {
+                    p.sendMessage("[Rivals] Sorry, then nobody will be able to read your name.");
                     return true;
                 }
                 faction.setColor(c);
