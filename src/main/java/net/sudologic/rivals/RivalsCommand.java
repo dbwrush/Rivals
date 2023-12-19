@@ -309,7 +309,7 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 if(args.length < 2) {
-                    p.sendMessage("[Rivals] You must include a color code to set your color. Example: " + ChatColor.COLOR_CHAR + ChatColor.RED + ChatColor.RED + " for red.");
+                    p.sendMessage("[Rivals] You must include a color code to set your color. Example: c" + ChatColor.COLOR_CHAR + ChatColor.RED + ChatColor.RED + " for red.");
                     return true;
                 }
                 String colorString = args[1];
