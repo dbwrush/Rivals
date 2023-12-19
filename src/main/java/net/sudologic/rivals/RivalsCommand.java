@@ -60,7 +60,8 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 manager.addMemberInvite(invited.getUniqueId(), faction.getID());
-                faction.sendMessageToOnlineMembers(invited.getName() + " has been invited to join your faction.");
+                invited.sendMessage("[Rivals] You have been invited to join " + faction.getColor() + faction.getName());
+                faction.sendMessageToOnlineMembers("[Rivals] " + invited.getName() + " has been invited to join your faction.");
                 return true;
             }
             else if(args[0].equals("join")) {
