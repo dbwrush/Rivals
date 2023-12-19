@@ -244,6 +244,9 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 if(args.length == 3) {
                     sendFactionInfo(p, f, args[2]);
+                    if(faction == f) {//player has looked up their own faction by name
+                        p.sendMessage("[Rivals] HINT You don't need to specify your own faction. You could have used /rivals info");
+                    }
                     return true;
                 }
                 sendFactionInfo(p, f, "");
@@ -312,7 +315,7 @@ public class RivalsCommand implements CommandExecutor {
                 String colorString = args[1];
                 ChatColor c = ChatColor.getByChar(colorString);
                 if(c == null) {
-                    p.sendMessage("[Rivals] Invalid color code. Example: " + ChatColor.COLOR_CHAR + ChatColor.RED + ChatColor.RED + " for red.");
+                    p.sendMessage("[Rivals] Invalid color code. Example: c" + ChatColor.COLOR_CHAR + ChatColor.RED + " for red.");
                     return true;
                 }
                 if(c.equals(ChatColor.MAGIC)) {
@@ -326,12 +329,62 @@ public class RivalsCommand implements CommandExecutor {
                 faction.setColor(c);
                 return true;
             }
+            else if(args[0].equals("help")) {
+                if(args.length == 1) {
+                    p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
+                } else {
+                    if(args[1].equals("create")) {
+                        p.sendMessage("[Rivals] Creates a new Faction. Syntax: /rivals create <factionName>");
+                    }
+                    else if(args[1].equals("invite")) {
+                        p.sendMessage("[Rivals] Invites a player to your faction. Syntax: /rivals invite <playerName>");
+                    }
+                    else if(args[1].equals("join")) {
+                        p.sendMessage("[Rivals] Joins a faction that has invited you. Syntax: /rivals join <factionName>");
+                    }
+                    else if(args[1].equals("leave")) {
+                        p.sendMessage("[Rivals] Leaves your current faction. Syntax: /rivals leave");
+                    }
+                    else if(args[1].equals("enemy")) {
+                        p.sendMessage("[Rivals] Declare another faction to be your enemy. Syntax: /rivals enemy <factionName>");
+                    }
+                    else if(args[1].equals("ally")) {
+                        p.sendMessage("[Rivals] Propose/Accept an alliance with another faction. Syntax: /rivals ally <factionName>");
+                    }
+                    else if(args[1].equals("peace")) {
+                        p.sendMessage("[Rivals] Propose/Accept peace with another faction. Syntax: /rivals enemy <factionName>");
+                    }
+                    else if(args[1].equals("unally")) {
+                        p.sendMessage("[Rivals] Ends your alliance with another faction. Syntax: /rivals unally <factionName>");
+                    }
+                    else if(args[1].equals("claim")) {
+                        p.sendMessage("[Rivals] Claim the chunk you are standing in for your faction. Syntax: /rivals claim");
+                    }
+                    else if(args[1].equals("info")) {
+                        p.sendMessage("[Rivals] Display info for a faction. Syntax: /rivals info <factionName>");
+                    }
+                    else if(args[1].equals("map")) {
+                        p.sendMessage("[Rivals] Display a map of nearby claims. Syntax: /rivals map");
+                    }
+                    else if(args[1].equals("list")) {
+                        p.sendMessage("[Rivals] Display the faction list, you may specify a page number. Syntax: /rivals list <pageNumber>");
+                    }
+                    else if(args[1].equals("color")) {
+                        p.sendMessage("[Rivals] Sets the color for your faction using Minecraft color codes. Syntax: /rivals color <colorCode>");
+                        p.sendMessage("You can learn about color codes here: https://minecraft.wiki/w/Formatting_codes#Color_codes");
+                        p.sendMessage("By the way, you don't need to include the §.");
+                    }
+                    else {
+                        p.sendMessage("[Rivals] That subcommand doesn't exist. Valid subcommands are: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
+                    }
+                }
+            }
             else {
                 p.sendMessage("[Rivals] Invalid syntax");
             }
         }
         else {
-            p.sendMessage("[Rivals] Pick a subcommand: invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
+            p.sendMessage("[Rivals] Pick a subcommand: create,invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
         }
         return true;
     }
