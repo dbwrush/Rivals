@@ -6,6 +6,7 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
@@ -48,6 +49,11 @@ public class ClaimManager {
         RegionManager manager = container.get(BukkitAdapter.adapt(w));
         if(manager.hasRegion(name)) {
             manager.removeRegion(name);
+            try {
+                manager.saveChanges();
+            } catch (StorageException e) {
+                throw new RuntimeException(e);
+            }
             return true;
         }
         return false;
@@ -60,7 +66,9 @@ public class ClaimManager {
             domain.addPlayer(uuid);
         }
         for(ProtectedRegion r : regions) {
-            r.setMembers(domain);
+            if(r != null) {
+                r.setMembers(domain);
+            }
         }
         ShopManager shopManager = Rivals.getShopManager();
         ProtectedRegion shopRegion = shopManager.getRegionForFaction(f);
