@@ -548,7 +548,7 @@ public class RivalsCommand implements CommandExecutor {
                 for(int i = 0; i < f.getMembers().size() - 1; i++) {
                     members += Bukkit.getOfflinePlayer(f.getMembers().get(i)).getName() + ", ";
                 }
-                members += "and " + Bukkit.getOfflinePlayer(f.getMembers().get(1)).getName();
+                members += "and " + Bukkit.getOfflinePlayer(f.getMembers().get(f.getMembers().size() - 1)).getName();
             } else {
                 members += Bukkit.getOfflinePlayer(f.getMembers().get(0)).getName();
             }
@@ -565,7 +565,7 @@ public class RivalsCommand implements CommandExecutor {
                     for(int i = 0; i < f.getAllies().size() - 1; i++) {
                         allies += manager.getFactionByID(f.getAllies().get(i)).getName() + ", ";
                     }
-                    allies += "and " + manager.getFactionByID(f.getAllies().get(1)).getName();
+                    allies += "and " + manager.getFactionByID(f.getAllies().get(f.getAllies().size() - 1)).getName();
                 } else {
                     allies += manager.getFactionByID(f.getAllies().get(0)).getName();
                 }
@@ -585,7 +585,7 @@ public class RivalsCommand implements CommandExecutor {
                     for(int i = 0; i < f.getEnemies().size() - 1; i++) {
                         enemies += manager.getFactionByID(f.getEnemies().get(i)).getName() + ", ";
                     }
-                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(1)).getName();
+                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(f.getEnemies().size() - 1)).getName();
                 } else {
                     enemies += manager.getFactionByID(f.getEnemies().get(0)).getName();
                 }
