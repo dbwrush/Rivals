@@ -5,7 +5,16 @@ api-version: '1.20'
 author: sudologic
 depend:
   - WorldGuard
+  - Shopkeepers
 commands:
   rivals:
     description: Main rivals command
     usage: /rivals
+  rivalsadmin:
+    description: Rivals command for admins
+    usage: /rivalsadmin
+
+permissions:
+  rivals.admin:
+    description: Access to /rivalsadmin command, and editing all shopkeepers.
+    default: op

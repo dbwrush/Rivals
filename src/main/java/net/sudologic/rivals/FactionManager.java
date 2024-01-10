@@ -13,6 +13,7 @@ public class FactionManager implements ConfigurationSerializable {
     private List<PeaceInvite> peaceInvites;
 
     public FactionManager(Map<String, Object> serializedFactionManager) {
+        //Bukkit.getLogger().log(Level.INFO, "[Rivals] Begin deserializing faction data.");
         factions = new HashMap<>();
         memberInvites = new ArrayList<>();
         List<Object> fObjects = (List<Object>) serializedFactionManager.get("factions");
@@ -50,7 +51,8 @@ public class FactionManager implements ConfigurationSerializable {
                 peaceInvites.add(a);
             }
         }
-        Bukkit.getLogger().log(Level.INFO, "Removed " + removedInvites + " invites because they were more than 7 days old.");
+        //Bukkit.getLogger().log(Level.INFO, "[Rivals] Removed " + removedInvites + " invites because they were more than 7 days old.");
+        //Bukkit.getLogger().log(Level.INFO, "[Rivals] Finished deserializing faction data.");
     }
 
     public int getUnusedFactionID() {
@@ -130,6 +132,31 @@ public class FactionManager implements ConfigurationSerializable {
         for(Faction f : factions.values()) {
             if(f.getName().equals(name)) {
                 return f;
+            }
+        }
+        return null;
+    }
+
+    public Faction getFactionByNameImprecise(String name) {
+        for(Faction f : factions.values()) {
+            if(f.getName().equals(name)) {
+                return f;
+            }
+        }
+        for(int i = Math.min(name.length() - 1, 16); i > 0; i++) {
+            String sub = name.substring(0, i);
+            for(Faction f : factions.values()) {
+                if(f.getName().equals(sub)) {
+                    return f;
+                }
+            }
+        }
+        for(int i = Math.min(name.length() - 1, 16); i > 0; i++) {
+            String sub = name.substring(0, i);
+            for(Faction f : factions.values()) {
+                if(f.getName().contains(sub)) {
+                    return f;
+                }
             }
         }
         return null;

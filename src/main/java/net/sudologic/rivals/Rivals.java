@@ -1,7 +1,9 @@
 package net.sudologic.rivals;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -10,14 +12,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 
 /*
 TODO:
-    - Write Rivals command
-        - Wars
-        - Make Peace
-    - Add land claims
     - Add shopkeepers
  */
 
@@ -25,7 +24,9 @@ public final class Rivals extends JavaPlugin {
     private static FileConfiguration customConfig;
     private static FactionManager factionManager;
     private static ClaimManager claimManager;
+    private static ShopManager shopManager;
     private static RivalsCommand command;
+    private static ConfigurationSection settings;
 
     @Override
     public void onEnable() {
@@ -47,18 +48,45 @@ public final class Rivals extends JavaPlugin {
     }
 
     public void saveData() {
-        getConfig().set("data", factionManager);
+        if(getConfig().getConfigurationSection("settings") == null) {
+            getConfig().set("settings", settings);
+        }
+        getConfig().set("factionManager", factionManager);
+        getConfig().set("shopManager", shopManager);
+
         //System.out.println(getConfig().get("data"));
         saveConfig();
     }
 
-    public FactionManager readData() {
-        if(getConfig().get("data") != null) {
-            FactionManager manager = (FactionManager) getConfig().get("data", FactionManager.class);
-            return manager;
+    public void readData() {
+        if(getConfig().getConfigurationSection("settings") != null) {
+            settings = (ConfigurationSection) getConfig().get("settings");
         } else {
-            return new FactionManager();
+            settings = new YamlConfiguration();
+            Bukkit.getLogger().log(Level.INFO, "No existing settings, creating them.");
+            settings.set("minShopPower", 10.0);
+            settings.set("killEntityPower", 0.0);
+            settings.set("killMonsterPower", 1.0);
+            settings.set("killPlayerPower", 3.0);
+            settings.set("deathPowerLoss", -4.0);
+            settings.set("tradePower", 1.0);
+            settings.set("defaultPower", 3.0);
+            settings.set("maxNameLength", 16);
         }
+        if(getConfig().get("factionManager") != null) {
+            factionManager = (FactionManager) getConfig().get("factionManager", FactionManager.class);
+        } else {
+            factionManager = new FactionManager();
+        }
+        if(getConfig().get("shopManager") != null) {
+            shopManager = (ShopManager) getConfig().get("shopManager", ShopManager.class);
+        } else {
+            shopManager = new ShopManager();
+        }
+    }
+
+    public static ConfigurationSection getSettings() {
+        return settings;
     }
 
     public void createCustomConfig() {
@@ -69,12 +97,11 @@ public final class Rivals extends JavaPlugin {
         }
         customConfig = new YamlConfiguration();
         try{
-            customConfig.load(customConfigFile);//error here
-            //org.yaml.snakeyaml.error.YAMLException: Could not deserialize object
+            customConfig.load(customConfigFile);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-        factionManager = readData();
+        readData();
     }
 
     public void createConfigs() {
@@ -84,7 +111,7 @@ public final class Rivals extends JavaPlugin {
 
     public void registerListeners() {
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new EventManager(), this);
+        pm.registerEvents(new EventManager(settings), this);
     }
 
     public static RivalsCommand getCommand() {
@@ -92,8 +119,9 @@ public final class Rivals extends JavaPlugin {
     }
 
     public void registerCommands() {
-        command = new RivalsCommand();
+        command = new RivalsCommand(settings);
         this.getCommand("rivals").setExecutor(command);
+        this.getCommand("rivalsadmin").setExecutor(new AdminCommand());
     }
 
     public void registerClasses() {
@@ -101,10 +129,15 @@ public final class Rivals extends JavaPlugin {
         ConfigurationSerialization.registerClass(FactionManager.class);
         ConfigurationSerialization.registerClass(FactionManager.MemberInvite.class);
         ConfigurationSerialization.registerClass(FactionManager.AllyInvite.class);
+        ConfigurationSerialization.registerClass(ShopManager.class);
     }
 
     public static FactionManager getFactionManager() {
         return factionManager;
+    }
+
+    public static ShopManager getShopManager() {
+        return shopManager;
     }
 
     public static ClaimManager getClaimManager() {

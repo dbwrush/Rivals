@@ -71,12 +71,16 @@ public class Faction implements ConfigurationSerializable {
         allyFactions = new ArrayList<>();
         members = new ArrayList<>();
         members.add(firstPlayer);
-        power = 10;
+        power = (double) Rivals.getSettings().get("defaultPower");
         regions = new ArrayList<>();
         color = ChatColor.values()[(int) (Math.random() * ChatColor.values().length)];
         if(color.equals(ChatColor.MAGIC) || color.equals(ChatColor.BLACK)) {
             color = ChatColor.RESET;
         }
+    }
+
+    public void setName(String name) {
+        factionName = name;
     }
 
     public void setColor(ChatColor color) {

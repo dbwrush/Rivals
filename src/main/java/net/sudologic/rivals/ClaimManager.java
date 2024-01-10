@@ -62,6 +62,19 @@ public class ClaimManager {
         for(ProtectedRegion r : regions) {
             r.setMembers(domain);
         }
+        ShopManager shopManager = Rivals.getShopManager();
+        ProtectedRegion shopRegion = shopManager.getRegionForFaction(f);
+        if(shopRegion != null) {
+            shopRegion.setMembers(domain);
+        }
+    }
+
+    public static void setFactionAsRegionMember(Faction f, ProtectedRegion region) {
+        DefaultDomain domain = new DefaultDomain();
+        for(UUID uuid : f.getMembers()) {
+            domain.addPlayer(uuid);
+        }
+        region.setMembers(domain);
     }
 
     private void setRegionMembers(ProtectedRegion region, Faction f) {

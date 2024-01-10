@@ -1,5 +1,7 @@
 package net.sudologic.rivals;
 
+import com.nisovin.shopkeepers.api.events.*;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,22 +14,39 @@ import org.bukkit.event.world.WorldSaveEvent;
 import java.util.List;
 
 public class EventManager implements Listener {
+    private double killEntityPower, killMonsterPower, killPlayerPower, deathPowerLoss, tradePower;
+
+
+    public EventManager(ConfigurationSection settings) {
+        /*killEntityPower = 0;
+        killMonsterPower = 1;
+        killPlayerPower = 3;
+        deathPowerLoss = -4;
+        tradePower = 1;*/
+        killEntityPower = (double) settings.get("killEntityPower");
+        killMonsterPower = (double) settings.get("killMonsterPower");
+        killPlayerPower = (double) settings.get("killPlayerPower");
+        deathPowerLoss = (double) settings.get("deathPowerLoss");
+        tradePower = (double) settings.get("tradePower");
+    }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         FactionManager manager = Rivals.getFactionManager();
         if(e.getEntity().getKiller() != null) {
             Player killer = e.getEntity().getKiller();
-            double power = 1;
+            double power = killEntityPower;
             if(e.getEntity() instanceof Monster) {
-                power = 2;
+                power = killMonsterPower;
             } else if(e.getEntity() instanceof Player) {
-                power = 4;
+                power = killPlayerPower;
             }
             manager.getFactionByPlayer(killer.getUniqueId()).powerChange(power);
         }
         if(e.getEntity() instanceof Player) {
-            manager.getFactionByPlayer(e.getEntity().getUniqueId()).powerChange(-4);
+            if(manager.getFactionByPlayer(e.getEntity().getUniqueId()) != null) {
+                manager.getFactionByPlayer(e.getEntity().getUniqueId()).powerChange(deathPowerLoss);
+            }
         }
     }
 
@@ -35,10 +54,14 @@ public class EventManager implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         FactionManager manager = Rivals.getFactionManager();
         List<Integer> invites = manager.getInvitesForPlayer(e.getPlayer().getUniqueId());
-        if(manager.getFactionByPlayer(e.getPlayer().getUniqueId()) == null) {
+        if(manager.getFactionByPlayer(e.getPlayer().getUniqueId()) == null && invites.size() > 0) {
             String inviteMess = "[Rivals] You're invited to join " + manager.getFactionByID(invites.get(0)).getColor() + manager.getFactionByID(invites.get(0)).getName();
             e.getPlayer().sendMessage(inviteMess);
         } else {
+            if(manager.getFactionByPlayer(e.getPlayer().getUniqueId()) == null) {
+                e.getPlayer().sendMessage("[Rivals] You haven't joined a faction yet!");
+                return;
+            }
             e.getPlayer().sendMessage("[Rivals] Faction status:");
             Rivals.getCommand().sendFactionInfo(e.getPlayer(), manager.getFactionByPlayer(e.getPlayer().getUniqueId()), "");
         }
@@ -48,5 +71,13 @@ public class EventManager implements Listener {
     public void onWorldSave(WorldSaveEvent e) {
         FactionManager manager = Rivals.getFactionManager();
         manager.removeInvitesOver7Days();
+    }
+
+    @EventHandler
+    public void onTrade(ShopkeeperTradeEvent e) {
+        Faction f = Rivals.getShopManager().getFactionForShopLocation(e.getShopkeeper().getLocation());
+        if(f != null) {
+            f.powerChange(tradePower);
+        }
     }
 }

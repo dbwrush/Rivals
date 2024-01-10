@@ -1,5 +1,7 @@
 package net.sudologic.rivals;
 
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -7,6 +9,8 @@ import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -15,6 +19,17 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class RivalsCommand implements CommandExecutor {
+
+    private double minShopPower;
+    private int maxNameLength;
+
+    public RivalsCommand(ConfigurationSection settings) {
+        minShopPower = (double) settings.get("minShopPower");
+        maxNameLength = (int) settings.get("maxNameLength");
+        /*minShopPower = 10;
+        maxNameLength = 16;*/
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         FactionManager manager = Rivals.getFactionManager();
@@ -37,12 +52,20 @@ public class RivalsCommand implements CommandExecutor {
                 String name = args[1];
                 if(manager.nameAlreadyExists(name)) {
                     p.sendMessage("[Rivals] " + name + " already exists.");
+                    return true;
+                }
+                if(name.length() > maxNameLength) {
+                    p.sendMessage("[Rivals] That name is too long.");
+                    return true;
                 }
                 Faction f = new Faction(p.getUniqueId(), name, manager.getUnusedFactionID());
-                manager.addFaction(f);
-                p.sendMessage("[Rivals] Created the " + f.getColor() + name + " faction.");
-                p.sendMessage("For a list of things to do, use /rivals help");
-                p.sendMessage("P.S., if you don't like your randomly chosen color, use /rivals color");
+                if(manager.addFaction(f)) {
+                    p.sendMessage("[Rivals] Created the " + f.getColor() + name + " faction.");
+                    p.sendMessage("For a list of things to do, use /rivals help");
+                    p.sendMessage("P.S., if you don't like your randomly chosen color, use /rivals color");
+                } else {
+                    p.sendMessage("[Rivals] Unable to create faction.");
+                }
                 return true;
             }
             else if(args[0].equals("invite")) {
@@ -109,6 +132,10 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] You are now enemies with " + enemyName);
                 } else {
                     p.sendMessage("[Rivals] Could not declare war on " + enemyName + ", there might not be a faction by that name.");
+                    Faction imprecise = manager.getFactionByNameImprecise(enemyName);
+                    if(imprecise != null) {
+                        p.sendMessage("There is a faction named " + imprecise.getName());
+                    }
                 }
                 return true;
             }
@@ -123,6 +150,13 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 String allyName = args[1];
                 Faction ally = manager.getFactionByName(allyName);
+                if(ally == null) {
+                    Faction imprecise = manager.getFactionByNameImprecise(allyName);
+                    if(imprecise != null) {
+                        p.sendMessage("[Rivals] There is no faction with that name. Maybe you meant " + imprecise.getName());
+                    }
+                    return true;
+                }
                 if(manager.getAllyInvitesForFaction(faction.getID()).contains(ally.getID())) {
                     faction.addAlly(ally.getID());
                     manager.removeAllyInvite(ally.getID(), faction.getID());
@@ -145,6 +179,10 @@ public class RivalsCommand implements CommandExecutor {
                 Faction enemy = manager.getFactionByName(enemyName);
                 if(!faction.getEnemies().contains(enemy.getID())) {
                     p.sendMessage("[Rivals] You are not at war with " + enemy.getName());
+                    Faction imprecise = manager.getFactionByNameImprecise(enemyName);
+                    if(imprecise != null && faction.getEnemies().contains(imprecise.getID())) {
+                        p.sendMessage("You ARE at war with" + imprecise.getName());
+                    }
                     return true;
                 }
                 if(manager.getPeaceInvitesForFaction(faction.getID()).contains(enemy.getID())) {
@@ -169,6 +207,10 @@ public class RivalsCommand implements CommandExecutor {
                 Faction ally = manager.getFactionByName(allyName);
                 if(!faction.getAllies().contains(ally.getID())) {
                     p.sendMessage("[Rivals] You are not allied with " + ally.getName());
+                    Faction imprecise = manager.getFactionByNameImprecise(allyName);
+                    if(imprecise != null && faction.getAllies().contains(imprecise.getID())) {
+                        p.sendMessage("You ARE allied with" + imprecise.getName());
+                    }
                     return true;
                 }
                 faction.removeAlly(ally.getID());
@@ -245,6 +287,10 @@ public class RivalsCommand implements CommandExecutor {
                 Faction f = manager.getFactionByName(factionName);
                 if(f == null) {
                     p.sendMessage("[Rivals] There is no faction by that name.");
+                    Faction imprecise = manager.getFactionByNameImprecise(factionName);
+                    if(imprecise != null) {
+                        p.sendMessage("[Rivals] Maybe you meant " + imprecise.getName());
+                    }
                     return true;
                 }
                 if(args.length == 3) {
@@ -312,7 +358,7 @@ public class RivalsCommand implements CommandExecutor {
             }
             else if(args[0].equals("color")) {
                 if(faction == null) {
-                    p.sendMessage("[Rivals] You must be on a faction to set the faction color.");
+                    p.sendMessage("[Rivals] You must be in a faction to set the faction color.");
                     return true;
                 }
                 if(args.length < 2) {
@@ -339,7 +385,7 @@ public class RivalsCommand implements CommandExecutor {
             }
             else if(args[0].equals("help")) {
                 if(args.length == 1) {
-                    p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
+                    p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color, shop, rename");
                 } else {
                     if(args[1].equals("create")) {
                         p.sendMessage("[Rivals] Creates a new Faction. Syntax: /rivals create <factionName>");
@@ -382,17 +428,107 @@ public class RivalsCommand implements CommandExecutor {
                         p.sendMessage("You can learn about color codes here: https://minecraft.wiki/w/Formatting_codes#Color_codes");
                         p.sendMessage("By the way, you don't need to include the §.");
                     }
+                    else if(args[1].equals("shop")) {
+                        p.sendMessage("[Rivals] Opens the edit menu for your faction's shop. Syntax: /rivals shop");
+                        p.sendMessage("If your faction has no shop, create one with /rivals shop create");
+                    }
+                    else if(args[1].equals("rename")) {
+                        p.sendMessage("[Rivals] Changes your faction's name. Syntax: /rivals rename <newName>");
+                        p.sendMessage("Names must be less than " + maxNameLength + " characters.");
+                    }
                     else {
                         p.sendMessage("[Rivals] That subcommand doesn't exist. Valid subcommands are: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
                     }
+                    return true;
                 }
+            }
+            else if(args[0].equals("shop")) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be in a faction to access your faction's shop");
+                    return true;
+                }
+                ShopManager shopManager = Rivals.getShopManager();
+                Shopkeeper shopkeeper = shopManager.getShopkeeperForFaction(faction);
+                if(args.length == 2) {
+                    if(args[1].equals("create")) {
+                        if (shopkeeper != null) {
+                            p.sendMessage("[Rivals] Your faction already has a shop!");
+                            return true;
+                        } else {
+                            if (faction.getPower() < minShopPower) {
+                                p.sendMessage("[Rivals] Your faction has too little power to open a shop.");
+                                return true;
+                            }
+                            if (shopManager.setupShop(faction)) {
+                                p.sendMessage("[Rivals] Created a shop for your faction.");
+                                int x = shopManager.getShopkeeperForFaction(faction).getX();
+                                int y = shopManager.getShopkeeperForFaction(faction).getY();
+                                int z = shopManager.getShopkeeperForFaction(faction).getZ();
+                                p.sendMessage("It is at (" + x + ", " + y + ", " + z + ").");
+                                return true;
+                            } else {
+                                p.sendMessage("[Rivals] Unable to create a shop. There might not be any open spaces.");
+                                return true;
+                            }
+                        }
+                    }
+                    else if(args[1].equals("close")) {
+                        if (shopkeeper == null) {
+                            p.sendMessage("[Rivals] Your faction doesn't have a shop.");
+                            return true;
+                        } else {
+                            if(shopManager.removeShop(faction)) {
+                                p.sendMessage("[Rivals] Closed your factions shop.");
+                            } else {
+                                p.sendMessage("[Rivals] For some unknown reason, we can't close your shop.");
+                            }
+                            return true;
+                        }
+                    }
+                }
+                if(shopkeeper != null) {
+                    if(shopkeeper instanceof PlayerShopkeeper) {
+                        ((PlayerShopkeeper) shopkeeper).setOwner(p);
+                    }
+                    if(shopkeeper.openEditorWindow(p)) {
+                        p.sendMessage("[Rivals] Opening your shop's editor.");
+                    } else {
+                        p.sendMessage("[Rivals] Unable to open your shop's editor.");
+                    }
+                    return true;
+                } else {//faction might not have shop.
+                    p.sendMessage("[Rivals] Your faction doesn't have a shop. Create one with /rivals shop create");
+                    return true;
+                }
+            }
+            else if(args[0].equals("rename")) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be in a faction to rename it!");
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage("[Rivals] Please include faction name");
+                    return true;
+                }
+                String name = args[1];
+                if(manager.nameAlreadyExists(name)) {
+                    p.sendMessage("[Rivals] " + name + " already exists.");
+                    return true;
+                }
+                if(name.length() > maxNameLength) {
+                    p.sendMessage("[Rivals] That name is too long.");
+                    return true;
+                }
+                faction.setName(args[1]);
+                p.sendMessage("[Rivals] Your faction's name is now " + faction.getColor() + faction.getName());
+                return true;
             }
             else {
                 p.sendMessage("[Rivals] Invalid syntax");
             }
         }
         else {
-            p.sendMessage("[Rivals] Pick a subcommand: create,invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
+            p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color, shop, rename");
         }
         return true;
     }
@@ -401,6 +537,7 @@ public class RivalsCommand implements CommandExecutor {
         FactionManager manager = Rivals.getFactionManager();
         String mess = "";
         if(s.equals("")) {
+            mess = f.getName() + "\nPower: " + f.getPower();
             String members = ChatColor.COLOR_CHAR + ChatColor.RESET.toString() + "\nMembers: ";
             if(f.getMembers().size() > 3) {
                 for(int i = 0; i < 3; i++) {
@@ -411,7 +548,7 @@ public class RivalsCommand implements CommandExecutor {
                 for(int i = 0; i < f.getMembers().size() - 1; i++) {
                     members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
                 }
-                members += " and " + Bukkit.getPlayer(f.getMembers().get(1)).getName();
+                members += "and " + Bukkit.getPlayer(f.getMembers().get(1)).getName();
             } else {
                 members += Bukkit.getPlayer(f.getMembers().get(0)).getName();
             }
@@ -428,7 +565,7 @@ public class RivalsCommand implements CommandExecutor {
                     for(int i = 0; i < f.getAllies().size() - 1; i++) {
                         allies += manager.getFactionByID(f.getAllies().get(i)).getName() + ", ";
                     }
-                    allies += " and " + manager.getFactionByID(f.getAllies().get(1)).getName();
+                    allies += "and " + manager.getFactionByID(f.getAllies().get(1)).getName();
                 } else {
                     allies += manager.getFactionByID(f.getAllies().get(0)).getName();
                 }
@@ -448,7 +585,7 @@ public class RivalsCommand implements CommandExecutor {
                     for(int i = 0; i < f.getEnemies().size() - 1; i++) {
                         enemies += manager.getFactionByID(f.getEnemies().get(i)).getName() + ", ";
                     }
-                    enemies += " and " + manager.getFactionByID(f.getEnemies().get(1)).getName();
+                    enemies += "and " + manager.getFactionByID(f.getEnemies().get(1)).getName();
                 } else {
                     enemies += manager.getFactionByID(f.getEnemies().get(0)).getName();
                 }
