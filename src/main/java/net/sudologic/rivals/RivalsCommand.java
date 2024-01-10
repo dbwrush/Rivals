@@ -345,7 +345,7 @@ public class RivalsCommand implements CommandExecutor {
                                 facts += ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + ChatColor.COLOR_CHAR + ChatColor.RESET + " ";
                             }
                         } else {
-                            row += "  | ";
+                            row += "_ | ";
                         }
                     }
                     mess += row;
@@ -541,16 +541,16 @@ public class RivalsCommand implements CommandExecutor {
             String members = ChatColor.COLOR_CHAR + ChatColor.RESET.toString() + "\nMembers: ";
             if(f.getMembers().size() > 3) {
                 for(int i = 0; i < 3; i++) {
-                    members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
+                    members += Bukkit.getOfflinePlayer(f.getMembers().get(i)).getName() + ", ";
                 }
                 members += "+ " + (f.getMembers().size() - 3);
             } else if(f.getMembers().size() > 1){
                 for(int i = 0; i < f.getMembers().size() - 1; i++) {
-                    members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
+                    members += Bukkit.getOfflinePlayer(f.getMembers().get(i)).getName() + ", ";
                 }
-                members += "and " + Bukkit.getPlayer(f.getMembers().get(1)).getName();
+                members += "and " + Bukkit.getOfflinePlayer(f.getMembers().get(1)).getName();
             } else {
-                members += Bukkit.getPlayer(f.getMembers().get(0)).getName();
+                members += Bukkit.getOfflinePlayer(f.getMembers().get(0)).getName();
             }
             mess += members;
 
@@ -608,11 +608,11 @@ public class RivalsCommand implements CommandExecutor {
                 String members = "\n";
                 if(f.getMembers().size() > 1) {
                     for(int i = 0; i < f.getMembers().size() - 1; i++) {
-                        members += Bukkit.getPlayer(f.getMembers().get(i)).getName() + ", ";
+                        members += Bukkit.getOfflinePlayer(f.getMembers().get(i)).getName() + ", ";
                     }
-                    members += "and " + Bukkit.getPlayer(f.getMembers().get(f.getMembers().size() - 1)).getName();
+                    members += "and " + Bukkit.getOfflinePlayer(f.getMembers().get(f.getMembers().size() - 1)).getName();
                 } else {
-                    members += Bukkit.getPlayer(f.getMembers().get(f.getMembers().size() - 1)).getName();
+                    members += Bukkit.getOfflinePlayer(f.getMembers().get(f.getMembers().size() - 1)).getName();
                 }
                 mess += members;
             }
