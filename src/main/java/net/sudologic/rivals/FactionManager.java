@@ -116,8 +116,8 @@ public class FactionManager implements ConfigurationSerializable {
 
     public boolean removeFaction(Faction f) {
         if(factions.containsKey(f.getID())) {
-            factions.remove(f.getID());
             Rivals.getClaimManager().removeRegionsForFaction(f);
+            factions.remove(f.getID());
             removeInvitesForFaction(f);
             return true;
         }

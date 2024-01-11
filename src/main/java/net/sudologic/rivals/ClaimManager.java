@@ -71,9 +71,11 @@ public class ClaimManager {
             }
         }
         ShopManager shopManager = Rivals.getShopManager();
-        ProtectedRegion shopRegion = shopManager.getRegionForFaction(f);
-        if(shopRegion != null) {
-            shopRegion.setMembers(domain);
+        if(shopManager.getRegionIDForFaction(f.getID()) != null) {
+            ProtectedRegion shopRegion = shopManager.getRegionForFaction(f);
+            if(shopRegion != null) {
+                shopRegion.setMembers(domain);
+            }
         }
     }
 
