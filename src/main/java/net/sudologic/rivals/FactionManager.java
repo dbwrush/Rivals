@@ -319,7 +319,7 @@ public class FactionManager implements ConfigurationSerializable {
         private long time;
         public MemberInvite(Map<String, Object> serialized) {
             this.faction = (int) serialized.get("faction");
-            this.player = (UUID) serialized.get("player");
+            this.player = UUID.fromString((String) serialized.get("player"));
             this.time = (long) serialized.get("time");
         }
         public MemberInvite(int faction, UUID id) {
