@@ -41,11 +41,15 @@ public class EventManager implements Listener {
             } else if(e.getEntity() instanceof Player) {
                 power = killPlayerPower;
             }
-            manager.getFactionByPlayer(killer.getUniqueId()).powerChange(power);
+            Faction killerFaction = manager.getFactionByPlayer(killer.getUniqueId());
+            if(killerFaction != null) {
+                killerFaction.powerChange(power);
+            }
         }
         if(e.getEntity() instanceof Player) {
-            if(manager.getFactionByPlayer(e.getEntity().getUniqueId()) != null) {
-                manager.getFactionByPlayer(e.getEntity().getUniqueId()).powerChange(deathPowerLoss);
+            Faction playerFaction = manager.getFactionByPlayer(e.getEntity().getUniqueId());
+            if(playerFaction != null) {
+                playerFaction.powerChange(deathPowerLoss);
             }
         }
     }
