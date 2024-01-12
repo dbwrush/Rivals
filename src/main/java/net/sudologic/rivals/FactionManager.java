@@ -143,7 +143,7 @@ public class FactionManager implements ConfigurationSerializable {
                 return f;
             }
         }
-        for(int i = Math.min(name.length() - 1, 16); i > 0; i++) {
+        for(int i = Math.min(name.length() - 1, 16); i > 0; i--) {
             String sub = name.substring(0, i);
             for(Faction f : factions.values()) {
                 if(f.getName().equals(sub)) {
@@ -151,7 +151,7 @@ public class FactionManager implements ConfigurationSerializable {
                 }
             }
         }
-        for(int i = Math.min(name.length() - 1, 16); i > 0; i++) {
+        for(int i = Math.min(name.length() - 1, 16); i > 0; i--) {
             String sub = name.substring(0, i);
             for(Faction f : factions.values()) {
                 if(f.getName().contains(sub)) {
