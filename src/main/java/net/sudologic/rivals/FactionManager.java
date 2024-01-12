@@ -342,6 +342,7 @@ public class FactionManager implements ConfigurationSerializable {
 
             mapSerializer.put("player", player.toString());
             mapSerializer.put("faction", faction);
+            mapSerializer.put("time", time);
 
             return mapSerializer;
         }
@@ -377,6 +378,7 @@ public class FactionManager implements ConfigurationSerializable {
 
             mapSerializer.put("inviter", inviter);
             mapSerializer.put("invitee", invitee);
+            mapSerializer.put("time", time);
 
             return mapSerializer;
         }
@@ -413,6 +415,7 @@ public class FactionManager implements ConfigurationSerializable {
 
             mapSerializer.put("inviter", inviter);
             mapSerializer.put("invitee", invitee);
+            mapSerializer.put("time", time);
 
             return mapSerializer;
         }
