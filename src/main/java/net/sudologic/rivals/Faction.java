@@ -261,7 +261,7 @@ public class Faction implements ConfigurationSerializable {
 
     public void sendMessageToOnlineMembers(String s) {
         for(UUID id : members) {
-            if(Bukkit.getPlayer(id).isOnline()) {
+            if(Bukkit.getOfflinePlayer(id).isOnline()) {
                 Bukkit.getPlayer(id).sendMessage("[Rivals] " + s);
             }
         }
