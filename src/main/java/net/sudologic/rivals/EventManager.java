@@ -80,7 +80,7 @@ public class EventManager implements Listener {
     @EventHandler
     public void onTrade(ShopkeeperTradeEvent e) {
         Faction f = Rivals.getShopManager().getFactionForShopLocation(e.getShopkeeper().getLocation());
-        if(f != null) {
+        if (f != null && !f.equals(manager.getFactionByPlayer(e.getPlayer().getUniqueId()))) {
             f.powerChange(tradePower);
         }
     }
