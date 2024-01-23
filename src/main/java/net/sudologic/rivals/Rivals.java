@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 /*
 TODO:
-    - Tweak power change to be logarithmic so that gaining power becomes more difficult as you gain it. (Similar to enchanting levels in Minecraft)
     - Faction Home: Sufficient Faction power grants access to a faction home. Quantity of homes available might scale with Power
     - Add time-delay war declarations
         Immediate war declarations have a power penalty, but time-delayed ones do not.
