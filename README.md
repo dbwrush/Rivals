@@ -6,7 +6,7 @@
 - [x] **~~Tweak Power Change:~~ IMPLEMENTED**
     - Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
 
--[ ]**Faction Home:**
+-[ ] **Faction Home:**
     - Grant access to a faction home based on sufficient faction power.
     - Scale the quantity of available homes with power.
 
