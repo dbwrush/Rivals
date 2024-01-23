@@ -5,27 +5,27 @@
 1. **~~Tweak Power Change:~~ IMPLEMENTED**
     - [x] Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
 
-- [ ] **Faction Home:**
+2. **Faction Home:**
     - [ ] Grant access to a faction home based on sufficient faction power.
     - [ ] Scale the quantity of available homes with power.
 
-- [ ] **Time-Delay War Declarations:**
+3. **Time-Delay War Declarations:**
     - [ ] Implement time-delayed war declarations.
     - [ ] Immediate declarations have a power penalty, while time-delayed ones do not.
     - [ ] Allow configuration of delay time in `config.yml`.
 
-- [ ] **Faction Ranking:**
+4. **Faction Ranking:**
     - [ ] Convert ranks from a list to a number stored with the faction upon serialization/deserialization.
     - [ ] Reorder factions based on power, not creation date, when calling the faction list.
     - [ ] Consider reordering factions whenever `Faction.powerChange()` is called.
 
-- [ ] **Resource Chunks:**
+5. **Resource Chunks:**
     - [ ] Spawn resource chunks randomly with quantity controlled by `config.yml`.
     - [ ] Allow resource chunks to have periodic resource spawn opportunities.
     - [ ] Determine resource spawn based on a random chance, decreasing over time on a decay curve.
     - [ ] Move resource chunk to a new location and reset its chance when the random chance falls below a configurable threshold.
 
-- [ ] **Politics:**
+6. **Politics:**
     - [ ] Enable factions to propose one resolution at a time.
     - [ ] Allow voting for or against resolutions, with vote strength controlled by faction power.
     - [ ] Pass resolutions with a majority vote after an allotted time.
