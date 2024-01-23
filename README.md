@@ -1,7 +1,5 @@
 🌟Documentation🌟
 
-Certainly! Here's a more organized representation of your TODO list in GitHub-flavored Markdown:
-
 ### TODO List:
 
 1. **~~Tweak Power Change:~~ IMPLEMENTED**
