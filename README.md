@@ -2,25 +2,11 @@
 
 ### TODO List:
 
-- [x] Completed task
-- [~] Inapplicable task
-- [ ] Incomplete task
-  - [x] Sub-task 1
-  - [~] Sub-task 2
-  - [ ] Sub-task 3
 
-1. [x] Completed task
-1. [~] Inapplicable task
-1. [ ] Incomplete task
-   1. [x] Sub-task 1
-   1. [~] Sub-task 2
-   1. [ ] Sub-task 3
-
-* [x]
 - [x] **~~Tweak Power Change:~~ IMPLEMENTED**
     - Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
 
-2. **Faction Home:**
+2. - [ ] **Faction Home:**
     - Grant access to a faction home based on sufficient faction power.
     - Scale the quantity of available homes with power.
 
