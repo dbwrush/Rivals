@@ -2,7 +2,7 @@
 
 ### TODO List:
 
-- 1. **~~Tweak Power Change:~~ IMPLEMENTED**
+1. **~~Tweak Power Change:~~ IMPLEMENTED**
     - [x] Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
 
 - [ ] **Faction Home:**
