@@ -17,7 +17,34 @@ import java.util.logging.Level;
 
 /*
 TODO:
-    - Add shopkeepers
+    - Tweak power change to be logarithmic so that gaining power becomes more difficult as you gain it. (Similar to enchanting levels in Minecraft)
+    - Faction Home: Sufficient Faction power grants access to a faction home. Quantity of homes available might scale with Power
+    - Add time-delay war declarations
+        Immediate war declarations have a power penalty, but time-delayed ones do not.
+        Delay time configurable in config.yml
+    - Faction ranking
+        Upon serialization/deserialization convert ranks from a list to a number stored with the faction.
+        Any time that Faction.powerChange() is called, factions may need to be re-ordered.
+        When Faction list is called, factions should be displayed in order by power, not by creation date.
+    - Resource chunks
+        Spawn randomly, quantity controlled by config.yml
+        Every x time, all resource chunks have a resource spawn opportunity.
+        Opportunities are taken based on a random chance, which becomes less likely on a decay curve.
+        Once random chance falls below some configurable threshold, resource chunk moves to new location and resets its chance.
+    - Politics
+        Each Faction can propose one resolution at a time.
+        Factions can vote for or against, strength of vote controlled by Faction power.
+        If a resolution has a majority vote after the allotted time, it passes.
+        Proposing faction gets a power change relative to the amount of support for the proposal, positive or negative.
+        Proposal types: All Proposals will have a description for why it should be passed
+            - Denounce: Faction faces an immediate loss of power relative to support to this proposal, but no lasting consequences.
+            - Sanction: Punish a faction for perceived misbehavior. Reduce their power changes by some proportion relative to support to this proposal.
+            - Unsanction: Removes sanctions.
+            - Intervention: Declare a single Faction to be a threat to all players, all Factions are effectively at war with this one.
+            - Change setting: Changes some setting in the config (this behavior can be enabled/disabled in the config).
+            - Custodian (add/remove): Custodian faction gets faster power gain and is able to build within the shopping area. Powers are assumed to benefit common good.
+                - Set Budget: Declare need for materials which will be given to the Custodian who requested them. Factions which provide materials can gain power from it.
+                - Set Mandate: Require the Custodian(s) to work towards a certain goal.
  */
 
 public final class Rivals extends JavaPlugin {
