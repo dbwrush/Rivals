@@ -209,7 +209,7 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public void powerChange(double amount) {
-        power += (amount / members.size());
+        power += (amount / members.size()) / Math.max(power, 1);
         if(power < 0) {
             power = 0;
         }
