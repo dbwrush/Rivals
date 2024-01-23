@@ -2,12 +2,12 @@
 
 ### TODO List:
 
-- [x] **~~Tweak Power Change:~~ IMPLEMENTED**
-    - Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
+- 1 **~~Tweak Power Change:~~ IMPLEMENTED**
+    - [x] Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
 
 - [ ] **Faction Home:**
-    - Grant access to a faction home based on sufficient faction power.
-    - Scale the quantity of available homes with power.
+    - [ ] Grant access to a faction home based on sufficient faction power.
+    - [ ] Scale the quantity of available homes with power.
 
 - [ ] **Time-Delay War Declarations:**
     - [ ] Implement time-delayed war declarations.
