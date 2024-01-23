@@ -1,5 +1,3 @@
-🌟Documentation🌟
-
 ### TODO List:
 
 1. **~~Tweak Power Change:~~ IMPLEMENTED**
