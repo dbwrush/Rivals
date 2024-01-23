@@ -1,3 +1,20 @@
+## Current Features
+1. **Factions**
+   - Players can create factions with custom names and colors.
+   - Factions can invite new players to join
+   - Factions can claim land
+   - Factions can decalre war, make peace, and form alliances
+   - Factions can create shops
+   - Factions can gain or lose power in combat with players and mobs, or through commerce
+2. **Shops**
+   - Implemented with Shopkeepers plugin API
+   - Players can edit their faction's shop with a command
+3. **Land Claims**
+   - Factions can claim land based on how much power they have.
+   - Claimed land can only be edited by Faction members
+   - Factions at war can steal land from each other using power.
+   - Land claims can be visualized using a command.
+
 ### TODO List:
 
 1. **~~Tweak Power Change:~~ IMPLEMENTED**
