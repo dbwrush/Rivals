@@ -17,7 +17,7 @@
    1. [ ] Sub-task 3
 
 * [x]
-1. **~~Tweak Power Change:~~ IMPLEMENTED**
+- [x] **~~Tweak Power Change:~~ IMPLEMENTED**
     - Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
 
 2. **Faction Home:**
