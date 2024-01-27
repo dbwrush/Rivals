@@ -19,7 +19,7 @@ public class AdminCommand implements CommandExecutor {
             commandSender.sendMessage("[Rivals] Options: setMainShopRegion <id>, scanForShopRegions");
             return true;
         }
-        if(args[0].equals("setMainShopRegion")) {
+        if("setMainShopRegion".equals(args[0])) {
             if(args.length < 2) {
                 commandSender.sendMessage("[Rivals] This subcommand requires a region ID.");
                 return true;
@@ -27,7 +27,7 @@ public class AdminCommand implements CommandExecutor {
             Rivals.getShopManager().setMainRegionString(args[1]);
             commandSender.sendMessage("[Rivals] Set main shop region to " + args[1]);
             return true;
-        } else if(args[0].equals("scanForShopRegions")) {
+        } else if("scanForShopRegions".equals(args[0])) {
             int count = Rivals.getShopManager().addSubregions();
             commandSender.sendMessage("[Rivals] There are now " + count + " shop subregions.");
             return true;

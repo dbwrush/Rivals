@@ -42,7 +42,7 @@ public class RivalsCommand implements CommandExecutor {
         Player p = (Player)sender;
         if(args.length >= 1) {
             Faction faction = Rivals.getFactionManager().getFactionByPlayer(p.getUniqueId());
-            if(args[0].equals("create")) {//create submenu
+            if("create".equals(args[0])) {//create submenu
                 if(faction != null) {
                     p.sendMessage("[Rivals] You must leave your current faction before making a new one.");
                     return true;
@@ -70,7 +70,7 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 return true;
             }
-            else if(args[0].equals("invite")) {
+            else if("invite".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be a part of a faction to invite people.");
                     return true;
@@ -89,7 +89,7 @@ public class RivalsCommand implements CommandExecutor {
                 faction.sendMessageToOnlineMembers("[Rivals] " + invited.getName() + " has been invited to join your faction.");
                 return true;
             }
-            else if(args[0].equals("join")) {
+            else if("join".equals(args[0])) {
                 if(faction != null) {
                     p.sendMessage("[Rivals] You must leave your current faction before you can join another.");
                     return true;
@@ -110,7 +110,7 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 p.sendMessage("[Rivals] That faction either hasn't invited you or doesn't exist.");
             }
-            else if(args[0].equals("leave")) {
+            else if("leave".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction in order to leave it.");
                     return true;
@@ -119,7 +119,7 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage("[Rivals] You are no longer a member of " + faction.getName());
                 return true;
             }
-            else if(args[0].equals("enemy")) {
+            else if("enemy".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to declare war.");
                     return true;
@@ -141,7 +141,7 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 return true;
             }
-            else if(args[0].equals("ally")) {
+            else if("ally".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to invite another faction to an alliance.");
                     return true;
@@ -168,7 +168,7 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 return true;
             }
-            else if(args[0].equals("peace")) {
+            else if("peace".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to send a peace offer.");
                     return true;
@@ -196,7 +196,7 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 return true;
             }
-            else if(args[0].equals("unally")) {
+            else if("unally".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to end an alliance.");
                     return true;
@@ -218,7 +218,7 @@ public class RivalsCommand implements CommandExecutor {
                 faction.removeAlly(ally.getID());
                 return true;
             }
-            else if(args[0].equals("claim")) {
+            else if("claim".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to claim land.");
                     return true;
@@ -261,7 +261,7 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
             }
-            else if(args[0].equals("unclaim")) {
+            else if("unclaim".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to unclaim land.");
                     return true;
@@ -275,7 +275,7 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] Your faction does not claim chunk " + c.getX() + " " + c.getZ());
                 }
             }
-            else if(args[0].equals("info")) {
+            else if("info".equals(args[0])) {
                 if(args.length < 2) {
                     if(faction == null) {
                         p.sendMessage("[Rivals] You must be in a faction to get info on your own faction. Add a faction name to look up their info.");
@@ -306,7 +306,7 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage("[Rivals] Info on " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName());
                 sendFactionInfo(p, f, "");
             }
-            else if(args[0].equals("list")) {
+            else if("list".equals(args[0])) {
                 int perPage = 8;
                 List<Faction> factions = manager.getFactions();
                 int numPages = (factions.size() / perPage) + 1;
@@ -331,7 +331,7 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage(mess);
                 return true;
             }
-            else if(args[0].equals("map")) {
+            else if("map".equals(args[0])) {
                 Chunk c = p.getLocation().getChunk();
                 String mess = "[Rivals] Map of your surroundings";
                 String facts = "\nFactions: ";
@@ -352,13 +352,13 @@ public class RivalsCommand implements CommandExecutor {
                     }
                     mess += row;
                 }
-                if(facts.equals("\nFactions: ")) {
+                if("\nFactions: ".equals(facts)) {
                     facts = "There are no nearby factions";
                 }
                 mess += facts;
                 p.sendMessage(mess);
             }
-            else if(args[0].equals("color")) {
+            else if("color".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to set the faction color.");
                     return true;
@@ -386,7 +386,7 @@ public class RivalsCommand implements CommandExecutor {
                 return true;
             }
 
-            else if(args[0].equals("help")) {
+            else if("help".equals(args[0])) {
                 String[] commands = {
                     "§e/rivals create <factionName> §f- Creates a new Faction.",
                     "§e/rivals invite <playerName> §f- Invites a player to your faction.",
@@ -469,7 +469,7 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
             }
 
-            else if(args[0].equals("shop")) {
+            else if("shop".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to access your faction's shop");
                     return true;
@@ -477,7 +477,7 @@ public class RivalsCommand implements CommandExecutor {
                 ShopManager shopManager = Rivals.getShopManager();
                 Shopkeeper shopkeeper = shopManager.getShopkeeperForFaction(faction);
                 if(args.length == 2) {
-                    if(args[1].equals("create")) {
+                    if("create".equals(args[1])) {
                         if (shopkeeper != null) {
                             p.sendMessage("[Rivals] Your faction already has a shop!");
                             return true;
@@ -499,7 +499,7 @@ public class RivalsCommand implements CommandExecutor {
                             }
                         }
                     }
-                    else if(args[1].equals("close")) {
+                    else if("close".equals(args[1])) {
                         if (shopkeeper == null) {
                             p.sendMessage("[Rivals] Your faction doesn't have a shop.");
                             return true;
@@ -528,7 +528,7 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
             }
-            else if(args[0].equals("rename")) {
+            else if("rename".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to rename it!");
                     return true;
@@ -563,7 +563,7 @@ public class RivalsCommand implements CommandExecutor {
     public void sendFactionInfo(Player p, Faction f, String s) {
         FactionManager manager = Rivals.getFactionManager();
         String mess = "";
-        if(s.equals("")) {
+        if("".equals(s)) {
             mess = f.getName() + "\nPower: " + f.getPower();
             String members = ChatColor.COLOR_CHAR + ChatColor.RESET.toString() + "\nMembers: ";
             if(f.getMembers().size() > 3) {
@@ -630,7 +630,7 @@ public class RivalsCommand implements CommandExecutor {
 
             mess += hint;
         } else {
-            if(s.equals("members")) {
+            if("members".equals(s)) {
                 mess = "[Rivals] Members of " + f.getName();
                 String members = "\n";
                 if(f.getMembers().size() > 1) {
@@ -643,7 +643,7 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 mess += members;
             }
-            else if(s.equals("allies")) {
+            else if("allies".equals(s)) {
                 mess = "[Rivals] Allies of " + f.getName();
                 String allies = "\n";
                 if(f.getAllies().size() > 1) {
@@ -658,7 +658,7 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 mess += allies;
             }
-            else if(s.equals("enemies")) {
+            else if("enemies".equals(s)) {
                 mess = "[Rivals] Enemies of " + f.getName();
                 String enemies = "\n";
                 if(f.getEnemies().size() > 1) {
