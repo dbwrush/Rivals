@@ -1,4 +1,4 @@
-## Current Features
+## Features
 1. **Factions**
    - Players can create factions with custom names and colors.
    - Factions can invite new players to join
