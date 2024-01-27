@@ -12,6 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -383,66 +385,6 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage("[Rivals] Successfully changed faction color to " + faction.getColor() + faction.getName());
                 return true;
             }
-            // else if(args[0].equals("help")) {
-            //     if(args.length == 1) {
-            //         p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color, shop, rename");
-            //     } else {
-            //         if(args[1].equals("create")) {
-            //             p.sendMessage("[Rivals] Creates a new Faction. Syntax: /rivals create <factionName>");
-            //         }
-            //         else if(args[1].equals("invite")) {
-            //             p.sendMessage("[Rivals] Invites a player to your faction. Syntax: /rivals invite <playerName>");
-            //         }
-            //         else if(args[1].equals("join")) {
-            //             p.sendMessage("[Rivals] Joins a faction that has invited you. Syntax: /rivals join <factionName>");
-            //         }
-            //         else if(args[1].equals("leave")) {
-            //             p.sendMessage("[Rivals] Leaves your current faction. Syntax: /rivals leave");
-            //         }
-            //         else if(args[1].equals("enemy")) {
-            //             p.sendMessage("[Rivals] Declare another faction to be your enemy. Syntax: /rivals enemy <factionName>");
-            //         }
-            //         else if(args[1].equals("ally")) {
-            //             p.sendMessage("[Rivals] Propose/Accept an alliance with another faction. Syntax: /rivals ally <factionName>");
-            //         }
-            //         else if(args[1].equals("peace")) {
-            //             p.sendMessage("[Rivals] Propose/Accept peace with another faction. Syntax: /rivals enemy <factionName>");
-            //         }
-            //         else if(args[1].equals("unally")) {
-            //             p.sendMessage("[Rivals] Ends your alliance with another faction. Syntax: /rivals unally <factionName>");
-            //         }
-            //         else if(args[1].equals("claim")) {
-            //             p.sendMessage("[Rivals] Claim the chunk you are standing in for your faction. Syntax: /rivals claim");
-            //         }
-            //         else if(args[1].equals("info")) {
-            //             p.sendMessage("[Rivals] Display info for a faction. Syntax: /rivals info <factionName>");
-            //         }
-            //         else if(args[1].equals("map")) {
-            //             p.sendMessage("[Rivals] Display a map of nearby claims. Syntax: /rivals map");
-            //         }
-            //         else if(args[1].equals("list")) {
-            //             p.sendMessage("[Rivals] Display the faction list, you may specify a page number. Syntax: /rivals list <pageNumber>");
-            //         }
-            //         else if(args[1].equals("color")) {
-            //             p.sendMessage("[Rivals] Sets the color for your faction using Minecraft color codes. Syntax: /rivals color <colorCode>");
-            //             p.sendMessage("You can learn about color codes here: https://minecraft.wiki/w/Formatting_codes#Color_codes");
-            //             p.sendMessage("By the way, you don't need to include the §.");
-            //         }
-            //         else if(args[1].equals("shop")) {
-            //             p.sendMessage("[Rivals] Opens the edit menu for your faction's shop. Syntax: /rivals shop");
-            //             p.sendMessage("If your faction has no shop, create one with /rivals shop create");
-            //         }
-            //         else if(args[1].equals("rename")) {
-            //             p.sendMessage("[Rivals] Changes your faction's name. Syntax: /rivals rename <newName>");
-            //             p.sendMessage("Names must be less than " + maxNameLength + " characters.");
-            //         }
-            //         else {
-            //             p.sendMessage("[Rivals] That subcommand doesn't exist. Valid subcommands are: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
-            //         }
-            //         return true;
-            //     }
-            // }
-
             else if(args[0].equals("help")) {
                 if(args.length == 1) {
                     p.sendMessage("§6[Rivals] §fPick a subcommand:");
