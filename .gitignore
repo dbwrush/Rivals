@@ -5,6 +5,10 @@
 *.ipr
 *.iws
 
+# vscode
+.vscode/
+
+
 # IntelliJ
 out/
 

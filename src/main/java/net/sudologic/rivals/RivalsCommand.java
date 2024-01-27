@@ -385,28 +385,80 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage("[Rivals] Successfully changed faction color to " + faction.getColor() + faction.getName());
                 return true;
             }
+
             else if(args[0].equals("help")) {
-                if(args.length == 1) {
-                    p.sendMessage("§6[Rivals] §fPick a subcommand:");
-                    p.sendMessage("§e/rivals create <factionName> §f- Creates a new Faction.");
-                    p.sendMessage("§e/rivals invite <playerName> §f- Invites a player to your faction.");
-                    p.sendMessage("§e/rivals join <factionName> §f- Joins a faction that has invited you.");
-                    p.sendMessage("§e/rivals leave §f- Leaves your current faction.");
-                    p.sendMessage("§e/rivals enemy <factionName> §f- Declare another faction to be your enemy.");
-                    p.sendMessage("§e/rivals ally <factionName> §f- Propose/Accept an alliance with another faction.");
-                    p.sendMessage("§e/rivals peace <factionName> §f- Propose/Accept peace with another faction.");
-                    p.sendMessage("§e/rivals unally <factionName> §f- Ends your alliance with another faction.");
-                    p.sendMessage("§e/rivals claim §f- Claim the chunk you are standing in for your faction.");
-                    p.sendMessage("§e/rivals info <factionName> §f- Display info for a faction.");
-                    p.sendMessage("§e/rivals map §f- Display a map of nearby claims.");
-                    p.sendMessage("§e/rivals list <pageNumber> §f- Display the faction list, you may specify a page number.");
-                    p.sendMessage("§e/rivals color <colorCode> §f- Sets the color for your faction using Minecraft color codes.");
-                    p.sendMessage("§e/rivals shop §f- Opens the edit menu for your faction's shop.");
-                    p.sendMessage("§e/rivals rename <newName> §f- Changes your faction's name.");
-                } else {
-                    p.sendMessage("[Rivals] That subcommand doesn't exist. Valid subcommands are: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color");
+                String[] commands = {
+                    "§e/rivals create <factionName> §f- Creates a new Faction.",
+                    "§e/rivals invite <playerName> §f- Invites a player to your faction.",
+                    "§e/rivals join <factionName> §f- Joins a faction that has invited you.",
+                    "§e/rivals leave §f- Leaves your current faction.",
+                    "§e/rivals enemy <factionName> §f- Declare another faction to be your enemy.",
+                    "§e/rivals ally <factionName> §f- Propose/Accept an alliance with another faction.",
+                    "§e/rivals peace <factionName> §f- Propose/Accept peace with another faction.",
+                    "§e/rivals unally <factionName> §f- Ends your alliance with another faction.",
+                    "§e/rivals claim §f- Claim the chunk you are standing in for your faction.",
+                    "§e/rivals info <factionName> §f- Display info for a faction.",
+                    "§e/rivals map §f- Display a map of nearby claims.",
+                    "§e/rivals list <pageNumber> §f- Display the faction list, you may specify a page number.",
+                    "§e/rivals color <colorCode> §f- Sets the color for your faction using Minecraft color codes.",
+                    "§e/rivals shop §f- Opens the edit menu for your faction's shop.",
+                    "§e/rivals rename <newName> §f- Changes your faction's name."
+                };
+
+                int perPage = 5;
+                int page = 1;
+
+                if(args.length > 1) {
+                    try {
+                        page = Integer.parseInt(args[1]);
+                    } catch (NumberFormatException e) {
+                        p.sendMessage("§c[Rivals] §fInvalid page number.");
+                        return true;
+                    }
                 }
-                return true;
+
+                int start = (page - 1) * perPage;
+                int end = start + perPage;
+
+                if(start < 0 || start >= commands.length) {
+                    p.sendMessage("§c[Rivals] §fInvalid page number.");
+                    return true;
+                }
+
+                // Add spacing
+                p.sendMessage("");
+                p.sendMessage("");
+
+                    p.sendMessage("§6[Rivals] §fHelp Menu (Page " + page + "):");
+
+                    for(int i = start; i < end && i < commands.length; i++) {
+                        p.sendMessage(commands[i]);
+                    }
+
+                    // Page navigation
+                    TextComponent pageNavigation = new TextComponent();
+
+                    // Previous page
+                    if(page > 1) {
+                        TextComponent prevPage = new TextComponent("§b[Previous Page]");
+                        prevPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/rivals help " + (page - 1)));
+                        pageNavigation.addExtra(prevPage);
+                    }
+
+                    // Separator
+                    TextComponent separator = new TextComponent("   ");
+                    pageNavigation.addExtra(separator);
+
+                    // Next page
+                    if(end < commands.length) {
+                        TextComponent nextPage = new TextComponent("§b[Next Page]");
+                        nextPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/rivals help " + (page + 1)));
+                        pageNavigation.addExtra(nextPage);
+                    }
+
+                    p.spigot().sendMessage(pageNavigation);
+
+                    return true;
             }
 
             else if(args[0].equals("shop")) {
