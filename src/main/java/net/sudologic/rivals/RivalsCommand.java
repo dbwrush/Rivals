@@ -393,7 +393,7 @@ public class RivalsCommand implements CommandExecutor {
                     "§e/rivals join <factionName> §f- Joins a faction that has invited you.",
                     "§e/rivals leave §f- Leaves your current faction.",
                     "§e/rivals enemy <factionName> §f- Declare another faction to be your enemy.",
-                    "§e/rivals ally <factionName> §f- Propose/Accept an alliance with another faction.",
+                    "§e/rivals ally <factionName> §f- Propose/Accept faction alliance.",
                     "§e/rivals peace <factionName> §f- Propose/Accept peace with another faction.",
                     "§e/rivals unally <factionName> §f- Ends your alliance with another faction.",
                     "§e/rivals claim §f- Claim the chunk you are standing in for your faction.",
@@ -405,7 +405,7 @@ public class RivalsCommand implements CommandExecutor {
                     "§e/rivals rename <newName> §f- Changes your faction's name."
                 };
 
-                int perPage = 5;
+                int perPage = 6;
                 int page = 1;
 
                 if(args.length > 1) {
@@ -426,6 +426,14 @@ public class RivalsCommand implements CommandExecutor {
                 }
 
                 // Add spacing
+                p.sendMessage("");
+                p.sendMessage("");
+                p.sendMessage("");
+                p.sendMessage("");
+                p.sendMessage("");
+                p.sendMessage("");
+                p.sendMessage("");
+                p.sendMessage("");
                 p.sendMessage("");
                 p.sendMessage("");
 
