@@ -6,6 +6,7 @@
    - Factions can decalre war, make peace, and form alliances
    - Factions can create shops
    - Factions can gain or lose power in combat with players and mobs, or through commerce
+   - Help/Info command
 2. **Shops**
    - Implemented with Shopkeepers plugin API
    - Players can edit their faction's shop with a command
