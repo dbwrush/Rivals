@@ -35,11 +35,11 @@ public class EventManager implements Listener {
         FactionManager manager = Rivals.getFactionManager();
         if(e.getEntity().getKiller() != null) {
             Player killer = e.getEntity().getKiller();
-            double power = killEntityPower;
+            double power = Math.round(killEntityPower * 100.0) / 100.0;
             if(e.getEntity() instanceof Monster) {
-                power = killMonsterPower;
+                power = Math.round(killMonsterPower * 100.0) / 100.0;
             } else if(e.getEntity() instanceof Player) {
-                power = killPlayerPower;
+                power = Math.round(killPlayerPower * 100.0) / 100.0;
             }
             Faction killerFaction = manager.getFactionByPlayer(killer.getUniqueId());
             if(killerFaction != null) {
