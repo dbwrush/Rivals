@@ -403,6 +403,7 @@ public class RivalsCommand implements CommandExecutor {
                     "§e/rivals color <colorCode> §f- Sets the color for your faction using Minecraft color codes.",
                     "§e/rivals shop §f- Opens the edit menu for your faction's shop.",
                     "§e/rivals rename <newName> §f- Changes your faction's name."
+                    // "§e/rivals INSERT NAME HERE §f- INSERT DESCRIPTION HERE."
                 };
 
                 int perPage = 6;
