@@ -44,15 +44,15 @@ public class Faction implements ConfigurationSerializable {
     public Faction(Map<String, Object> serializedFaction) {
         this.factionID = (int) serializedFaction.get("factionID");
         this.factionName = (String) serializedFaction.get("factionName");
-        List<String> enemyStrings = (List<String>) serializedFaction.get("enemyFactions");
+        List<Integer> enemyIds = (List<Integer>) serializedFaction.get("enemyFactions");
         this.enemyFactions = new ArrayList<>();
-        for(String s : enemyStrings) {
-            enemyFactions.add(Integer.valueOf(s));
+        for(Integer s : enemyIds) {
+            enemyFactions.add(s);
         }
-        List<String> allyStrings = (List<String>) serializedFaction.get("allyFactions");
+        List<Integer> allyIds = (List<Integer>) serializedFaction.get("allyFactions");
         this.allyFactions = new ArrayList<>();
-        for(String s : allyStrings) {
-            allyFactions.add(Integer.valueOf(s));
+        for(Integer s : allyIds) {
+            allyFactions.add(s);
         }
         List<String> memberStrings = (List<String>) serializedFaction.get("members");
         this.members = new ArrayList<>();

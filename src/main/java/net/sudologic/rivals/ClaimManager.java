@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class ClaimManager {
     private RegionContainer container;
@@ -61,12 +62,15 @@ public class ClaimManager {
 
     public void updateFactionMembers(Faction f) {
         ArrayList<ProtectedRegion> regions = getRegionsForFaction(f);
-        DefaultDomain domain = new DefaultDomain();//regions.get(0).getMembers();
+        DefaultDomain domain = new DefaultDomain();
+        Bukkit.getLogger().log(Level.INFO, "Updating faction claim members");
         for(UUID uuid : f.getMembers()) {
+            Bukkit.getLogger().log(Level.INFO, "Added " + Bukkit.getOfflinePlayer(uuid).getName() + " to member list.");
             domain.addPlayer(uuid);
         }
         for(ProtectedRegion r : regions) {
             if(r != null) {
+                Bukkit.getLogger().log(Level.INFO, "Added members to claim " + r.getId());
                 r.setMembers(domain);
             }
         }
