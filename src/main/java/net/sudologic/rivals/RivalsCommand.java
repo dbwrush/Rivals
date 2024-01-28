@@ -406,7 +406,7 @@ public class RivalsCommand implements CommandExecutor {
                     // "§e/rivals INSERT NAME HERE §f- INSERT DESCRIPTION HERE."
                 };
 
-                int perPage = 8;
+                int perPage = 6;
                 int page = 1;
 
                 if(args.length > 1) {
