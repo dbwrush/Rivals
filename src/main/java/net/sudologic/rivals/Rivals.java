@@ -174,6 +174,7 @@ public final class Rivals extends JavaPlugin {
         ConfigurationSerialization.registerClass(FactionManager.MemberInvite.class);
         ConfigurationSerialization.registerClass(FactionManager.AllyInvite.class);
         ConfigurationSerialization.registerClass(ShopManager.class);
+        ConfigurationSerialization.registerClass(Faction.Home.class);
     }
 
     public static FactionManager getFactionManager() {
