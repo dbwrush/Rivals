@@ -27,7 +27,6 @@ TODO:
         War status shown here (peace, imminent war, active war)
         Current proposal status
         Current invites
-    - Faction Home: Sufficient Faction power grants access to a faction home. Quantity of homes available might scale with Power
     - Add time-delay war declarations
         Immediate war declarations have a power penalty, but time-delayed ones do not.
         Delay time configurable in config.yml

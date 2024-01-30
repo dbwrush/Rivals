@@ -26,9 +26,9 @@
 3. **Scoreboard**
     - [ ] Players should be shown their current faction name in its color, along with the faction's current power.
     - [ ] Display count of faction members and the number that are currently online.
-4. **Faction Home:**
-    - [ ] Grant access to a faction home based on sufficient faction power.
-    - [ ] Scale the quantity of available homes with power.
+4. **~~Faction Home:~~** IMPLEMENTED
+    - [x] Grant access to a faction home based on sufficient faction power.
+    - [x] Scale the quantity of available homes with power.
 
 5. **Time-Delay War Declarations:**
     - [ ] Implement time-delayed war declarations.
