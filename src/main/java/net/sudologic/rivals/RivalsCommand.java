@@ -456,10 +456,9 @@ public class RivalsCommand implements CommandExecutor {
                     "§e/rivals color <colorCode> §f- Sets the color for your faction using Minecraft color codes.",
                     "§e/rivals shop §f- Opens the edit menu for your faction's shop.",
                     "§e/rivals rename <newName> §f- Changes your faction's name.",
-                    "§e/rivals kick <name> §f- Kicks player from faction if you are leader.",
-                    "§e/rivals leader <newName> §f- Changes your faction's name."
-                    // kick 
-                    // leader
+                    "§e/rivals kick <playerName> §f- Kicks player from faction if you are leader.",
+                    "§e/rivals leader <playerName> §f- Promote a player to team leader.",
+                    "§e/rivals invites §f- Lists your current invites."
                     // "§e/rivals INSERT NAME HERE §f- INSERT DESCRIPTION HERE."
                 };
 
