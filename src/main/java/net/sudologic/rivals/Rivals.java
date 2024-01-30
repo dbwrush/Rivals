@@ -2,7 +2,10 @@ package net.sudologic.rivals;
 
 import net.sudologic.rivals.commands.AdminCommand;
 import net.sudologic.rivals.commands.RivalsCommand;
+import net.sudologic.rivals.commands.home.DelHomeCommand;
 import net.sudologic.rivals.commands.home.HomeCommand;
+import net.sudologic.rivals.commands.home.HomesCommand;
+import net.sudologic.rivals.commands.home.SetHomeCommand;
 import net.sudologic.rivals.managers.ClaimManager;
 import net.sudologic.rivals.managers.EventManager;
 import net.sudologic.rivals.managers.FactionManager;
@@ -160,9 +163,9 @@ public final class Rivals extends JavaPlugin {
         this.getCommand("rivals").setExecutor(command);
         this.getCommand("rivalsadmin").setExecutor(new AdminCommand());
         this.getCommand("home").setExecutor(new HomeCommand());
-        this.getCommand("sethome").setExecutor(new HomeCommand.SetHomeCommand());
-        this.getCommand("delHome").setExecutor(new HomeCommand.DelCommand());
-        this.getCommand("homes").setExecutor(new HomeCommand.HomesCommand());
+        this.getCommand("sethome").setExecutor(new SetHomeCommand());
+        this.getCommand("delHome").setExecutor(new DelHomeCommand());
+        this.getCommand("homes").setExecutor(new HomesCommand());
     }
 
     public void registerClasses() {

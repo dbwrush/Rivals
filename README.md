@@ -15,6 +15,10 @@
    - Claimed land can only be edited by Faction members
    - Factions at war can steal land from each other using power.
    - Land claims can be visualized using a command.
+4. **Homes**
+   - Factions may set homes to teleport between.
+   - Number of homes scales with faction power.
+   - Players may not use homes while in combat.
 
 ### TODO List:
 
@@ -26,7 +30,7 @@
 3. **Scoreboard**
     - [ ] Players should be shown their current faction name in its color, along with the faction's current power.
     - [ ] Display count of faction members and the number that are currently online.
-4. **~~Faction Home:~~** IMPLEMENTED
+4. **~~Faction Home:~~ IMPLEMENTED**
     - [x] Grant access to a faction home based on sufficient faction power.
     - [x] Scale the quantity of available homes with power.
 
