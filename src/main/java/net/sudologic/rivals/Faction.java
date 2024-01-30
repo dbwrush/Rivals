@@ -79,6 +79,19 @@ public class Faction implements ConfigurationSerializable {
         }
     }
 
+    public UUID getLeader() {
+        return members.get(0);
+    }
+
+    public boolean setLeader(UUID uuid) {
+        if(members.contains(uuid)) {
+            members.remove(uuid);
+            members.add(0, uuid);
+            return true;
+        }
+        return false;
+    }
+
     public void setName(String name) {
         factionName = name;
     }
