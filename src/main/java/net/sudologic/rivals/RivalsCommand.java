@@ -3,9 +3,12 @@ package net.sudologic.rivals;
 import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
 import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import net.sudologic.rivals.util.NameFetcher;
+import net.sudologic.rivals.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,6 +21,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class RivalsCommand implements CommandExecutor {
@@ -69,6 +73,55 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] Unable to create faction.");
                 }
                 return true;
+            }
+            else if("kick".equals(args[0])) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be a part of a faction to kick people out of a faction.");
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage("[Rivals] Please include kicked player's name");
+                    return true;
+                }
+                if(!faction.getLeader().equals(p.getUniqueId())) {
+                    String leaderName = NameFetcher.getName(faction.getLeader());
+                    p.sendMessage("[Rivals] You must be your faction's leader to kick players. Your faction leader is " + leaderName);
+                    return true;
+                }
+                UUID kicked = UUIDFetcher.getUUID(args[1]);
+                if(kicked == null) {
+                    p.sendMessage("[Rivals] Incorrect player name, did you spell it right?");
+                    return true;
+                }
+                if(faction.removeMember(kicked)) {
+                    p.sendMessage("[Rivals] Kicked " + args[1] + " from your faction.");
+                    return true;
+                }
+            }
+            else if("leader".equals(args[0])) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be a part of a faction to set your faction's leader");
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage("[Rivals] Please include new leader's name");
+                    return true;
+                }
+                if(!faction.getLeader().equals(p.getUniqueId())) {
+                    String leaderName = NameFetcher.getName(faction.getLeader());
+                    p.sendMessage("[Rivals] You must be your faction's leader to set a new leader. Your faction leader is " + leaderName);
+                    return true;
+                }
+                UUID newLeaderID = UUIDFetcher.getUUID(args[1]);
+                if(newLeaderID == null) {
+                    p.sendMessage("[Rivals] Incorrect player name, did you spell it right?");
+                    return true;
+                }
+                if(faction.removeMember(newLeaderID)) {
+                    p.sendMessage("[Rivals] Made " + args[1] + " the leader of your faction.");
+                    faction.sendMessageToOnlineMembers(args[1] + " is now the leader of your faction.");
+                    return true;
+                }
             }
             else if("invite".equals(args[0])) {
                 if(faction == null) {
