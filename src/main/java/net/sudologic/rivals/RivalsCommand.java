@@ -142,6 +142,20 @@ public class RivalsCommand implements CommandExecutor {
                 faction.sendMessageToOnlineMembers("[Rivals] " + invited.getName() + " has been invited to join your faction.");
                 return true;
             }
+            else if("invites".equals(args[0])) {
+                List<Integer> invites = manager.getInvitesForPlayer(p.getUniqueId());
+                if(invites.size() == 0) {
+                    p.sendMessage("[Rivals] No factions have invited you.");
+                    return true;
+                }
+                p.sendMessage("[Rivals] Faction Invites:");
+                for(Integer invite : invites) {
+                    Faction f = manager.getFactionByID(invite);
+                    p.sendMessage(f.getColor() + f.getName());
+                }
+                p.sendMessage("Use /rivals <factionName> to join a faction.");
+                return true;
+            }
             else if("join".equals(args[0])) {
                 if(faction != null) {
                     p.sendMessage("[Rivals] You must leave your current faction before you can join another.");

@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 /*
 TODO:
-    - Rivals command: Add ability to check current invites
     - Scoreboard: Show faction name in its color, along with faction power.
         Number of online members and number of total members should also be shown.
         War status shown here (peace, imminent war, active war)
