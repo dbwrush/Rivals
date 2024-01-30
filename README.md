@@ -21,8 +21,8 @@
 1. **~~Tweak Power Change:~~ IMPLEMENTED**
     - [x] Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
 2. **/rivals command**
-    - [ ] Add subcommand to check current invites. Should include invites to factions, alliances, and peace.
-    - [ ] Add a command to kick a member from a faction.
+    - [x] Add subcommand to check current invites. Should include invites to factions, alliances, and peace.
+    - [x] Add a command to kick a member from a faction.
 3. **Scoreboard**
     - [ ] Players should be shown their current faction name in its color, along with the faction's current power.
     - [ ] Display count of faction members and the number that are currently online.
