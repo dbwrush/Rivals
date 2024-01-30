@@ -430,15 +430,8 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage("");
                 p.sendMessage("");
                 p.sendMessage("");
-                p.sendMessage("");
-                p.sendMessage("");
-                p.sendMessage("");
-                p.sendMessage("");
-                p.sendMessage("");
-                p.sendMessage("");
-                p.sendMessage("");
 
-                    p.sendMessage("§6[Rivals] §fHelp Menu (Page §a" + page + "§f):");
+                    p.sendMessage("§6[Rivals] §fHelp Menu (§a-------§fPage §a" + page + "§a-------§f):");
 
                     for(int i = start; i < end && i < commands.length; i++) {
                         p.sendMessage(commands[i]);
