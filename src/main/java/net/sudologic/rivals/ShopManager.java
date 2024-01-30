@@ -1,4 +1,4 @@
-package net.sudologic.rivals.managers;
+package net.sudologic.rivals;
 
 import com.nisovin.shopkeepers.api.ShopkeepersAPI;
 import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
@@ -9,8 +9,6 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import net.sudologic.rivals.Faction;
-import net.sudologic.rivals.Rivals;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
