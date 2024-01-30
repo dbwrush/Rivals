@@ -12,6 +12,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -37,6 +38,7 @@ public class EventManager implements Listener {
         } else {
             settings.set("combatTeleportDelay", 120);
         }
+        combatTime = new HashMap<>();
     }
 
     @EventHandler
