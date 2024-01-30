@@ -402,7 +402,11 @@ public class RivalsCommand implements CommandExecutor {
                     "§e/rivals list <pageNumber> §f- Display the faction list, you may specify a page number.",
                     "§e/rivals color <colorCode> §f- Sets the color for your faction using Minecraft color codes.",
                     "§e/rivals shop §f- Opens the edit menu for your faction's shop.",
-                    "§e/rivals rename <newName> §f- Changes your faction's name."
+                    "§e/rivals rename <newName> §f- Changes your faction's name.",
+                    "§e/rivals kick <name> §f- Kicks player from faction if you are leader.",
+                    "§e/rivals leader <newName> §f- Changes your faction's name."
+                    // kick 
+                    // leader
                     // "§e/rivals INSERT NAME HERE §f- INSERT DESCRIPTION HERE."
                 };
 
@@ -431,7 +435,7 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage("");
                 p.sendMessage("");
 
-                    p.sendMessage("§6[Rivals] §fHelp Menu (§a-------§fPage §a" + page + "§a-------§f):");
+                    p.sendMessage("§6[Rivals] §fHelp Menu (Page §a" + page + "§f):");
 
                     for(int i = start; i < end && i < commands.length; i++) {
                         p.sendMessage(commands[i]);
