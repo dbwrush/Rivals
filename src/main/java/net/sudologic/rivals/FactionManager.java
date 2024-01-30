@@ -336,6 +336,10 @@ public class FactionManager implements ConfigurationSerializable {
             return player;
         }
 
+        public long getRemainingTime() {
+            return (System.currentTimeMillis() / 1000L + 604800) - time;
+        }
+
         @Override
         public Map<String, Object> serialize() {
             HashMap<String, Object> mapSerializer = new HashMap<>();
@@ -370,6 +374,10 @@ public class FactionManager implements ConfigurationSerializable {
 
         public int getInviter() {
             return inviter;
+        }
+
+        public long getRemainingTime() {
+            return (System.currentTimeMillis() / 1000L + 604800) - time;
         }
 
         @Override
@@ -407,6 +415,10 @@ public class FactionManager implements ConfigurationSerializable {
 
         public int getInviter() {
             return inviter;
+        }
+
+        public long getRemainingTime() {
+            return (System.currentTimeMillis() / 1000L + 604800) - time;
         }
 
         @Override
