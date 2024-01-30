@@ -13,6 +13,18 @@ commands:
   rivalsadmin:
     description: Rivals command for admins
     usage: /rivalsadmin
+  home:
+    description: Teleport to a home
+    usage: /home
+  sethome:
+    description: Sets a home
+    usage: /sethome
+  delhome:
+    description: Deletes a home
+    usage: /delhome
+  homes:
+    description: Lists your homes
+    usage: /homes
 
 permissions:
   rivals.admin:

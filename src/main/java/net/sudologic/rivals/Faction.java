@@ -1,9 +1,9 @@
 package net.sudologic.rivals;
 
-import com.sk89q.worldguard.WorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
@@ -16,7 +16,7 @@ public class Faction implements ConfigurationSerializable {
     private List<Integer> allyFactions;
     private List<UUID> members;
     private double power;
-
+    private Map<String, Home> homes;
     private ChatColor color;
 
     private List<String> regions;
@@ -37,6 +37,7 @@ public class Faction implements ConfigurationSerializable {
         mapSerializer.put("power", power);
         mapSerializer.put("regions", regions);
         mapSerializer.put("color", color.getChar());
+        mapSerializer.put("homes", homes);
 
         return mapSerializer;
     }
@@ -62,6 +63,11 @@ public class Faction implements ConfigurationSerializable {
         this.power = (double) serializedFaction.get("power");
         this.regions = (List<String>) serializedFaction.get("regions");
         this.color = ChatColor.getByChar((String) serializedFaction.get("color"));
+        if(serializedFaction.containsKey("homes")) {
+            homes = (Map<String, Home>) serializedFaction.get("homes");
+        } else {
+            homes = new HashMap<>();
+        }
     }
 
     public Faction(UUID firstPlayer, String name, int id) {
@@ -77,6 +83,37 @@ public class Faction implements ConfigurationSerializable {
         if(color.equals(ChatColor.MAGIC) || color.equals(ChatColor.BLACK)) {
             color = ChatColor.RESET;
         }
+        homes = new HashMap<>();
+    }
+
+    public Map<String, Home> getHomes() {
+        return homes;
+    }
+
+    public Home getHome(String s) {
+        return homes.get(s);
+    }
+
+    public boolean setHome(String s, Location location) {
+        if(homes.containsKey(s)) {
+            return false;
+        }
+        if(homes.size() < getMaxHomes()) {
+            homes.put(s, new Home(location));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean delHome(String s) {
+        if(homes.remove(s) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public int getMaxHomes() {
+        return (int) Math.round(Math.sqrt(power)/2);
     }
 
     public UUID getLeader() {
@@ -278,6 +315,28 @@ public class Faction implements ConfigurationSerializable {
             if(Bukkit.getOfflinePlayer(id).isOnline()) {
                 Bukkit.getPlayer(id).sendMessage("[Rivals] " + s);
             }
+        }
+    }
+
+    public class Home implements ConfigurationSerializable{
+        private Location location;
+        @Override
+        public Map<String, Object> serialize() {
+            Map<String, Object> serialized = new HashMap<>();
+            serialized.put("location", location);
+            return serialized;
+        }
+
+        public Home(Map<String, Object> serialized) {
+            this.location = (Location) serialized.get("location");
+        }
+
+        public Home(Location location) {
+            this.location = location;
+        }
+
+        public Location getLocation() {
+            return location;
         }
     }
 }

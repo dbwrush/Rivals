@@ -1,21 +1,27 @@
-package net.sudologic.rivals;
+package net.sudologic.rivals.managers;
 
 import com.nisovin.shopkeepers.api.events.*;
+import net.sudologic.rivals.Faction;
+import net.sudologic.rivals.Rivals;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class EventManager implements Listener {
-    private double killEntityPower, killMonsterPower, killPlayerPower, deathPowerLoss, tradePower;
+    private double combatTeleportDelay, killEntityPower, killMonsterPower, killPlayerPower, deathPowerLoss, tradePower;
 
+    private Map<UUID, Double> combatTime;
 
     public EventManager(ConfigurationSection settings) {
         /*killEntityPower = 0;
@@ -28,6 +34,11 @@ public class EventManager implements Listener {
         killPlayerPower = (double) settings.get("killPlayerPower");
         deathPowerLoss = (double) settings.get("deathPowerLoss");
         tradePower = (double) settings.get("tradePower");
+        if(settings.contains("combatTeleportDelay")) {
+            combatTeleportDelay = (double) settings.get("combatTeleportDelay");
+        } else {
+            settings.set("combatTeleportDelay", 120);
+        }
     }
 
     @EventHandler
@@ -85,5 +96,28 @@ public class EventManager implements Listener {
         if(f != pFaction) {
             f.powerChange(tradePower);
         }
+    }
+
+    @EventHandler
+    public void onHit(EntityDamageByEntityEvent e) {
+        if(e.getEntityType() == EntityType.PLAYER) {
+            Player victim = (Player) e.getEntity();
+            if(combatTime.containsKey(victim.getUniqueId())) {
+                combatTime.remove(victim);
+            }
+            combatTime.put(victim.getUniqueId(), System.currentTimeMillis() + combatTeleportDelay * 1000);
+        }
+    }
+
+    public boolean getCombat(UUID uuid) {
+        double time = combatTime.get(uuid);
+        if(time == 0) {
+            return false;
+        }
+        if(System.currentTimeMillis() < time) {
+            combatTime.remove(uuid);
+            return false;
+        }
+        return true;
     }
 }

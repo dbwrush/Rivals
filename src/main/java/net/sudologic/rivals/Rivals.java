@@ -1,9 +1,15 @@
 package net.sudologic.rivals;
 
+import net.sudologic.rivals.commands.AdminCommand;
+import net.sudologic.rivals.commands.RivalsCommand;
+import net.sudologic.rivals.commands.home.HomeCommand;
+import net.sudologic.rivals.managers.ClaimManager;
+import net.sudologic.rivals.managers.EventManager;
+import net.sudologic.rivals.managers.FactionManager;
+import net.sudologic.rivals.managers.ShopManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -12,7 +18,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.logging.Level;
 
 /*
@@ -58,6 +63,7 @@ public final class Rivals extends JavaPlugin {
     private static ShopManager shopManager;
     private static RivalsCommand command;
     private static ConfigurationSection settings;
+    private static EventManager eventManager;
 
     @Override
     public void onEnable() {
@@ -142,7 +148,8 @@ public final class Rivals extends JavaPlugin {
 
     public void registerListeners() {
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new EventManager(settings), this);
+        eventManager = new EventManager(settings);
+        pm.registerEvents(eventManager, this);
     }
 
     public static RivalsCommand getCommand() {
@@ -153,6 +160,10 @@ public final class Rivals extends JavaPlugin {
         command = new RivalsCommand(settings);
         this.getCommand("rivals").setExecutor(command);
         this.getCommand("rivalsadmin").setExecutor(new AdminCommand());
+        this.getCommand("home").setExecutor(new HomeCommand());
+        this.getCommand("sethome").setExecutor(new HomeCommand.SetHomeCommand());
+        this.getCommand("delHome").setExecutor(new HomeCommand.DelCommand());
+        this.getCommand("homes").setExecutor(new HomeCommand.HomesCommand());
     }
 
     public void registerClasses() {
@@ -174,4 +185,6 @@ public final class Rivals extends JavaPlugin {
     public static ClaimManager getClaimManager() {
         return claimManager;
     }
+
+    public static EventManager getEventManager() {return eventManager;}
 }

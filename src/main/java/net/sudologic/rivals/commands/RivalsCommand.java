@@ -1,25 +1,25 @@
-package net.sudologic.rivals;
+package net.sudologic.rivals.commands;
 
 import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
 import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import net.sudologic.rivals.*;
+import net.sudologic.rivals.managers.ClaimManager;
+import net.sudologic.rivals.managers.FactionManager;
+import net.sudologic.rivals.managers.ShopManager;
 import net.sudologic.rivals.util.NameFetcher;
 import net.sudologic.rivals.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
