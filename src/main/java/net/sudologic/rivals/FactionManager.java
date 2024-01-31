@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 public class FactionManager implements ConfigurationSerializable {
     private Map<Integer, Faction> factions;
+    private List<Integer> factionRankings;
     private List<MemberInvite> memberInvites;
     private List<AllyInvite> allyInvites;
     private List<PeaceInvite> peaceInvites;
@@ -68,6 +69,60 @@ public class FactionManager implements ConfigurationSerializable {
             return m + 1;
         }
         return 0;
+    }
+
+    public List<Integer> getFactionRankings() {
+        return factionRankings;
+    }
+
+    public void updateFactionRank(Faction f) {
+        int id = f.getID();
+        double power = f.getPower();
+
+        // Find the index of the faction in the rankings
+        int currentIndex = factionRankings.indexOf(id);
+
+        // If faction not found in rankings, do nothing
+        if (currentIndex == -1) {
+            return;
+        }
+
+        // Check if the faction's power change affects its position in the rankings
+        int newIndex = currentIndex;
+        for (int i = currentIndex - 1; i >= 0; i--) {
+            int prevId = factionRankings.get(i);
+            double prevPower = factions.get(prevId).getPower();
+            if (prevPower < power) {
+                newIndex = i;
+            } else {
+                break;
+            }
+        }
+
+        // Update the rankings if the faction's position changed
+        if (newIndex != currentIndex) {
+            factionRankings.remove(currentIndex);
+            factionRankings.add(newIndex, id);
+        }
+    }
+
+    public List<Integer> buildFactionRanks() {
+        // Create a list of faction IDs
+        List<Integer> factionIDs = new ArrayList<>(factions.keySet());
+
+        // Sort the faction IDs based on the power of each faction
+        Collections.sort(factionIDs, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer id1, Integer id2) {
+                double power1 = factions.get(id1).getPower();
+                double power2 = factions.get(id2).getPower();
+                // Reverse order to sort in descending order
+                return Double.compare(power2, power1);
+            }
+        });
+
+        // Return the sorted faction IDs
+        return factionIDs;
     }
 
     public void removeInvitesForFaction(Faction f) {

@@ -39,10 +39,9 @@
     - [ ] Immediate declarations have a power penalty, while time-delayed ones do not.
     - [ ] Allow configuration of delay time in `config.yml`.
 
-6. **Faction Ranking:**
-    - [ ] Convert ranks from a list to a number stored with the faction upon serialization/deserialization.
-    - [ ] Reorder factions based on power, not creation date, when calling the faction list.
-    - [ ] Consider reordering factions whenever `Faction.powerChange()` is called.
+6. **~~Faction Ranking:~~** IMPLEMENTED
+    - [x] Convert ranks from a list to a number stored with the faction upon serialization/deserialization.
+    - [x] Consider reordering factions whenever `Faction.powerChange()` is called.
 
 7. **Resource Chunks:**
     - [ ] Spawn resource chunks randomly with quantity controlled by `config.yml`.

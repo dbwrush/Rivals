@@ -29,10 +29,6 @@ TODO:
     - Add time-delay war declarations
         Immediate war declarations have a power penalty, but time-delayed ones do not.
         Delay time configurable in config.yml
-    - Faction ranking
-        Upon serialization/deserialization convert ranks from a list to a number stored with the faction.
-        Any time that Faction.powerChange() is called, factions may need to be re-ordered.
-        When Faction list is called, factions should be displayed in order by power, not by creation date.
     - Resource chunks
         Spawn randomly, quantity controlled by config.yml
         Every x time, all resource chunks have a resource spawn opportunity.

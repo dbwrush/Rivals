@@ -375,6 +375,30 @@ public class RivalsCommand implements CommandExecutor {
             }
             else if("list".equals(args[0])) {
                 int perPage = 8;
+                List<Integer> rankings = manager.getFactionRankings();
+                List<Faction> factions = manager.getFactions();
+                int numPages = (rankings.size() / perPage) + 1;
+                int start = 0;
+                if(rankings.size() == 0) {
+                    p.sendMessage("[Rivals] There aren't any factions yet.");
+                    return true;
+                }
+                String mess = "[Rivals] Factions List Page 1/" + numPages;
+                if(args.length >= 2) {
+                    Integer page = Integer.parseInt(args[1]);
+                    mess = "[Rivals] Factions List Page " + page + "/" + numPages;
+                    if (page > numPages) {
+                        p.sendMessage("[Rivals] There are only " + numPages + " pages.");
+                        return true;
+                    }
+                    start = (page - 1) * perPage;
+                }
+                for(int i = start; i < perPage + start && i < manager.getFactions().size(); i++) {
+                    mess += "\n" + ChatColor.COLOR_CHAR + factions.get(rankings.get(i)).getColor().toString() + factions.get(rankings.get(i)).getName();
+                }
+                p.sendMessage(mess);
+                return true;
+                /*int perPage = 8;
                 List<Faction> factions = manager.getFactions();
                 int numPages = (factions.size() / perPage) + 1;
                 int start = 0;
@@ -396,7 +420,7 @@ public class RivalsCommand implements CommandExecutor {
                     mess += "\n" + ChatColor.COLOR_CHAR + factions.get(i).getColor().toString() + factions.get(i).getName();
                 }
                 p.sendMessage(mess);
-                return true;
+                return true;*/
             }
             else if("map".equals(args[0])) {
                 Chunk c = p.getLocation().getChunk();
