@@ -28,6 +28,7 @@ public class HomesCommand implements CommandExecutor {
                 p.sendMessage(home);
             }
             p.sendMessage("Used " + faction.getHomes().size() + " / " + faction.getMaxHomes());
+            return true;
         }
         p.sendMessage("[Rivals] You must be in a faction to list homes.");
         return true;

@@ -37,6 +37,7 @@ public class HomeCommand implements CommandExecutor {
                 }
                 p.sendMessage("[Rivals] Teleporting to " + args[0]);
                 p.teleport(h.getLocation());
+                return true;
             }
             p.sendMessage("[Rivals] Your faction has no home by that name.");
             return true;

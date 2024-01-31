@@ -29,6 +29,7 @@ public class SetHomeCommand implements CommandExecutor {
                 }
                 p.sendMessage("[Rivals] Set home " + args[0]);
                 faction.setHome(args[0], p.getLocation());
+                return true;
             } else {
                 p.sendMessage("[Rivals] Your faction needs more power to get more homes.");
                 return true;
