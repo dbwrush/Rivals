@@ -54,6 +54,7 @@ public class FactionManager implements ConfigurationSerializable {
                 peaceInvites.add(a);
             }
         }
+        buildFactionRanks();
         //Bukkit.getLogger().log(Level.INFO, "[Rivals] Removed " + removedInvites + " invites because they were more than 7 days old.");
         //Bukkit.getLogger().log(Level.INFO, "[Rivals] Finished deserializing faction data.");
     }
@@ -166,6 +167,7 @@ public class FactionManager implements ConfigurationSerializable {
     public boolean addFaction(Faction f) {
         if(!factions.containsKey(f.getID()) && !nameAlreadyExists(f.getName())) {
             factions.put(f.getID(), f);
+            factionRankings.add(factionRankings.size(), f.getID());
             return true;
         }
         return false;
@@ -176,6 +178,7 @@ public class FactionManager implements ConfigurationSerializable {
             Rivals.getClaimManager().removeRegionsForFaction(f);
             factions.remove(f.getID());
             removeInvitesForFaction(f);
+            factionRankings.remove((Object) f.getID());
             return true;
         }
         return false;
