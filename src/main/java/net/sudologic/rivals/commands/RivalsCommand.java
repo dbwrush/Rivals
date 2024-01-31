@@ -394,7 +394,8 @@ public class RivalsCommand implements CommandExecutor {
                     start = (page - 1) * perPage;
                 }
                 for(int i = start; i < perPage + start && i < manager.getFactions().size(); i++) {
-                    mess += "\n" + ChatColor.COLOR_CHAR + factions.get(rankings.get(i)).getColor().toString() + factions.get(rankings.get(i)).getName();
+                    Faction f = factions.get(rankings.get(i));
+                    mess += "\n" + ChatColor.YELLOW + i + " " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + " " + ChatColor.RESET + f.getPower();
                 }
                 p.sendMessage(mess);
                 return true;
