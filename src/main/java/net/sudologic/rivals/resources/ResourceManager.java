@@ -52,6 +52,13 @@ public class ResourceManager implements ConfigurationSerializable {
         return serialized;
     }
 
+    public ResourceSpawner getSpawnerAtChunk(Chunk c) {
+        if(spawners.containsKey(c)) {
+            return spawners.get(c);
+        }
+        return null;
+    }
+
     public ResourceManager(Map<String, Object> serialized) {
         spawners = new HashMap<>();
         ArrayList<Map<String, Object>> sObjects = (ArrayList<Map<String, Object>>) serialized.get("spawners");

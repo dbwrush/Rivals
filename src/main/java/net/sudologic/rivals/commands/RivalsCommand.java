@@ -7,6 +7,8 @@ import net.sudologic.rivals.*;
 import net.sudologic.rivals.ClaimManager;
 import net.sudologic.rivals.FactionManager;
 import net.sudologic.rivals.ShopManager;
+import net.sudologic.rivals.resources.ResourceManager;
+import net.sudologic.rivals.resources.ResourceSpawner;
 import net.sudologic.rivals.util.NameFetcher;
 import net.sudologic.rivals.util.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -449,30 +451,13 @@ public class RivalsCommand implements CommandExecutor {
             }
             else if("map".equals(args[0])) {
                 Chunk c = p.getLocation().getChunk();
-                String mess = "[Rivals] Map of your surroundings";
-                String facts = "\nFactions: ";
-                for(int x = 0; x < 9; x++) {
-                    String row = "\n| ";
-                    for(int z = 0; z < 9; z++) {
-                        Chunk loc = c.getWorld().getChunkAt(c.getX() - 4 + x, c.getZ() - 4 + z);
-                        ProtectedRegion claim = Rivals.getClaimManager().getExistingClaim(loc);
-                        if(claim != null) {
-                            Faction f = manager.getFactionByID(Integer.parseInt(claim.getId().split("_")[2]));
-                            row += ChatColor.COLOR_CHAR + f.getColor().toString() + "X " + ChatColor.COLOR_CHAR + ChatColor.RESET + "| ";
-                            if(!facts.contains(f.getName())) {
-                                facts += ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + ChatColor.COLOR_CHAR + ChatColor.RESET + " ";
-                            }
-                        } else {
-                            row += "_ | ";
-                        }
-                    }
-                    mess += row;
-                }
-                if("\nFactions: ".equals(facts)) {
-                    facts = "There are no nearby factions";
-                }
-                mess += facts;
-                p.sendMessage(mess);
+                printClaimMap(c, p);
+                return true;
+            }
+            else if("resources".equals(args[0])) {
+                Chunk c = p.getLocation().getChunk();
+                printResourceMap(c, p);
+                return true;
             }
             else if("color".equals(args[0])) {
                 if(faction == null) {
@@ -668,9 +653,63 @@ public class RivalsCommand implements CommandExecutor {
             }
         }
         else {
-            p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color, shop, rename");
+            p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, resources, color, shop, rename");
         }
         return true;
+    }
+
+    public void printClaimMap(Chunk c, Player p) {
+        String mess = "[Rivals] Map of surrounding claims";
+        String facts = "\nFactions: ";
+        for(int x = 0; x < 9; x++) {
+            String row = "\n| ";
+            for(int z = 0; z < 9; z++) {
+                Chunk loc = c.getWorld().getChunkAt(c.getX() - 4 + x, c.getZ() - 4 + z);
+                ProtectedRegion claim = Rivals.getClaimManager().getExistingClaim(loc);
+                if(claim != null) {
+                    Faction f = Rivals.getFactionManager().getFactionByID(Integer.parseInt(claim.getId().split("_")[2]));
+                    row += ChatColor.COLOR_CHAR + f.getColor().toString() + "X " + ChatColor.COLOR_CHAR + ChatColor.RESET + "| ";
+                    if(!facts.contains(f.getName())) {
+                        facts += ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + ChatColor.COLOR_CHAR + ChatColor.RESET + " ";
+                    }
+                } else {
+                    row += "_ | ";
+                }
+            }
+            mess += row;
+        }
+        if("\nFactions: ".equals(facts)) {
+            facts = "There are no nearby factions";
+        }
+        mess += facts;
+        p.sendMessage(mess);
+    }
+
+    public void printResourceMap(Chunk c, Player p) {
+        String mess = "[Rivals] Map of surrounding claims";
+        String rescs = "\nResources: ";
+        ResourceManager resc = Rivals.getResourceManager();
+        for(int x = 0; x < 9; x++) {
+            String row = "\n| ";
+            for(int z = 0; z < 9; z++) {
+                Chunk loc = c.getWorld().getChunkAt(c.getX() - 4 + x, c.getZ() - 4 + z);
+                ResourceSpawner r = resc.getSpawnerAtChunk(loc);
+                if(r != null) {
+                    row += "X | ";
+                    if(!rescs.contains(r.getMaterial())) {
+                        rescs += r.getMaterial() + " ";
+                    }
+                } else {
+                    row += "_ | ";
+                }
+            }
+            mess += row;
+        }
+        if("\nResources: ".equals(rescs)) {
+            rescs = "There are no nearby resources";
+        }
+        mess += rescs;
+        p.sendMessage(mess);
     }
 
     public void sendFactionInfo(Player p, Faction f, String s) {

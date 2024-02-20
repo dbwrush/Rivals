@@ -86,6 +86,12 @@ public class ResourceSpawner implements ConfigurationSerializable {
         return location;
     }
 
+    public String getMaterial() {
+        if(item.getItemMeta() == null)
+            return "";
+        return item.getItemMeta().getDisplayName();
+    }
+
     public double getChance() {
         return chance;
     }

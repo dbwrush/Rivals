@@ -147,6 +147,10 @@ public final class Rivals extends JavaPlugin {
         return settings;
     }
 
+    public static ResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
     public void createCustomConfig() {
         File customConfigFile = new File(getDataFolder(), "config.yml");
         if(!customConfigFile.exists()) {
