@@ -82,6 +82,10 @@ public class ResourceSpawner implements ConfigurationSerializable {
         }
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
     public double getChance() {
         return chance;
     }
