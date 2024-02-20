@@ -267,6 +267,11 @@ public class Faction implements ConfigurationSerializable {
         Rivals.getFactionManager().updateFactionRank(this);
     }
 
+    public void rawPowerChange(double amount) {
+        power += amount;
+        Rivals.getFactionManager().updateFactionRank(this);
+    }
+
     public List<UUID> getMembers() {
         return members;
     }
@@ -274,7 +279,6 @@ public class Faction implements ConfigurationSerializable {
     public List<Integer> getEnemies() {
         return enemyFactions;
     }
-
     public List<Integer> getAllies() {
         return allyFactions;
     }

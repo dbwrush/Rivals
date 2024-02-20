@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +59,7 @@ public final class Rivals extends JavaPlugin {
     private static RivalsCommand command;
     private static ConfigurationSection settings;
     private static EventManager eventManager;
+    private int taskId;
 
     @Override
     public void onEnable() {
@@ -70,10 +72,20 @@ public final class Rivals extends JavaPlugin {
         registerCommands();
 
         claimManager = new ClaimManager();
+
+        taskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Task(), 0, 3600);
+    }
+
+    private class Task extends BukkitRunnable {
+        @Override
+        public void run() {
+            factionManager.startWars();
+        }
     }
 
     @Override
     public void onDisable() {
+        getServer().getScheduler().cancelTask(taskId);
         saveData();
         Bukkit.getLogger().log(Level.INFO, "[Rivals] Closing!");
     }
@@ -95,15 +107,27 @@ public final class Rivals extends JavaPlugin {
         } else {
             settings = new YamlConfiguration();
             Bukkit.getLogger().log(Level.INFO, "No existing settings, creating them.");
-            settings.set("minShopPower", 10.0);
-            settings.set("killEntityPower", 0.0);
-            settings.set("killMonsterPower", 1.0);
-            settings.set("killPlayerPower", 3.0);
-            settings.set("deathPowerLoss", -4.0);
-            settings.set("tradePower", 1.0);
-            settings.set("defaultPower", 3.0);
-            settings.set("maxNameLength", 16);
         }
+        if(!settings.contains("minShopPower"))
+            settings.set("minShopPower", 10.0);
+        if(!settings.contains("killEntityPower"))
+            settings.set("killEntityPower", 0.0);
+        if(!settings.contains("killMonsterPower"))
+            settings.set("killMonsterPower", 1.0);
+        if(!settings.contains("killPlayerPower"))
+            settings.set("killPlayerPower", 3.0);
+        if(!settings.contains("deathPowerLoss"))
+            settings.set("deathPowerLoss", -4.0);
+        if(!settings.contains("tradePower"))
+            settings.set("tradePower", 1.0);
+        if(!settings.contains("defaultPower"))
+            settings.set("defaultPower", 3.0);
+        if(!settings.contains("maxNameLength"))
+            settings.set("maxNameLength", 16);
+        if(!settings.contains("warDelay"))
+            settings.set("warDelay", 48);//in hours
+        if(!settings.contains("nowWarPower"))
+            settings.set("nowWarPower", 20);
         if(getConfig().get("factionManager") != null) {
             factionManager = (FactionManager) getConfig().get("factionManager", FactionManager.class);
         } else {

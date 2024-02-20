@@ -196,14 +196,38 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
                 String enemyName = args[1];
+                boolean now = false;
+                if(args.length > 2) {
+                    now = args[2].equals("now");
+                }
                 Faction enemy = manager.getFactionByName(enemyName);
-                if(faction.addEnemy(enemy.getID())) {
-                    p.sendMessage("[Rivals] You are now enemies with " + enemyName);
+
+                if(now) {
+                    boolean mutual = enemy != null && enemy.getEnemies().contains(faction.getAllies());
+                    if(faction.getPower() > (double)Rivals.getSettings().get("warNowPower") || mutual) {
+                        if(!mutual)
+                            faction.rawPowerChange((double)Rivals.getSettings().get("warNowPower"));
+                        if(faction.addEnemy(enemy.getID())) {
+                            p.sendMessage("[Rivals] You are now enemies with " + enemyName);
+                        } else {
+                            p.sendMessage("[Rivals] Could not declare war on " + enemyName + ", there might not be a faction by that name.");
+                            Faction imprecise = manager.getFactionByNameImprecise(enemyName);
+                            if(imprecise != null) {
+                                p.sendMessage("There is a faction named " + imprecise.getName());
+                            }
+                        }
+                    } else {
+                        p.sendMessage("[Rivals] Your faction does not have enough power to declare war immediately.");
+                    }
                 } else {
-                    p.sendMessage("[Rivals] Could not declare war on " + enemyName + ", there might not be a faction by that name.");
-                    Faction imprecise = manager.getFactionByNameImprecise(enemyName);
-                    if(imprecise != null) {
-                        p.sendMessage("There is a faction named " + imprecise.getName());
+                    if(enemy == null) {
+                        p.sendMessage("[Rivals] Could not declare war on " + enemyName + ", there might not be a faction by that name.");
+                        Faction imprecise = manager.getFactionByNameImprecise(enemyName);
+                        if(imprecise != null) {
+                            p.sendMessage("There is a faction named " + imprecise.getName());
+                        }
+                    } else {
+                        manager.createWarDeclaration(faction.getID(), enemy.getID(), System.currentTimeMillis(), (long) Rivals.getSettings().get("warNowPower"));
                     }
                 }
                 return true;
@@ -711,11 +735,33 @@ public class RivalsCommand implements CommandExecutor {
 
             mess += enemies;
 
+            String upcoming = "\nUpcoming Wars:";
+            List<Integer> u = manager.getUpcoming(f.getID());
+            if(u.size() > 0) {
+                if(u.size() > 3) {
+                    for(int i = 0; i < 3; i++) {
+                        upcoming += manager.getFactionByID(u.get(i)).getName() + ", ";
+                    }
+                    upcoming += "+ " + (u.size() - 3);
+                } else if(u.size() > 1){
+                    for(int i = 0; i < u.size() - 1; i++) {
+                        upcoming += manager.getFactionByID(u.get(i)).getName() + ", ";
+                    }
+                    upcoming += "and " + manager.getFactionByID(u.get(u.size() - 1)).getName();
+                } else {
+                    upcoming += manager.getFactionByID(u.get(0)).getName();
+                }
+            } else {
+                upcoming += "None";
+            }
+
+            mess += upcoming;
+
             String chunks = "\nChunks: " + f.getRegions().size();
 
             mess += chunks;
 
-            String hint = "\nFor more info, add 'members', 'allies', or 'enemies' to the command.";
+            String hint = "\nFor more info, add 'members', 'allies', 'enemies', or 'upcoming' to the command.";
 
             mess += hint;
         } else {
@@ -761,9 +807,24 @@ public class RivalsCommand implements CommandExecutor {
                     enemies += "None";
                 }
                 mess += enemies;
+            } else if("upcoming".equals(s)) {
+                mess = "[Rivals] Upcoming wars for " + f.getName();
+                String str = "\n";
+                List<Integer> upcoming = manager.getUpcoming(f.getID());
+                if(upcoming.size() > 1) {
+                    for (int i = 0; i < upcoming.size() - 1; i++) {
+                        str += manager.getFactionByID(upcoming.get(i)).getName() + ", ";
+                    }
+                    str += "and " + manager.getFactionByID(upcoming.get(upcoming.size() - 1)).getName();
+                } else if(f.getEnemies().size() > 0) {
+                    str += "and " + manager.getFactionByID(upcoming.get(upcoming.size() - 1)).getName();
+                } else {
+                    str += "None";
+                }
+                mess += str;
             }
             else {
-                mess = "[Rivals] Choose either 'members', 'allies', or 'enemies' to get details about a faction.";
+                mess = "[Rivals] Choose either 'members', 'allies', 'enemies', 'upcoming' to get details about a faction.";
             }
         }
         p.sendMessage(mess);

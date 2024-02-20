@@ -3,6 +3,7 @@ package net.sudologic.rivals;
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.*;
@@ -14,6 +15,8 @@ public class FactionManager implements ConfigurationSerializable {
     private List<MemberInvite> memberInvites;
     private List<AllyInvite> allyInvites;
     private List<PeaceInvite> peaceInvites;
+
+    private List<WarDeclaration> upcomingWars;
 
     public FactionManager(Map<String, Object> serializedFactionManager) {
         //Bukkit.getLogger().log(Level.INFO, "[Rivals] Begin deserializing faction data.");
@@ -52,6 +55,18 @@ public class FactionManager implements ConfigurationSerializable {
                 removedInvites++;
             } else {
                 peaceInvites.add(a);
+            }
+        }
+        upcomingWars = new ArrayList<>();
+        List<Object> wObjects = (List<Object>) serializedFactionManager.get("upcomingWars");
+        if(wObjects != null) {
+            for(Object o : wObjects) {
+                WarDeclaration w = new WarDeclaration((Map<String, Object>) o);
+                if(w.delayOver()) {
+                    factions.get(w.getFid1()).addEnemy(w.getFid2());
+                } else {
+                    upcomingWars.add(w);
+                }
             }
         }
         buildFactionRanks();
@@ -179,6 +194,7 @@ public class FactionManager implements ConfigurationSerializable {
             factions.remove(f.getID());
             removeInvitesForFaction(f);
             factionRankings.remove((Object) f.getID());
+            pruneWarsForFaction(f.getID());
             return true;
         }
         return false;
@@ -313,6 +329,54 @@ public class FactionManager implements ConfigurationSerializable {
             }
         }
         return list;
+    }
+
+    public void addUpcomingWar(WarDeclaration w) {
+        upcomingWars.add(w);
+    }
+
+    public boolean createWarDeclaration(int fid1, int fid2, long declareTime, long delay) {
+        if(factions.containsKey(fid1) && factions.containsKey(fid2)) {
+            WarDeclaration w = new WarDeclaration(fid1, fid2, declareTime, delay);
+            addUpcomingWar(w);
+            Faction faction1 = getFactionByID(fid1), faction2 = getFactionByID(fid2);
+            faction1.sendMessageToOnlineMembers("You will be at war with " + faction2.getColor() + faction2.getName() + ChatColor.RESET + " in " + delay + " hours.");
+            faction2.sendMessageToOnlineMembers("You will be at war with " + faction1.getColor() + faction1.getName() + ChatColor.RESET + " in " + delay + " hours.");
+        }
+        return false;
+    }
+
+    public List<Integer> getUpcoming(int fid) {
+        ArrayList<Integer> upcoming = new ArrayList<>();
+        for(WarDeclaration w : upcomingWars) {
+            if(w.getFid1() == fid) {
+                upcoming.add(w.getFid2());
+            } else if(w.getFid2() == fid) {
+                upcoming.add(w.getFid1());
+            }
+        }
+        return upcoming;
+    }
+
+    public void startWars() {
+        ArrayList<WarDeclaration> declarations = new ArrayList<>();
+        for(WarDeclaration w : upcomingWars) {
+            if(w.delayOver()) {
+                w.startWar();
+                declarations.add(w);
+            }
+        }
+        upcomingWars.remove(declarations);
+    }
+
+    public void pruneWarsForFaction(int fid) {
+        ArrayList<WarDeclaration> cancellations = new ArrayList<>();
+        for(WarDeclaration w : upcomingWars) {
+            if(w.getFid1() == fid || w.getFid2() == fid) {
+                cancellations.add(w);
+            }
+        }
+        upcomingWars.remove(cancellations);
     }
 
     @Override
@@ -490,6 +554,61 @@ public class FactionManager implements ConfigurationSerializable {
             mapSerializer.put("time", time);
 
             return mapSerializer;
+        }
+    }
+
+    public class WarDeclaration implements ConfigurationSerializable{
+        private int fid1, fid2;
+        private long declareTime, delay;
+
+        public void startWar() {
+            getFactionByID(fid1).addEnemy(fid2);
+        }
+
+        public WarDeclaration(Map<String, Object> serialized) {
+            this.fid1 = (int) serialized.get("fid1");
+            this.fid2 = (int) serialized.get("fid2");
+            this.declareTime = (long) serialized.get("declareTime");
+            this.delay = (long) serialized.get("delay");
+        }
+
+        public WarDeclaration(int fid1, int fid2, long declareTime, long delay) {
+            this.fid1 = fid1;
+            this.fid2 = fid2;
+            this.declareTime = declareTime;
+            this.delay = delay;//measured in hours
+        }
+
+        public boolean delayOver() {
+            return System.currentTimeMillis() > declareTime + (delay * 3600000);
+        }
+
+        public int getFid1() {
+            return fid1;
+        }
+
+        public int getFid2() {
+            return fid2;
+        }
+
+        public long getDeclareTime() {
+            return declareTime;
+        }
+
+        public long getDelay() {
+            return delay;
+        }
+
+        @Override
+        public Map<String, Object> serialize() {
+            Map<String, Object> serialized = new HashMap<>();
+
+            serialized.put("fid1", fid1);
+            serialized.put("fid2", fid2);
+            serialized.put("declareTime", declareTime);
+            serialized.put("delay", delay);
+
+            return serialized;
         }
     }
 }
