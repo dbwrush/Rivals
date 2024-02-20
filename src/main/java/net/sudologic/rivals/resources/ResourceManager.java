@@ -16,8 +16,7 @@ import java.util.Map;
 import static org.bukkit.Bukkit.getServer;
 
 public class ResourceManager implements ConfigurationSerializable {
-    int taskId;
-    int maxSpawners = 1024;
+    int maxSpawners = 128;
     ArrayList<ResourceSpawner> spawners;
 
     public ResourceManager() {
