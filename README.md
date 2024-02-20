@@ -43,11 +43,11 @@
     - [x] Convert ranks from a list to a number stored with the faction upon serialization/deserialization.
     - [x] Consider reordering factions whenever `Faction.powerChange()` is called.
 
-7. **Resource Chunks:**
-    - [ ] Spawn resource chunks randomly with quantity controlled by `config.yml`.
-    - [ ] Allow resource chunks to have periodic resource spawn opportunities.
-    - [ ] Determine resource spawn based on a random chance, decreasing over time on a decay curve.
-    - [ ] Move resource chunk to a new location and reset its chance when the random chance falls below a configurable threshold.
+7. **~~Resource Chunks:~~** IMPLEMENTED
+    - [x] Spawn resource chunks randomly with quantity controlled by `config.yml`.
+    - [x] Allow resource chunks to have periodic resource spawn opportunities.
+    - [x] Determine resource spawn based on a random chance, decreasing over time on a decay curve.
+    - [x] Move resource chunk to a new location and reset its chance when the random chance falls below a configurable threshold.
 
 8. **Politics:**
     - [ ] Enable factions to propose one resolution at a time.

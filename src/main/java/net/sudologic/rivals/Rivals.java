@@ -6,6 +6,8 @@ import net.sudologic.rivals.commands.home.DelHomeCommand;
 import net.sudologic.rivals.commands.home.HomeCommand;
 import net.sudologic.rivals.commands.home.HomesCommand;
 import net.sudologic.rivals.commands.home.SetHomeCommand;
+import net.sudologic.rivals.resources.ResourceManager;
+import net.sudologic.rivals.resources.ResourceSpawner;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -27,11 +29,6 @@ TODO:
         War status shown here (peace, imminent war, active war)
         Current proposal status
         Current invites
-    - Resource chunks
-        Spawn randomly, quantity controlled by config.yml
-        Every x time, all resource chunks have a resource spawn opportunity.
-        Opportunities are taken based on a random chance, which becomes less likely on a decay curve.
-        Once random chance falls below some configurable threshold, resource chunk moves to new location and resets its chance.
     - Politics
         Each Faction can propose one resolution at a time.
         Factions can vote for or against, strength of vote controlled by Faction power.
@@ -56,11 +53,16 @@ public final class Rivals extends JavaPlugin {
     private static RivalsCommand command;
     private static ConfigurationSection settings;
     private static EventManager eventManager;
+    private static ResourceManager resourceManager;
     private int taskId;
 
     @Override
     public void onEnable() {
         Bukkit.getLogger().log(Level.INFO, "[Rivals] Starting!");
+
+        claimManager = new ClaimManager();
+        resourceManager = new ResourceManager();
+
         registerClasses();
         createCustomConfig();
         createConfigs();
@@ -68,7 +70,6 @@ public final class Rivals extends JavaPlugin {
         registerListeners();
         registerCommands();
 
-        claimManager = new ClaimManager();
 
         taskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Task(), 0, 3600);
     }
@@ -76,6 +77,7 @@ public final class Rivals extends JavaPlugin {
     private class Task extends BukkitRunnable {
         @Override
         public void run() {
+            resourceManager.update();
             factionManager.startWars();
         }
     }
@@ -93,6 +95,8 @@ public final class Rivals extends JavaPlugin {
         }
         getConfig().set("factionManager", factionManager);
         getConfig().set("shopManager", shopManager);
+        getConfig().set("claimManager", claimManager);
+        getConfig().set("resourceManager", resourceManager);
 
         //System.out.println(getConfig().get("data"));
         saveConfig();
@@ -134,6 +138,12 @@ public final class Rivals extends JavaPlugin {
             shopManager = (ShopManager) getConfig().get("shopManager", ShopManager.class);
         } else {
             shopManager = new ShopManager();
+        }
+        if(getConfig().get("claimManager") != null) {
+            claimManager = (ClaimManager) getConfig().get("claimManager", ClaimManager.class);
+        }
+        if(getConfig().get("resourceManager") != null) {
+            resourceManager = (ResourceManager) getConfig().get("resourceManager", ResourceManager.class);
         }
     }
 
@@ -189,6 +199,9 @@ public final class Rivals extends JavaPlugin {
         ConfigurationSerialization.registerClass(FactionManager.PeaceInvite.class);
         ConfigurationSerialization.registerClass(ShopManager.class);
         ConfigurationSerialization.registerClass(Faction.Home.class);
+        ConfigurationSerialization.registerClass(FactionManager.WarDeclaration.class);
+        ConfigurationSerialization.registerClass(ResourceSpawner.class);
+        ConfigurationSerialization.registerClass(ResourceManager.class);
     }
 
     public static FactionManager getFactionManager() {
