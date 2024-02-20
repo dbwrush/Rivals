@@ -34,10 +34,10 @@
     - [x] Grant access to a faction home based on sufficient faction power.
     - [x] Scale the quantity of available homes with power.
 
-5. **Time-Delay War Declarations:**
-    - [ ] Implement time-delayed war declarations.
-    - [ ] Immediate declarations have a power penalty, while time-delayed ones do not.
-    - [ ] Allow configuration of delay time in `config.yml`.
+5. **~~Time-Delay War Declarations:~~ IMPLEMENTED**
+    - [x] Implement time-delayed war declarations.
+    - [x] Immediate declarations have a power penalty, while time-delayed ones do not.
+    - [x] Allow configuration of delay time in `config.yml`.
 
 6. **~~Faction Ranking:~~** IMPLEMENTED
     - [x] Convert ranks from a list to a number stored with the faction upon serialization/deserialization.

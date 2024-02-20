@@ -27,9 +27,6 @@ TODO:
         War status shown here (peace, imminent war, active war)
         Current proposal status
         Current invites
-    - Add time-delay war declarations
-        Immediate war declarations have a power penalty, but time-delayed ones do not.
-        Delay time configurable in config.yml
     - Resource chunks
         Spawn randomly, quantity controlled by config.yml
         Every x time, all resource chunks have a resource spawn opportunity.
