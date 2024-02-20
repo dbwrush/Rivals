@@ -95,7 +95,6 @@ public final class Rivals extends JavaPlugin {
         }
         getConfig().set("factionManager", factionManager);
         getConfig().set("shopManager", shopManager);
-        getConfig().set("claimManager", claimManager);
         getConfig().set("resourceManager", resourceManager);
 
         //System.out.println(getConfig().get("data"));
