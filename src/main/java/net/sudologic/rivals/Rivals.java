@@ -71,7 +71,7 @@ public final class Rivals extends JavaPlugin {
         registerCommands();
 
         task = new Task();
-        task.runTaskTimerAsynchronously(this, 0, 3600);
+        task.runTaskTimer(this, 0, 3600);
     }
 
     private class Task extends BukkitRunnable {
