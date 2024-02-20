@@ -83,7 +83,7 @@ public class ResourceSpawner implements ConfigurationSerializable {
 
     public void spawnResource() {
         if(location.isWorldLoaded() && Math.random() < chance) {
-            item.setAmount((int) Math.max(Math.random() * 64 * chance, 1));
+            item.setAmount((int) Math.max(64 * chance, 1));
             location.getWorld().dropItem(location, item);
             chance *= 0.99 + Math.random() * 0.01;
         }
