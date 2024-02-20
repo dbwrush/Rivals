@@ -139,9 +139,6 @@ public final class Rivals extends JavaPlugin {
         } else {
             shopManager = new ShopManager();
         }
-        if(getConfig().get("claimManager") != null) {
-            claimManager = (ClaimManager) getConfig().get("claimManager", ClaimManager.class);
-        }
         if(getConfig().get("resourceManager") != null) {
             resourceManager = (ResourceManager) getConfig().get("resourceManager", ResourceManager.class);
         }
