@@ -1,10 +1,12 @@
 package net.sudologic.rivals.resources;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -72,6 +74,11 @@ public class ResourceSpawner implements ConfigurationSerializable {
         }
         item = new ItemStack(m);
         chance = Math.random() * 0.1 + 0.9;
+
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            p.sendMessage("[Rivals] New " + m.name() + " spawner at " + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ());
+        }
+
     }
 
     public void spawnResource() {
