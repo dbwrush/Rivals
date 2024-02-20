@@ -34,7 +34,7 @@ public class EventManager implements Listener {
         deathPowerLoss = (double) settings.get("deathPowerLoss");
         tradePower = (double) settings.get("tradePower");
         if(settings.contains("combatTeleportDelay")) {
-            combatTeleportDelay = (int) settings.get("combatTeleportDelay");
+            combatTeleportDelay = (double) settings.get("combatTeleportDelay");
         } else {
             settings.set("combatTeleportDelay", 120.0);
         }
