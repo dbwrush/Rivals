@@ -54,7 +54,7 @@ public final class Rivals extends JavaPlugin {
     private static ConfigurationSection settings;
     private static EventManager eventManager;
     private static ResourceManager resourceManager;
-    private int taskId;
+    private Task task;
 
     @Override
     public void onEnable() {
@@ -70,8 +70,8 @@ public final class Rivals extends JavaPlugin {
         registerListeners();
         registerCommands();
 
-
-        taskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Task(), 0, 3600);
+        task = new Task();
+        task.runTaskTimerAsynchronously(this, 0, 3600);
     }
 
     private class Task extends BukkitRunnable {
@@ -84,7 +84,7 @@ public final class Rivals extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getServer().getScheduler().cancelTask(taskId);
+        task.cancel();
         saveData();
         Bukkit.getLogger().log(Level.INFO, "[Rivals] Closing!");
     }
