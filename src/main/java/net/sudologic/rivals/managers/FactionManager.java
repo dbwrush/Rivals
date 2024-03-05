@@ -1,4 +1,4 @@
-package net.sudologic.rivals;
+package net.sudologic.rivals.managers;
 
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;

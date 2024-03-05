@@ -2,7 +2,7 @@ package net.sudologic.rivals.commands.home;
 
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
-import net.sudologic.rivals.FactionManager;
+import net.sudologic.rivals.managers.FactionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

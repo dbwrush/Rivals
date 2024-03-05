@@ -54,7 +54,7 @@ public final class Rivals extends JavaPlugin {
     private static ConfigurationSection settings;
     private static EventManager eventManager;
     private static ResourceManager resourceManager;
-    private Task task;
+    private int taskId;
 
     @Override
     public void onEnable() {
@@ -70,8 +70,8 @@ public final class Rivals extends JavaPlugin {
         registerListeners();
         registerCommands();
 
-        task = new Task();
-        task.runTaskTimer(this, 0, 3600);
+
+        taskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Task(), 0, 3600);
     }
 
     private class Task extends BukkitRunnable {
@@ -84,7 +84,7 @@ public final class Rivals extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        task.cancel();
+        getServer().getScheduler().cancelTask(taskId);
         saveData();
         Bukkit.getLogger().log(Level.INFO, "[Rivals] Closing!");
     }
@@ -95,6 +95,7 @@ public final class Rivals extends JavaPlugin {
         }
         getConfig().set("factionManager", factionManager);
         getConfig().set("shopManager", shopManager);
+        getConfig().set("claimManager", claimManager);
         getConfig().set("resourceManager", resourceManager);
 
         //System.out.println(getConfig().get("data"));
@@ -138,6 +139,9 @@ public final class Rivals extends JavaPlugin {
         } else {
             shopManager = new ShopManager();
         }
+        if(getConfig().get("claimManager") != null) {
+            claimManager = (ClaimManager) getConfig().get("claimManager", ClaimManager.class);
+        }
         if(getConfig().get("resourceManager") != null) {
             resourceManager = (ResourceManager) getConfig().get("resourceManager", ResourceManager.class);
         }
@@ -145,10 +149,6 @@ public final class Rivals extends JavaPlugin {
 
     public static ConfigurationSection getSettings() {
         return settings;
-    }
-
-    public static ResourceManager getResourceManager() {
-        return resourceManager;
     }
 
     public void createCustomConfig() {

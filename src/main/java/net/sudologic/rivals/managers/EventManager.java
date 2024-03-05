@@ -1,6 +1,8 @@
-package net.sudologic.rivals;
+package net.sudologic.rivals.managers;
 
 import com.nisovin.shopkeepers.api.events.*;
+import net.sudologic.rivals.Faction;
+import net.sudologic.rivals.Rivals;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;

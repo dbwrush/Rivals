@@ -113,7 +113,7 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public int getMaxHomes() {
-        return (int) Math.round(Math.sqrt(power)/2);
+        return (int) Math.round(Math.sqrt(getPower())/2);
     }
 
     public UUID getLeader() {
@@ -145,6 +145,8 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public double getPower() {
+        if(Rivals.getPoliticsManager().getSanctionedFactions().containsKey(factionID))
+            return power / 2;
         return power;
     }
 
