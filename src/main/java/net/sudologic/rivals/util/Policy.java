@@ -1,5 +1,6 @@
 package net.sudologic.rivals.util;
 
+import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import net.sudologic.rivals.managers.FactionManager;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -80,9 +81,9 @@ public class Policy implements ConfigurationSerializable {
         return nays;
     }
 
-    public Policy(PolicyType type, Object one, Object two) {
+    public Policy(PolicyType type, Object one, Object two, int proposedBy) {
         this.type = type;
-
+        this.proposedTime = System.currentTimeMillis();
         switch (type) {
             case denounce, sanction, intervention, custodian -> {
                 this.target = (int) one;
@@ -138,14 +139,17 @@ public class Policy implements ConfigurationSerializable {
         double total = 0;
         FactionManager manager = Rivals.getFactionManager();
         for(int i : yays) {
-            yay += manager.getFactionByID(i).getPower();
-            total += manager.getFactionByID(i).getPower();
+            yay += manager.getFactionByID(i).getInfluence();
+            total += manager.getFactionByID(i).getInfluence();
         }
         for(int i : nays) {
-            total += manager.getFactionByID(i).getPower();
+            total += manager.getFactionByID(i).getInfluence();
         }
-
         return yay / total;
+    }
+
+    public int getNumYays() {
+        return yays.size();
     }
 
     @Override
@@ -164,6 +168,14 @@ public class Policy implements ConfigurationSerializable {
         serialized.put("nays", nays);
 
         return serialized;
+    }
+
+    public long getTimeLeft() {
+        return (proposedTime + Rivals.getPoliticsManager().getVotePassTime()) - System.currentTimeMillis();
+    }
+
+    public Faction getTargetFaction() {
+        return Rivals.getFactionManager().getFactionByID(target);
     }
 
     public int getId() {

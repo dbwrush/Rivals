@@ -25,6 +25,9 @@ commands:
   homes:
     description: Lists your homes
     usage: /homes
+  policy:
+    description: Propose policy changes
+    usage: /policy
 
 permissions:
   rivals.admin:

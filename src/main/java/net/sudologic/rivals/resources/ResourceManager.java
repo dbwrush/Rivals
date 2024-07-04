@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -17,8 +18,9 @@ public class ResourceManager implements ConfigurationSerializable {
     int maxSpawners = 128;
     HashMap<Chunk, ResourceSpawner> spawners;
 
+
     public ResourceManager() {
-        spawners = new HashMap<Chunk, ResourceSpawner>();
+        spawners = new HashMap<>();
     }
 
     public void addSpawner() {
@@ -32,9 +34,13 @@ public class ResourceManager implements ConfigurationSerializable {
     }
 
     public Location pickLocation(World w) {
+        int d = Rivals.getResourceDistance();
         WorldBorder b = w.getWorldBorder();
-        double x = b.getCenter().getBlockX() + (Math.random() * 2 - 1) * (b.getSize() / 2);
-        double z = b.getCenter().getBlockZ() + (Math.random() * 2 - 1) * (b.getSize() / 2);
+        Bukkit.getLogger().log(Level.INFO, "[Rivals] Resource Distance: " + d + " Center: " + b.getCenter().getBlockX() + ", " + b.getCenter().getBlockZ());
+        double x = b.getCenter().getBlockX() + (Math.random() * 2 - 1) * (d / 2);
+        Bukkit.getLogger().log(Level.INFO, "[Rivals] X: " + x);
+        double z = b.getCenter().getBlockZ() + (Math.random() * 2 - 1) * (d / 2);
+        Bukkit.getLogger().log(Level.INFO, "[Rivals] Z: " + z);
         double y = (w.getHighestBlockYAt((int) x, (int) z) + w.getMinHeight()) * Math.random() - w.getMinHeight();
         return new Location(w, x, y, z);
     }

@@ -69,7 +69,7 @@ public class FactionManager implements ConfigurationSerializable {
                 }
             }
         }
-        buildFactionRanks();
+        factionRankings = buildFactionRanks();
         //Bukkit.getLogger().log(Level.INFO, "[Rivals] Removed " + removedInvites + " invites because they were more than 7 days old.");
         //Bukkit.getLogger().log(Level.INFO, "[Rivals] Finished deserializing faction data.");
     }
@@ -177,6 +177,8 @@ public class FactionManager implements ConfigurationSerializable {
         memberInvites = new ArrayList<>();
         allyInvites = new ArrayList<>();
         peaceInvites = new ArrayList<>();
+        upcomingWars = new ArrayList<>();
+        factionRankings = buildFactionRanks();
     }
 
     public boolean addFaction(Faction f) {

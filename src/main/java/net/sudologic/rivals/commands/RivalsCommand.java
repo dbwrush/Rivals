@@ -4,14 +4,15 @@ import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
 import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.sudologic.rivals.*;
-import net.sudologic.rivals.ClaimManager;
-import net.sudologic.rivals.FactionManager;
-import net.sudologic.rivals.ShopManager;
+import net.sudologic.rivals.managers.ClaimManager;
+import net.sudologic.rivals.managers.FactionManager;
+import net.sudologic.rivals.managers.ShopManager;
 import net.sudologic.rivals.util.NameFetcher;
 import net.sudologic.rivals.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,22 +20,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
 public class RivalsCommand implements CommandExecutor {
-
-    private double minShopPower;
-    private int maxNameLength;
-
-    public RivalsCommand(ConfigurationSection settings) {
-        minShopPower = (double) settings.get("minShopPower");
-        maxNameLength = (int) settings.get("maxNameLength");
-        /*minShopPower = 10;
-        maxNameLength = 16;*/
-    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -60,7 +52,7 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] " + name + " already exists.");
                     return true;
                 }
-                if(name.length() > maxNameLength) {
+                if(name.length() > (int)Rivals.getSettings().get("maxNameLength")) {
                     p.sendMessage("[Rivals] That name is too long.");
                     return true;
                 }
@@ -117,7 +109,11 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] Incorrect player name, did you spell it right?");
                     return true;
                 }
-                if(faction.removeMember(newLeaderID)) {
+                if(!faction.getMembers().contains(newLeaderID)) {
+                    p.sendMessage("[Rivals] That player is not in your faction.");
+                    return true;
+                }
+                if(faction.setLeader(newLeaderID)) {
                     p.sendMessage("[Rivals] Made " + args[1] + " the leader of your faction.");
                     faction.sendMessageToOnlineMembers(args[1] + " is now the leader of your faction.");
                     return true;
@@ -204,9 +200,9 @@ public class RivalsCommand implements CommandExecutor {
 
                 if(now) {
                     boolean mutual = enemy != null && enemy.getEnemies().contains(faction.getAllies());
-                    if(faction.getPower() > (double)Rivals.getSettings().get("warNowPower") || mutual) {
+                    if(faction.getPower() > (double)Rivals.getSettings().get("nowWarPower") || mutual) {
                         if(!mutual)
-                            faction.rawPowerChange((double)Rivals.getSettings().get("warNowPower"));
+                            faction.rawPowerChange((double)Rivals.getSettings().get("nowWarPower") * -1);
                         if(faction.addEnemy(enemy.getID())) {
                             p.sendMessage("[Rivals] You are now enemies with " + enemyName);
                         } else {
@@ -329,7 +325,7 @@ public class RivalsCommand implements CommandExecutor {
                         String id = existingClaim.getId();
                         Faction f = manager.getFactionByID(Integer.valueOf(id.split("_")[2]));
                         if(f != null) {
-                            if(faction.getEnemies().contains(f.getID())) {
+                            if(faction.getHostileFactions().contains(f.getID())) {
                                 double enemyStrength = claimManager.getClaimStrength(f);
                                 if(myStrength > enemyStrength * 1.5) {
                                     claimManager.removeClaim(c, f);
@@ -501,11 +497,26 @@ public class RivalsCommand implements CommandExecutor {
                 p.sendMessage("[Rivals] Successfully changed faction color to " + faction.getColor() + faction.getName());
                 return true;
             }
-
+            else if("cashout".equals(args[0])) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be in a faction to cash out.");
+                    return true;
+                }
+                int amount;
+                if(args.length < 2) {
+                    amount = faction.remInfluence(faction.getInfluence());
+                } else {
+                    amount = faction.remInfluence(Integer.parseInt(args[1]));
+                }
+                p.getInventory().addItem(new ItemStack(Material.DIAMOND, amount));
+            }
             else if("help".equals(args[0])) {
                 String[] commands = {
                     "§e/rivals create <factionName> §f- Creates a new Faction.",
+                    "§e/rivals kick <playerName> §f- Kicks player from faction if you are leader.",
+                    "§e/rivals leader <playerName> §f- Promote a player to team leader.",
                     "§e/rivals invite <playerName> §f- Invites a player to your faction.",
+                    "§e/rivals invites §f- Lists your current invites.",
                     "§e/rivals join <factionName> §f- Joins a faction that has invited you.",
                     "§e/rivals leave §f- Leaves your current faction.",
                     "§e/rivals enemy <factionName> §f- Declare another faction to be your enemy.",
@@ -513,15 +524,14 @@ public class RivalsCommand implements CommandExecutor {
                     "§e/rivals peace <factionName> §f- Propose/Accept peace with another faction.",
                     "§e/rivals unally <factionName> §f- Ends your alliance with another faction.",
                     "§e/rivals claim §f- Claim the chunk you are standing in for your faction.",
+                    "§e/rivals unclaim §f- Unclaim a chunk your faction owns.",
                     "§e/rivals info <factionName> §f- Display info for a faction.",
-                    "§e/rivals map §f- Display a map of nearby claims.",
                     "§e/rivals list <pageNumber> §f- Display the faction list, you may specify a page number.",
+                    "§e/rivals map §f- Display a map of nearby claims.",
                     "§e/rivals color <colorCode> §f- Sets the color for your faction using Minecraft color codes.",
-                    "§e/rivals shop §f- Opens the edit menu for your faction's shop.",
-                    "§e/rivals rename <newName> §f- Changes your faction's name.",
-                    "§e/rivals kick <playerName> §f- Kicks player from faction if you are leader.",
-                    "§e/rivals leader <playerName> §f- Promote a player to team leader.",
-                    "§e/rivals invites §f- Lists your current invites."
+                    "§e/rivals cashout [amount] §f- Cash out your faction's influence for diamonds.",
+                    "§e/rivals pay <factionName> <amount> §f- Pay influence to another faction.",
+                    "§e/rivals shop [create/close] §f- Manage your faction's shop."
                     // "§e/rivals INSERT NAME HERE §f- INSERT DESCRIPTION HERE."
                 };
 
@@ -581,7 +591,31 @@ public class RivalsCommand implements CommandExecutor {
 
                     return true;
             }
-
+            else if("pay".equals(args[0])) {
+                if(faction == null) {
+                    p.sendMessage("[Rivals] You must be in a faction to pay them.");
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage("[Rivals] Please include the name of the faction you wish to pay");
+                    return true;
+                }
+                if(args.length < 3) {
+                    p.sendMessage("[Rivals] Please include the amount you wish to pay");
+                    return true;
+                }
+                String factionName = args[1];
+                int amount = Integer.parseInt(args[2]);
+                Faction payF = manager.getFactionByNameImprecise(factionName);
+                if(faction.getInfluence() < amount) {
+                    p.sendMessage("[Rivals] You can't afford to pay that much influence");
+                } else {
+                    faction.remInfluence(amount);
+                    payF.addInfluence(amount);
+                    p.sendMessage("[Rivals] Paid " + amount + " influence to " + payF.getColor() + payF.getName());
+                }
+                return true;
+            }
             else if("shop".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage("[Rivals] You must be in a faction to access your faction's shop");
@@ -595,7 +629,7 @@ public class RivalsCommand implements CommandExecutor {
                             p.sendMessage("[Rivals] Your faction already has a shop!");
                             return true;
                         } else {
-                            if (faction.getPower() < minShopPower) {
+                            if (faction.getPower() < (double) Rivals.getSettings().get("minShopPower")) {
                                 p.sendMessage("[Rivals] Your faction has too little power to open a shop.");
                                 return true;
                             }
@@ -655,7 +689,7 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] " + name + " already exists.");
                     return true;
                 }
-                if(name.length() > maxNameLength) {
+                if(name.length() > (int) Rivals.getSettings().get("maxNameLength")) {
                     p.sendMessage("[Rivals] That name is too long.");
                     return true;
                 }
@@ -668,7 +702,7 @@ public class RivalsCommand implements CommandExecutor {
             }
         }
         else {
-            p.sendMessage("[Rivals] Pick a subcommand: create, invite, join, leave, enemy, ally, peace, unally, claim, info, list, map, color, shop, rename");
+            p.sendMessage("[Rivals] Options: create, kick, leader, invite, invites, join, leave, enemy, ally, peace, unally, claim, unclaim, info, list, map, color, cashout, help, pay, shop, rename");
         }
         return true;
     }

@@ -1,11 +1,13 @@
 package net.sudologic.rivals;
 
 import net.sudologic.rivals.commands.AdminCommand;
+import net.sudologic.rivals.commands.PolicyCommand;
 import net.sudologic.rivals.commands.RivalsCommand;
 import net.sudologic.rivals.commands.home.DelHomeCommand;
 import net.sudologic.rivals.commands.home.HomeCommand;
 import net.sudologic.rivals.commands.home.HomesCommand;
 import net.sudologic.rivals.commands.home.SetHomeCommand;
+import net.sudologic.rivals.managers.*;
 import net.sudologic.rivals.resources.ResourceManager;
 import net.sudologic.rivals.resources.ResourceSpawner;
 import org.bukkit.Bukkit;
@@ -50,11 +52,69 @@ public final class Rivals extends JavaPlugin {
     private static FactionManager factionManager;
     private static ClaimManager claimManager;
     private static ShopManager shopManager;
+    private static PoliticsManager politicsManager;
     private static RivalsCommand command;
     private static ConfigurationSection settings;
     private static EventManager eventManager;
     private static ResourceManager resourceManager;
-    private int taskId;
+    private Task t;
+
+    public static boolean changeSetting(String settingName, String settingValue) {
+        try {
+            switch (settingName) {
+                case "minShopPower", "killEntityPower", "killNeutralPower", "killAllyPower", "killEnemyPower", "deathPowerLoss", "tradePower", "defaultPower", "nowWarPower", "votePassRatio", "warDelay" -> {
+                    double value = Double.parseDouble(settingValue);
+                    settings.set(settingName, value);
+                    return true;
+                }
+                case "maxNameLength", "minVotes", "resourceDistance", "votePassTime" -> {
+                    int value = Integer.parseInt(settingValue);
+                    settings.set(settingName, value);
+                    return true;
+                }
+                default -> {
+                    settings.set(settingName, settingValue);
+                    return true;
+                }
+            }
+        } catch (NumberFormatException e) {
+            return false; // The provided settingValue could not be cast to the correct type.
+        }
+    }
+
+    public static boolean validSetting(String settingName, String settingValue) {
+        try {
+            switch (settingName) {
+                case "deathPowerLoss" -> {
+                    if(Double.parseDouble(settingValue) > 0) {
+                        return false;
+                    }
+                    return true;
+                }
+                case "killNeutralPower", "killAllyPower" -> {
+                    Double.parseDouble(settingValue);
+                    return true;
+                }
+                case "minShopPower", "killEnemyPower", "combatTeleportDelay", "killEntityPower", "tradePower", "defaultPower", "nowWarPower", "votePassRatio", "warDelay" -> {
+                    if(Double.parseDouble(settingValue) < 0) {
+                        return false;
+                    }
+                    return true;
+                }
+                case "maxNameLength", "minVotes", "resourceDistance", "votePassTime" -> {
+                    if(Integer.parseInt(settingValue) < 0) {
+                        return false;
+                    }
+                    return true;
+                }
+                default -> {
+                    return true;
+                }
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     @Override
     public void onEnable() {
@@ -70,8 +130,8 @@ public final class Rivals extends JavaPlugin {
         registerListeners();
         registerCommands();
 
-
-        taskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Task(), 0, 3600);
+        t = new Task();
+        t.runTaskTimer(this, 0, 3600);
     }
 
     private class Task extends BukkitRunnable {
@@ -79,12 +139,13 @@ public final class Rivals extends JavaPlugin {
         public void run() {
             resourceManager.update();
             factionManager.startWars();
+            politicsManager.update();
         }
     }
 
     @Override
     public void onDisable() {
-        getServer().getScheduler().cancelTask(taskId);
+        t.cancel();
         saveData();
         Bukkit.getLogger().log(Level.INFO, "[Rivals] Closing!");
     }
@@ -95,8 +156,8 @@ public final class Rivals extends JavaPlugin {
         }
         getConfig().set("factionManager", factionManager);
         getConfig().set("shopManager", shopManager);
-        getConfig().set("claimManager", claimManager);
         getConfig().set("resourceManager", resourceManager);
+        getConfig().set("politicsManager", politicsManager);
 
         //System.out.println(getConfig().get("data"));
         saveConfig();
@@ -107,7 +168,7 @@ public final class Rivals extends JavaPlugin {
             settings = (ConfigurationSection) getConfig().get("settings");
         } else {
             settings = new YamlConfiguration();
-            Bukkit.getLogger().log(Level.INFO, "No existing settings, creating them.");
+            Bukkit.getLogger().log(Level.INFO, "[Rivals] No existing settings, creating them.");
         }
         if(!settings.contains("minShopPower"))
             settings.set("minShopPower", 10.0);
@@ -115,10 +176,14 @@ public final class Rivals extends JavaPlugin {
             settings.set("killEntityPower", 0.0);
         if(!settings.contains("killMonsterPower"))
             settings.set("killMonsterPower", 1.0);
-        if(!settings.contains("killPlayerPower"))
-            settings.set("killPlayerPower", 3.0);
+        if(!settings.contains("killEnemyPower"))
+            settings.set("killEnemyPower", 3.0);
+        if(!settings.contains("killNeutralPower"))
+            settings.set("killNeutralPower", 0.0);
+        if(!settings.contains("killAllyPower"))
+            settings.set("killAllyPower", -3.0);
         if(!settings.contains("deathPowerLoss"))
-            settings.set("deathPowerLoss", -4.0);
+            settings.set("deathPowerLoss", 4.0);
         if(!settings.contains("tradePower"))
             settings.set("tradePower", 1.0);
         if(!settings.contains("defaultPower"))
@@ -126,9 +191,19 @@ public final class Rivals extends JavaPlugin {
         if(!settings.contains("maxNameLength"))
             settings.set("maxNameLength", 16);
         if(!settings.contains("warDelay"))
-            settings.set("warDelay", 48);//in hours
+            settings.set("warDelay", 48.0);//in hours
         if(!settings.contains("nowWarPower"))
-            settings.set("nowWarPower", 20);
+            settings.set("nowWarPower", 20.0);
+        if(!settings.contains("votePassRatio"))
+            settings.set("votePassRatio", 0.5);
+        if(!settings.contains("votePassTime"))
+            settings.set("votePassTime", 24);
+        if(!settings.contains("minVotes"))
+            settings.set("minVotes", 3);
+        if(!settings.contains("resourceDistance"))
+            settings.set("resourceDistance", 10000);
+        if(!settings.contains("combatTeleportDelay"))
+            settings.set("combatTeleportDelay", 120.0);
         if(getConfig().get("factionManager") != null) {
             factionManager = (FactionManager) getConfig().get("factionManager", FactionManager.class);
         } else {
@@ -139,8 +214,10 @@ public final class Rivals extends JavaPlugin {
         } else {
             shopManager = new ShopManager();
         }
-        if(getConfig().get("claimManager") != null) {
-            claimManager = (ClaimManager) getConfig().get("claimManager", ClaimManager.class);
+        if(getConfig().get("politicsManager") != null) {
+            politicsManager = (PoliticsManager) getConfig().get("politicsManager", PoliticsManager.class);
+        } else {
+            politicsManager = new PoliticsManager();
         }
         if(getConfig().get("resourceManager") != null) {
             resourceManager = (ResourceManager) getConfig().get("resourceManager", ResourceManager.class);
@@ -166,6 +243,10 @@ public final class Rivals extends JavaPlugin {
         readData();
     }
 
+    public static int getResourceDistance() {
+        return (int) settings.get("resourceDistance");
+    }
+
     public void createConfigs() {
         this.saveDefaultConfig();
         this.getConfig();
@@ -173,7 +254,7 @@ public final class Rivals extends JavaPlugin {
 
     public void registerListeners() {
         PluginManager pm = Bukkit.getPluginManager();
-        eventManager = new EventManager(settings);
+        eventManager = new EventManager();
         pm.registerEvents(eventManager, this);
     }
 
@@ -182,13 +263,14 @@ public final class Rivals extends JavaPlugin {
     }
 
     public void registerCommands() {
-        command = new RivalsCommand(settings);
+        command = new RivalsCommand();
         this.getCommand("rivals").setExecutor(command);
         this.getCommand("rivalsadmin").setExecutor(new AdminCommand());
         this.getCommand("home").setExecutor(new HomeCommand());
         this.getCommand("sethome").setExecutor(new SetHomeCommand());
         this.getCommand("delHome").setExecutor(new DelHomeCommand());
         this.getCommand("homes").setExecutor(new HomesCommand());
+        this.getCommand("policy").setExecutor(new PolicyCommand());
     }
 
     public void registerClasses() {
@@ -198,6 +280,7 @@ public final class Rivals extends JavaPlugin {
         ConfigurationSerialization.registerClass(FactionManager.AllyInvite.class);
         ConfigurationSerialization.registerClass(FactionManager.PeaceInvite.class);
         ConfigurationSerialization.registerClass(ShopManager.class);
+        ConfigurationSerialization.registerClass(PoliticsManager.class);
         ConfigurationSerialization.registerClass(Faction.Home.class);
         ConfigurationSerialization.registerClass(FactionManager.WarDeclaration.class);
         ConfigurationSerialization.registerClass(ResourceSpawner.class);
@@ -217,4 +300,8 @@ public final class Rivals extends JavaPlugin {
     }
 
     public static EventManager getEventManager() {return eventManager;}
+
+    public static PoliticsManager getPoliticsManager() {
+        return politicsManager;
+    }
 }

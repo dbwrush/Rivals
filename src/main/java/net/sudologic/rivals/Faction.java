@@ -18,6 +18,7 @@ public class Faction implements ConfigurationSerializable {
     private double power;
     private Map<String, Home> homes;
     private ChatColor color;
+    private int influence;
 
     private List<String> regions;
 
@@ -38,8 +39,27 @@ public class Faction implements ConfigurationSerializable {
         mapSerializer.put("regions", regions);
         mapSerializer.put("color", color.getChar());
         mapSerializer.put("homes", homes);
+        mapSerializer.put("influence", influence);
 
         return mapSerializer;
+    }
+
+    public int taxInfluence(float prop) {
+        int tax = (int) (influence * prop);
+        influence -= tax;
+        return tax;
+    }
+
+    public void payInfluence() {
+        influence += (int) (power * 0.1);
+    }
+
+    public void addInfluence(int amount) {
+        influence += amount;
+    }
+
+    public int getInfluence() {
+        return influence;
     }
 
     public Faction(Map<String, Object> serializedFaction) {
@@ -67,6 +87,11 @@ public class Faction implements ConfigurationSerializable {
             homes = (Map<String, Home>) serializedFaction.get("homes");
         } else {
             homes = new HashMap<>();
+        }
+        if(serializedFaction.containsKey("influence")) {
+            influence = (int) serializedFaction.get("influence");
+        } else {
+            influence = 0;
         }
     }
 
@@ -148,6 +173,18 @@ public class Faction implements ConfigurationSerializable {
         if(Rivals.getPoliticsManager().getSanctionedFactions().containsKey(factionID))
             return power / 2;
         return power;
+    }
+
+    public int remInfluence(int amount) {
+        int ret = 0;
+        if(amount < influence) {
+            influence -= amount;
+            ret = amount;
+        } else {
+            ret = influence;
+            influence = 0;
+        }
+        return ret;
     }
 
     public boolean addMember(UUID member) {
@@ -281,6 +318,15 @@ public class Faction implements ConfigurationSerializable {
     public List<Integer> getEnemies() {
         return enemyFactions;
     }
+
+    public List<Integer> getHostileFactions() {
+        List<Integer> l = new ArrayList<>();
+        l.addAll(enemyFactions);
+        l.addAll(Rivals.getPoliticsManager().getInterventionFactions().keySet());
+        l.removeAll(allyFactions);
+        return l;
+    }
+
     public List<Integer> getAllies() {
         return allyFactions;
     }
