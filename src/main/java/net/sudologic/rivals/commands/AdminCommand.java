@@ -65,7 +65,7 @@ public class AdminCommand implements CommandExecutor {
                 commandSender.sendMessage("[Rivals] Admin Command Help:\n" +
                         "- /rivalsadmin setMainShopRegion <id>: Set the main shop region.\n" +
                         "- /rivalsadmin scanForShopRegions: Scan for shop subregions.\n" +
-                        "- /rivalsadmin forceChangeSetting <setting> <value>: Forcefully change a setting.\n" +
+                        "- /rivalsadmin setting <setting> <value>: Forcefully change a setting.\n" +
                         "- /rivalsadmin stopProposal <id>: Stop a policy proposal.\n" +
                         "Use /rivalsadmin help for this message.");
                 return true;
