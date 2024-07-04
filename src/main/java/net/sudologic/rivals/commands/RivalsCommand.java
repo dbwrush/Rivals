@@ -714,7 +714,7 @@ public class RivalsCommand implements CommandExecutor {
         FactionManager manager = Rivals.getFactionManager();
         String mess = "";
         if("".equals(s)) {
-            mess = f.getName() + "\nPower: " + f.getPower();
+            mess = f.getName() + "\nPower: " + f.getPower() + "\nInfluence: " + f.getInfluence();
             String members = ChatColor.COLOR_CHAR + ChatColor.RESET.toString() + "\nMembers: ";
             if(f.getMembers().size() > 3) {
                 for(int i = 0; i < 3; i++) {
