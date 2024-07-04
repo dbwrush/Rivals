@@ -228,7 +228,7 @@ public class Faction implements ConfigurationSerializable {
 
     public boolean addAlly(int allyID) {
         if(!allyFactions.contains(allyID)) {
-            addAlly(allyID, false);
+            addAlly(allyID, true);
             return true;
         }
         return false;

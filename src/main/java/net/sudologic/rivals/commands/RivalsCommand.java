@@ -243,12 +243,15 @@ public class RivalsCommand implements CommandExecutor {
                     Faction imprecise = manager.getFactionByNameImprecise(allyName);
                     if(imprecise != null) {
                         p.sendMessage("[Rivals] There is no faction with that name. Maybe you meant " + imprecise.getName());
+                    } else {
+                        p.sendMessage("[Rivals] There is no faction with that name.");
                     }
                     return true;
                 }
                 if(manager.getAllyInvitesForFaction(faction.getID()).contains(ally.getID())) {
                     faction.addAlly(ally.getID());
                     manager.removeAllyInvite(ally.getID(), faction.getID());
+                    p.sendMessage("[Rivals] You are now allies with " + ally.getName());
                 } else {
                     manager.addAllyInvite(faction.getID(), ally.getID());
                     p.sendMessage("[Rivals] Sent alliance invite to " + ally.getName() + ", they can run the same command to accept the invite.");
@@ -413,7 +416,7 @@ public class RivalsCommand implements CommandExecutor {
                     }
                     start = (page - 1) * perPage;
                 }
-                for(int i = start; i < perPage + start && i < manager.getFactions().size(); i++) {
+                for(int i = start; i < perPage + start && i < rankings.size(); i++) {
                     Faction f = factions.get(rankings.get(i));
                     mess += "\n" + ChatColor.YELLOW + i + " " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + " " + ChatColor.RESET + f.getPower();
                 }

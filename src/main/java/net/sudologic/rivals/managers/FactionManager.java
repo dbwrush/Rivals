@@ -420,19 +420,19 @@ public class FactionManager implements ConfigurationSerializable {
     public void removeInvitesOver7Days() {
         List<MemberInvite> m = new ArrayList<>(memberInvites);
         for(MemberInvite i : m) {
-            if(i.time > System.currentTimeMillis() / 1000L + 604800) {
+            if(i.time > System.currentTimeMillis() + 604800000) {
                 memberInvites.remove(i);
             }
         }
         List<AllyInvite> a = new ArrayList<>(allyInvites);
         for(AllyInvite i : a) {
-            if(i.time > System.currentTimeMillis() / 1000L + 604800) {
+            if(i.time > System.currentTimeMillis() + 604800000) {
                 allyInvites.remove(i);
             }
         }
         List<PeaceInvite> p = new ArrayList<>(peaceInvites);
         for(PeaceInvite i : p) {
-            if(i.time > System.currentTimeMillis() / 1000L + 604800) {
+            if(i.time > System.currentTimeMillis() + 604800000) {
                 peaceInvites.remove(i);
             }
         }
@@ -451,7 +451,7 @@ public class FactionManager implements ConfigurationSerializable {
         public MemberInvite(int faction, UUID id) {
             this.faction = faction;
             this.player = id;
-            this.time = System.currentTimeMillis() / 1000L;
+            this.time = System.currentTimeMillis();
         }
 
         public int getFaction() {
@@ -463,7 +463,7 @@ public class FactionManager implements ConfigurationSerializable {
         }
 
         public long getRemainingTime() {
-            return (System.currentTimeMillis() / 1000L + 604800) - time;
+            return (System.currentTimeMillis() + 604800000) - time;
         }
 
         @Override
@@ -491,7 +491,7 @@ public class FactionManager implements ConfigurationSerializable {
         public AllyInvite(int inviter, int invitee) {
             this.inviter = inviter;
             this.invitee = invitee;
-            this.time = System.currentTimeMillis() / 1000L;
+            this.time = System.currentTimeMillis();
         }
 
         public int getInvitee() {
@@ -503,7 +503,7 @@ public class FactionManager implements ConfigurationSerializable {
         }
 
         public long getRemainingTime() {
-            return (System.currentTimeMillis() / 1000L + 604800) - time;
+            return (System.currentTimeMillis() + 604800000L) - time;
         }
 
         @Override
@@ -532,7 +532,7 @@ public class FactionManager implements ConfigurationSerializable {
         public PeaceInvite(int inviter, int invitee) {
             this.inviter = inviter;
             this.invitee = invitee;
-            this.time = System.currentTimeMillis() / 1000L;
+            this.time = System.currentTimeMillis();
         }
 
         public int getInvitee() {
@@ -544,7 +544,7 @@ public class FactionManager implements ConfigurationSerializable {
         }
 
         public long getRemainingTime() {
-            return (System.currentTimeMillis() / 1000L + 604800) - time;
+            return (System.currentTimeMillis() + 604800000) - time;
         }
 
         @Override
@@ -571,7 +571,8 @@ public class FactionManager implements ConfigurationSerializable {
             this.fid1 = (int) serialized.get("fid1");
             this.fid2 = (int) serialized.get("fid2");
             this.declareTime = (long) serialized.get("declareTime");
-            this.delay = (long) serialized.get("delay");
+
+            this.delay = (int) serialized.get("delay");
         }
 
         public WarDeclaration(int fid1, int fid2, long declareTime, long delay) {
