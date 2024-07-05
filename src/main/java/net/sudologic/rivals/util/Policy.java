@@ -24,6 +24,7 @@ public class Policy implements ConfigurationSerializable {
         denounce, //target, time
         sanction, //target, time
         unsanction, //target
+        unintervention, //target
         intervention, //target, time
         setting, //settingName, newValue
         custodian, //target, time

@@ -121,7 +121,7 @@ public class FactionManager implements ConfigurationSerializable {
         }
     }
 
-    public List<Integer> buildFactionRanks() {
+    public void buildFactionRanks() {
         // Create a list of faction IDs
         List<Integer> factionIDs = new ArrayList<>(factions.keySet());
 
@@ -137,7 +137,7 @@ public class FactionManager implements ConfigurationSerializable {
         });
 
         // Return the sorted faction IDs
-        return factionIDs;
+        factionRankings = factionIDs;
     }
 
     public void removeInvitesForFaction(Faction f) {
@@ -206,7 +206,7 @@ public class FactionManager implements ConfigurationSerializable {
 
     public Faction getFactionByName(String name) {
         for(Faction f : factions.values()) {
-            if(f.getName().equals(name)) {
+            if(f.getName().equalsIgnoreCase(name)) {
                 return f;
             }
         }
@@ -408,7 +408,7 @@ public class FactionManager implements ConfigurationSerializable {
 
     public boolean nameAlreadyExists(String name){
         for(Faction f : factions.values()) {
-            if(f.getName().equals(name)) {
+            if(f.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }

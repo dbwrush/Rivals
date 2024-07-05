@@ -95,6 +95,10 @@ public class PoliticsManager implements ConfigurationSerializable {
                 interventionFactions.put(p.getTarget(), p.getTime());
                 announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is now under intervention";
             }
+            case unintervention -> {
+                interventionFactions.remove(p.getTarget());
+                announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is no longer under intervention";
+            }
         }
         for(Player pl : Bukkit.getOnlinePlayers()) {
             pl.sendMessage(announce);
@@ -161,6 +165,7 @@ public class PoliticsManager implements ConfigurationSerializable {
         int taxRev = 0;
         if(custodian != -1) {
             for (Faction f : Rivals.getFactionManager().getFactions()) {
+                f.payInfluence();
                 int am = f.taxInfluence(custodianBudget);
                 taxRev += am;
                 f.sendMessageToOnlineMembers("[Rivals] You have paid " + am + " influence to the custodian");
@@ -204,7 +209,7 @@ public class PoliticsManager implements ConfigurationSerializable {
         return proposed;
     }
 
-    public int propose(Policy policy) {
+    public Policy propose(Policy policy) {
         if(proposed.size() < 2048) {
             policy.setId((int) (Math.random() * 2048));
             if(proposed.keySet().contains(policy.getId())) {
@@ -216,9 +221,9 @@ public class PoliticsManager implements ConfigurationSerializable {
                 }
             }
             proposed.put(policy.getId(), policy);
-            return policy.getId();
+            return policy;
         }
-        return -1;
+        return null;
     }
 
     public int getCustodian() {

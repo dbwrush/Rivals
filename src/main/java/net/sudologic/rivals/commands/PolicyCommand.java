@@ -50,10 +50,14 @@ public class PolicyCommand implements CommandExecutor {
             }
             if(args[0].equals("propose")) {
                 if(args.length < 3) {
-                    commandSender.sendMessage("[Rivals] Invalid syntax");
+                    commandSender.sendMessage("[Rivals] Usage: /policy propose <type> <arg1> <arg2>...");
                     return true;
                 }
                 Faction f = Rivals.getFactionManager().getFactionByPlayer(p.getUniqueId());
+                if(f == null) {
+                    commandSender.sendMessage("[Rivals] You must be in a faction to propose a policy.");
+                    return true;
+                }
                 Policy.PolicyType type;
                 try {
                     type = Policy.PolicyType.valueOf(args[1].toLowerCase());
@@ -61,35 +65,37 @@ public class PolicyCommand implements CommandExecutor {
                     commandSender.sendMessage("[Rivals] No policy type with that name");
                     return true;
                 }
-                int id = -1;
+                Policy policy = null;
                 switch (type) {
                     case denounce, sanction, intervention, custodian -> {
                         if(args.length < 4) {
-                            commandSender.sendMessage("[Rivals] Invalid syntax");
+                            commandSender.sendMessage("[Rivals] Usage: /policy propose " + type.name() + " <faction> <hours>");
                             return true;
                         }
-                        Integer target = Ints.tryParse(args[2]);
+                        Faction target = Rivals.getFactionManager().getFactionByName(args[2]);
                         Long time = Longs.tryParse(args[3]) * 3600000 + System.currentTimeMillis();
                         if(target != null && time != null)
-                            id = Rivals.getPoliticsManager().propose(new Policy(type, target, time, f.getID()));
+                            policy = Rivals.getPoliticsManager().propose(new Policy(type, target.getID(), time, f.getID()));
                         else {
-                            commandSender.sendMessage("[Rivals] Invalid syntax");
+                            commandSender.sendMessage("[Rivals] Usage: /policy propose " + type.name() + " <faction> <hours>");
                             return true;
                         }
                     }
                     case budget -> {
                         Float budget = Floats.tryParse(args[2]);
                         if(budget != null)
-                            id = Rivals.getPoliticsManager().propose(new Policy(type, budget, null, f.getID()));
+                            policy = Rivals.getPoliticsManager().propose(new Policy(type, budget, null, f.getID()));
                         else {
-                            commandSender.sendMessage("[Rivals] Invalid syntax");
+                            commandSender.sendMessage("[Rivals] Usage: /policy propose budget <percentage>");
                             return true;
                         }
                     }
-                    case mandate -> id = Rivals.getPoliticsManager().propose(new Policy(type, args[2], null, f.getID()));
+                    case mandate -> {
+                        policy = Rivals.getPoliticsManager().propose(new Policy(type, args[2], null, f.getID()));
+                    }
                     case setting -> {
                         if(args.length < 4) {
-                            commandSender.sendMessage("[Rivals] Invalid syntax");
+                            commandSender.sendMessage("[Rivals] Usage: /policy propose setting <setting> <value>");
                             return true;
                         }
                         if(!ALLOWED_SETTINGS.contains(args[2])) {
@@ -97,31 +103,33 @@ public class PolicyCommand implements CommandExecutor {
                             return true;
                         }
                         if(!Rivals.validSetting(args[2], args[3])) {
-                            commandSender.sendMessage("[Rivals] Invalid setting value.");
+                            commandSender.sendMessage("[Rivals] Not a valid value for that setting.");
                             return true;
                         }
-                        id = Rivals.getPoliticsManager().propose(new Policy(type, args[2], args[3], f.getID()));
+                        policy = Rivals.getPoliticsManager().propose(new Policy(type, args[2], args[3], f.getID()));
                     }
-                    case unsanction -> {
-                        Integer target = Ints.tryParse(args[2]);
+                    case unsanction, unintervention -> {
+                        Faction target = Rivals.getFactionManager().getFactionByName(args[2]);
                         if(target != null) {
-                            id = Rivals.getPoliticsManager().propose(new Policy(type, target, null, f.getID()));
+                            policy = Rivals.getPoliticsManager().propose(new Policy(type, target.getID(), null, f.getID()));
                         } else {
-                            commandSender.sendMessage("[Rivals] Invalid syntax");
+                            commandSender.sendMessage("[Rivals] Usage: /policy propose " + type.name() + " <faction>");
                             return true;
                         }
                     }
                     default -> {
-                        commandSender.sendMessage("[Rivals] Invalid syntax");
+                        commandSender.sendMessage("[Rivals] Provide a subcommand.");
                         return true;
                     }
                 }
-                commandSender.sendMessage("[Rivals] Proposed resolution " + id);
+                commandSender.sendMessage("[Rivals] Proposed resolution.");
+                policy.vote(f.getID(), true);
+                describePolicy(Rivals.getPoliticsManager().getProposed().get(policy));
                 return true;
 
             } else if(args[0].equals("vote")) {
                 if(args.length < 3) {
-                    commandSender.sendMessage("[Rivals] Invalid syntax");
+                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay>");
                     return true;
                 }
                 Integer id = Ints.tryParse(args[2]);
@@ -133,7 +141,7 @@ public class PolicyCommand implements CommandExecutor {
                 if(args[2].equals("yay") || args[2].equals("yes") || args[2].equals("aye") || args[2].equals("y")) {
                     yay = true;
                 } else if(!args[2].equals("nay") && !args[2].equals("no") && !args[2].equals("n")) {
-                    commandSender.sendMessage("[Rivals] Invalid syntax");
+                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay>");
                     return true;
                 }
                 Faction faction = Rivals.getFactionManager().getFactionByPlayer(((Player) commandSender).getUniqueId());
@@ -145,7 +153,7 @@ public class PolicyCommand implements CommandExecutor {
                         commandSender.sendMessage("[Rivals] Your faction has voted in opposition of resolution " + id);
                     }
                 } else {
-                    commandSender.sendMessage("[Rivals] Invalid syntax");
+                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay>");
                 }
                 return true;
 
@@ -156,14 +164,14 @@ public class PolicyCommand implements CommandExecutor {
             }
             else if(args[0].equals("get")) {
                 if(args.length < 2) {
-                    commandSender.sendMessage("[Rivals] Invalid syntax");
+                    commandSender.sendMessage("[Rivals] Usage: /policy get <setting | proposal-id>");
                     return true;
                 }
                 if(args[1].equals("setting") && args.length < 3) {
-                    commandSender.sendMessage("[Rivals] Invalid syntax");
+                    commandSender.sendMessage("[Rivals] Usage: /policy get setting <setting>");
                     return true;
                 }
-                try {
+                try {//see if user passed a proposal id, if so describe that proposal
                     if (Integer.parseInt(args[1]) != 0) {
                         Policy policy = Rivals.getPoliticsManager().getProposed().get(Integer.parseInt(args[1]));
                         if (policy == null) {
@@ -173,10 +181,8 @@ public class PolicyCommand implements CommandExecutor {
                         commandSender.sendMessage(describePolicy(policy));
                         return true;
                     }
+                } catch (NumberFormatException e) {//otherwise see if user passed a setting name
                     Rivals.getPoliticsManager().displayPolicy(args, (Player) commandSender);
-                    return true;
-                } catch (NumberFormatException e) {
-                    commandSender.sendMessage("[Rivals] Invalid syntax");
                     return true;
                 }
             } else if(args[0].equals("help")) {
