@@ -136,7 +136,7 @@ public class PolicyCommand implements CommandExecutor {
                     commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay>");
                     return true;
                 }
-                Integer id = Ints.tryParse(args[2]);
+                Integer id = Ints.tryParse(args[1]);
                 if(id == null || !Rivals.getPoliticsManager().getProposed().keySet().contains(id)) {
                     commandSender.sendMessage("[Rivals] No resolution with that id.");
                     return true;
