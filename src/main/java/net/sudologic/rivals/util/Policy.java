@@ -123,7 +123,7 @@ public class Policy implements ConfigurationSerializable {
     }
 
     public Policy(Map<String, Object> serialized) {
-        this.type = (PolicyType) serialized.get("type");
+        this.type = PolicyType.valueOf((String) serialized.get("type")); //(PolicyType) serialized.get("type");
         this.proposedBy = (int) serialized.get("proposedBy");
         this.proposedTime = (long) serialized.get("proposedTime");
         this.time = (int) serialized.getOrDefault("time", 0);
@@ -147,6 +147,9 @@ public class Policy implements ConfigurationSerializable {
         for(int i : nays) {
             total += manager.getFactionByID(i).getInfluence();
         }
+        if(total == 0) {
+            return 0;
+        }
         return yay / total;
     }
 
@@ -157,7 +160,7 @@ public class Policy implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> serialized = new HashMap<>();
-        serialized.put("type", type);
+        serialized.put("type", type.toString());
         serialized.put("proposedBy", proposedBy);
         serialized.put("proposedTime", proposedTime);
         serialized.put("time", time);

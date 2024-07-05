@@ -128,7 +128,7 @@ public class PolicyCommand implements CommandExecutor {
                 }
                 commandSender.sendMessage("[Rivals] Proposed resolution.");
                 policy.vote(f.getID(), true);
-                describePolicy(policy);
+                commandSender.sendMessage(describePolicy(policy));
                 return true;
 
             } else if(args[0].equals("vote")) {
