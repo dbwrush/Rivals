@@ -51,7 +51,7 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public void payInfluence() {
-        influence += Math.round(power * 0.1);//(int) (power * 0.1);
+        influence += power * 0.1;//(int) (power * 0.1);
     }
 
     public void addInfluence(int amount) {
