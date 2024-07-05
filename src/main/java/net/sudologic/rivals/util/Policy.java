@@ -130,7 +130,11 @@ public class Policy implements ConfigurationSerializable {
         this.settingName = (String) serialized.getOrDefault("settingName", null);
         this.mandate = (String) serialized.getOrDefault("mandate", null);
         this.settingValue = (String) serialized.getOrDefault("settingValue", null);
-        this.budget = (float) serialized.getOrDefault("budget", 0f);
+        try {
+            this.budget = (float) serialized.getOrDefault("budget", 0f);
+        } catch (Exception e) {
+            this.budget = (float) (double)serialized.getOrDefault("budget", 0d);
+        }
         this.id = (int) serialized.get("id");
         this.yays = (ArrayList<Integer>) serialized.get("yays");
         this.nays = (ArrayList<Integer>) serialized.get("nays");

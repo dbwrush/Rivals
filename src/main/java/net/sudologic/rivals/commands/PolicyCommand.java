@@ -6,6 +6,7 @@ import com.google.common.primitives.Longs;
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import net.sudologic.rivals.util.Policy;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,9 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import static net.sudologic.rivals.util.Policy.PolicyType.unintervention;
+import static net.sudologic.rivals.util.Policy.PolicyType.unsanction;
 
 public class PolicyCommand implements CommandExecutor {
 
@@ -110,6 +114,14 @@ public class PolicyCommand implements CommandExecutor {
                     }
                     case unsanction, unintervention -> {
                         Faction target = Rivals.getFactionManager().getFactionByName(args[2]);
+                        if(type == unsanction && !Rivals.getPoliticsManager().getSanctionedFactions().containsKey(target.getID())) {
+                            commandSender.sendMessage("[Rivals] That faction is not currently sanctioned.");
+                            return true;
+                        }
+                        if(type == unintervention && !Rivals.getPoliticsManager().getInterventionFactions().containsKey(target.getID())) {
+                            commandSender.sendMessage("[Rivals] There is no intervention against that faction.");
+                            return true;
+                        }
                         if(target != null) {
                             policy = Rivals.getPoliticsManager().propose(new Policy(type, target.getID(), null, f.getID()));
                         } else {
@@ -210,18 +222,22 @@ public class PolicyCommand implements CommandExecutor {
     }
 
     public String describePolicy(Policy p) {
-        String s = "" + p.getId() + ": " + (p.support() * 100) + "% support | Proposed by " + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getName() + " | " + (p.getTimeLeft() / 3600000) + " hours remaining\n";
+        String s = "" + p.getId() + ": " + (p.support() * 100) + "% support | Proposed by " + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getColor() + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getName() + ChatColor.RESET + " | " + (p.getTimeLeft() / 3600000) + " hours remaining\n";
         switch (p.getType()) {
-            case denounce -> s += "Denounce Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
-            case sanction -> s += "Sanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
-            case intervention -> s += "Intervene against Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
-            case custodian -> s += "Nominate Custodian " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
-            case unsanction -> s += "Unsanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName();
+            case denounce -> s += "Denounce Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET + " for " + p.getTime() + " hours";
+            case sanction -> s += "Sanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET +  " for " + p.getTime() + " hours";
+            case intervention -> s += "Intervene against Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET +  " for " + p.getTime() + " hours";
+            case unintervention -> s += "End Intervention against Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET;
+            case custodian -> s += "Nominate Custodian " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET + " for " + p.getTime() + " hours";
+            case unsanction -> s += "Unsanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET;
             case setting -> s += "Set " + p.getSettingName() + " to " + p.getSettingValue();
             case budget -> s += "Set Custodian budget to " + (p.getBudget() * 100) + "%";
             case mandate -> s += "Set Custodian mandate to " + p.getMandate();
         }
-
+        s += "\nSupporters: ";
+        for(int i : p.getYays()) {
+            s += Rivals.getFactionManager().getFactionByID(i).getColor() + Rivals.getFactionManager().getFactionByID(i).getName() + ChatColor.RESET + ", ";
+        }
         return s;
     }
 }
