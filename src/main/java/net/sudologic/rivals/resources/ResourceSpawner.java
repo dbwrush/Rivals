@@ -15,6 +15,7 @@ import java.util.Map;
 public class ResourceSpawner implements ConfigurationSerializable {
     private Location location;
     private double chance;
+    private int maxAmount = 64;
     private ItemStack item;
 
     public ResourceSpawner(Location location) {
@@ -24,45 +25,59 @@ public class ResourceSpawner implements ConfigurationSerializable {
         switch (b) {
             case FOREST, TAIGA, SWAMP:
                 m = Material.COAL;
+                maxAmount = 8;
                 break;
             case SNOWY_SLOPES, GROVE, CHERRY_GROVE, MEADOW, FROZEN_PEAKS, JAGGED_PEAKS, STONY_PEAKS:
                 m = Material.RAW_IRON;
+                maxAmount = 3;
                 break;
             case BADLANDS, ERODED_BADLANDS, WOODED_BADLANDS:
                 m = Material.RAW_GOLD;
+                maxAmount = 2;
                 break;
             case DEEP_OCEAN, DEEP_COLD_OCEAN, DEEP_LUKEWARM_OCEAN:
                 m = Material.DIAMOND;
+                maxAmount = 1;
                 break;
             case SAVANNA, SAVANNA_PLATEAU, WINDSWEPT_SAVANNA:
                 m = Material.REDSTONE;
+                maxAmount = 2;
                 break;
             case JUNGLE, BAMBOO_JUNGLE, SPARSE_JUNGLE:
                 m = Material.JUNGLE_LOG;
+                maxAmount = 3;
                 break;
             case BIRCH_FOREST, OLD_GROWTH_BIRCH_FOREST:
                 m = Material.BIRCH_LOG;
+                maxAmount = 3;
                 break;
             case DARK_FOREST:
                 m = Material.DARK_OAK_LOG;
+                maxAmount = 3;
                 break;
             case OLD_GROWTH_PINE_TAIGA, OLD_GROWTH_SPRUCE_TAIGA, SNOWY_TAIGA:
                 m = Material.SPRUCE_LOG;
+                maxAmount = 3;
                 break;
             case DESERT:
                 m = Material.SAND;
+                maxAmount = 2;
                 break;
             case ICE_SPIKES, FROZEN_OCEAN, FROZEN_RIVER, DEEP_FROZEN_OCEAN:
                 m = Material.ICE;
+                maxAmount = 2;
                 break;
             case BASALT_DELTAS:
                 m = Material.MAGMA_BLOCK;
+                maxAmount = 2;
                 break;
             case NETHER_WASTES:
                 m = Material.QUARTZ;
+                maxAmount = 2;
                 break;
             case SOUL_SAND_VALLEY:
                 m = Material.SOUL_SAND;
+                maxAmount = 2;
                 break;
         }
         if(m == null) {
@@ -105,7 +120,7 @@ public class ResourceSpawner implements ConfigurationSerializable {
 
     public Map<String, Object> serialize() {
         Map<String, Object> serialized = new HashMap<>();
-
+        serialized.put("amount", maxAmount);
         serialized.put("location", location);
         serialized.put("chance", chance);
         serialized.put("item", item);
@@ -117,5 +132,10 @@ public class ResourceSpawner implements ConfigurationSerializable {
         this.location = (Location) serialized.get("location");
         this.chance = (double) serialized.get("chance");
         this.item = (ItemStack) serialized.get("item");
+        if(serialized.containsKey("amount")) {
+            this.maxAmount = (int) serialized.get("amount");
+        } else {
+            this.maxAmount = 64;
+        }
     }
 }

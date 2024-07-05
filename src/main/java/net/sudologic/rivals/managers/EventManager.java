@@ -119,4 +119,12 @@ public class EventManager implements Listener {
         }
         return true;
     }
+
+    public double combatTimeLeft(UUID uuid) {
+        double time = combatTime.get(uuid);
+        if(time == 0) {
+            return 0;
+        }
+        return time - System.currentTimeMillis();
+    }
 }

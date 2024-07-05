@@ -28,7 +28,7 @@ public class HomeCommand implements CommandExecutor {
             Faction.Home h = f.getHome(args[0]);
             if(h != null) {
                 if(Rivals.getEventManager().getCombat(p.getUniqueId())) {
-                    p.sendMessage("[Rivals] You cannot teleport in combat.");
+                    p.sendMessage("[Rivals] You cannot teleport in combat. Please wait " + (Rivals.getEventManager().combatTimeLeft(p.getUniqueId()) / 1000) + " seconds.");
                     return true;
                 }
                 if(f.getHomes().size() > f.getMaxHomes()) {
