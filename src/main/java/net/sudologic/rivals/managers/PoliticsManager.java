@@ -162,10 +162,12 @@ public class PoliticsManager implements ConfigurationSerializable {
         if(custodianEnd < time) {
             custodian = -1;
         }
+        for(Faction f : Rivals.getFactionManager().getFactions()) {
+            f.payInfluence();
+        }
         int taxRev = 0;
         if(custodian != -1) {
             for (Faction f : Rivals.getFactionManager().getFactions()) {
-                f.payInfluence();
                 int am = f.taxInfluence(custodianBudget);
                 taxRev += am;
                 f.sendMessageToOnlineMembers("[Rivals] You have paid " + am + " influence to the custodian");
