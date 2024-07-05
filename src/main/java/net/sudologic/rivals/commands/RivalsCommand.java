@@ -511,9 +511,9 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 int amount;
                 if(args.length < 2) {
-                    amount = faction.remInfluence(faction.getInfluence());
+                    amount = (int) faction.remInfluence(Math.floor(faction.getInfluence()));
                 } else {
-                    amount = faction.remInfluence(Integer.parseInt(args[1]));
+                    amount = (int) faction.remInfluence(Integer.parseInt(args[1]));
                 }
                 p.getInventory().addItem(new ItemStack(Material.DIAMOND, amount));
             }

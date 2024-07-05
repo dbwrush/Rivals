@@ -18,7 +18,7 @@ public class Faction implements ConfigurationSerializable {
     private double power;
     private Map<String, Home> homes;
     private ChatColor color;
-    private int influence;
+    private double influence;
 
     private List<String> regions;
 
@@ -58,7 +58,7 @@ public class Faction implements ConfigurationSerializable {
         influence += amount;
     }
 
-    public int getInfluence() {
+    public double getInfluence() {
         return influence;
     }
 
@@ -179,14 +179,14 @@ public class Faction implements ConfigurationSerializable {
         return power;
     }
 
-    public int remInfluence(int amount) {
-        int ret = 0;
+    public double remInfluence(double amount) {
+        double ret;
         if(amount < influence) {
             influence -= amount;
             ret = amount;
         } else {
-            ret = influence;
-            influence = 0;
+            ret = Math.floor(influence);
+            influence = influence - ret;
         }
         return ret;
     }
