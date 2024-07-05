@@ -284,7 +284,6 @@ public final class Rivals extends JavaPlugin {
         ConfigurationSerialization.registerClass(FactionManager.PeaceInvite.class);
         ConfigurationSerialization.registerClass(ShopManager.class);
         ConfigurationSerialization.registerClass(PoliticsManager.class);
-        ConfigurationSerialization.registerClass(Faction.Home.class);
         ConfigurationSerialization.registerClass(FactionManager.WarDeclaration.class);
         ConfigurationSerialization.registerClass(ResourceSpawner.class);
         ConfigurationSerialization.registerClass(ResourceManager.class);

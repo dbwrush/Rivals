@@ -4,6 +4,7 @@ import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import net.sudologic.rivals.managers.FactionManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,9 +28,9 @@ public class SetHomeCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] Please specify a home name.");
                     return true;
                 }
-                Faction.Home existing = faction.getHome(args[0]);
+                Location existing = faction.getHome(args[0]);
                 if(existing != null) {
-                    p.sendMessage("[Rivals] Home " + args[0] + " already exists at " + existing.getLocation().getBlockX() + ", " + existing.getLocation().getBlockY() + ", " + existing.getLocation().getBlockZ() + ".");
+                    p.sendMessage("[Rivals] Home " + args[0] + " already exists at " + existing.getBlockX() + ", " + existing.getBlockY() + ", " + existing.getBlockZ() + ".");
                     return true;
                 } else {
                     faction.setHome(args[0], p.getLocation());

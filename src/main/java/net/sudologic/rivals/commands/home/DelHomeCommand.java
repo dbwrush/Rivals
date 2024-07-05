@@ -24,7 +24,7 @@ public class DelHomeCommand implements CommandExecutor {
         if(faction != null) {
             if(args.length < 1) {
                 p.sendMessage("[Rivals] Please specify which home to delete.");
-            } else if(faction.getHome(args[0]) == null) {
+            } else if(!faction.getHomes().containsKey(args[0])) {
                 p.sendMessage("[Rivals] No home by that name, did you spell it correctly?");
             } else if(faction.delHome(args[0])) {
                 p.sendMessage("[Rivals] Deleting home " + args[0]);
