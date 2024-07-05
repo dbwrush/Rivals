@@ -24,19 +24,14 @@ public class DelHomeCommand implements CommandExecutor {
         if(faction != null) {
             if(args.length < 1) {
                 p.sendMessage("[Rivals] Please specify which home to delete.");
-                return true;
-            }
-            if(faction.getHome(args[0]) == null) {
+            } else if(faction.getHome(args[0]) == null) {
                 p.sendMessage("[Rivals] No home by that name, did you spell it correctly?");
-                return true;
-            }
-            if(faction.delHome(args[0])) {
+            } else if(faction.delHome(args[0])) {
                 p.sendMessage("[Rivals] Deleting home " + args[0]);
-                return true;
             } else {
                 p.sendMessage("[Rivals] Failed to delete home " + args[0]);
-                return true;
             }
+            return true;
         }
         p.sendMessage("[Rivals] You must be in a faction to delete a home.");
         return true;

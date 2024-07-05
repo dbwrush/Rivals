@@ -51,7 +51,7 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public void payInfluence() {
-        influence += power * 0.1;//(int) (power * 0.1);
+        influence += power * 0.1;
     }
 
     public void addInfluence(int amount) {
@@ -116,6 +116,9 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public Home getHome(String s) {
+        if(homes.containsKey(s) && homes.get(s) == null) {
+            Bukkit.getLogger().log(java.util.logging.Level.INFO, "Home " + s + " is null, wtf?");
+        }
         return homes.get(s);
     }
 
@@ -380,12 +383,12 @@ public class Faction implements ConfigurationSerializable {
         @Override
         public Map<String, Object> serialize() {
             Map<String, Object> serialized = new HashMap<>();
-            serialized.put("location", location);
+            serialized.put("location", location.serialize());
             return serialized;
         }
 
         public Home(Map<String, Object> serialized) {
-            this.location = (Location) serialized.get("location");
+            this.location = Location.deserialize((Map<String, Object>) serialized.get("location"));
         }
 
         public Home(Location location) {

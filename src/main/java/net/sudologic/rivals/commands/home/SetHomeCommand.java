@@ -27,13 +27,18 @@ public class SetHomeCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] Please specify a home name.");
                     return true;
                 }
-                p.sendMessage("[Rivals] Set home " + args[0]);
-                faction.setHome(args[0], p.getLocation());
-                return true;
+                Faction.Home existing = faction.getHome(args[0]);
+                if(existing != null) {
+                    p.sendMessage("[Rivals] Home " + args[0] + " already exists at " + existing.getLocation().getBlockX() + ", " + existing.getLocation().getBlockY() + ", " + existing.getLocation().getBlockZ() + ".");
+                    return true;
+                } else {
+                    faction.setHome(args[0], p.getLocation());
+                    p.sendMessage("[Rivals] Home " + args[0] + " set to " + p.getLocation().getBlockX() + ", " + p.getLocation().getBlockY() + ", " + p.getLocation().getBlockZ() + ".");
+                }
             } else {
                 p.sendMessage("[Rivals] Your faction needs more power to get more homes.");
-                return true;
             }
+            return true;
         }
         p.sendMessage("[Rivals] You must be in a faction to set a home.");
         return true;
