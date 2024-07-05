@@ -170,8 +170,12 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public double getPower() {
-        if(Rivals.getPoliticsManager().getSanctionedFactions().containsKey(factionID))
-            return power / 2;
+        try {//shouldn't be necessary but just in case
+            if (Rivals.getPoliticsManager().getSanctionedFactions().containsKey(factionID))
+                return power / 2;
+        } catch (NullPointerException e) {
+            return power;
+        }
         return power;
     }
 

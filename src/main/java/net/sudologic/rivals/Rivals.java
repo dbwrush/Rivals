@@ -222,6 +222,7 @@ public final class Rivals extends JavaPlugin {
         if(getConfig().get("resourceManager") != null) {
             resourceManager = (ResourceManager) getConfig().get("resourceManager", ResourceManager.class);
         }
+        factionManager.buildFactionRanks();
     }
 
     public static ConfigurationSection getSettings() {

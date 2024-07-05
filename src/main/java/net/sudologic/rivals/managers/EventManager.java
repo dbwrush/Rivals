@@ -34,7 +34,7 @@ public class EventManager implements Listener {
             Faction killerFaction = manager.getFactionByPlayer(killer.getUniqueId());
             double power = Math.round((double)Rivals.getSettings().get("killEntityPower") * 100.0) / 100.0;
             if(e.getEntity() instanceof Monster) {
-                power = Math.round((double)Rivals.getSettings().get("killMonster") * 100.0) / 100.0;
+                power = Math.round((double)Rivals.getSettings().get("killMonsterPower") * 100.0) / 100.0;
             } else if(e.getEntity() instanceof Player) {
                 //power = Math.round((double)Rivals.getSettings().get("killPlayerPower") * 100.0) / 100.0;
                 Faction victimFaction = manager.getFactionByPlayer(e.getEntity().getUniqueId());
@@ -109,6 +109,9 @@ public class EventManager implements Listener {
     }
 
     public boolean getCombat(UUID uuid) {
+        if(!combatTime.containsKey(uuid)) {
+            return false;
+        }
         double time = combatTime.get(uuid);
         if(time == 0) {
             return false;
