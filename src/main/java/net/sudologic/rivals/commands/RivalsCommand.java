@@ -133,6 +133,10 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] That player is offline, please wait for them to log in before inviting them.");
                     return true;
                 }
+                if(faction.getMembers().contains(invited.getUniqueId())) {
+                    p.sendMessage("[Rivals] That player is already in your faction.");
+                    return true;
+                }
                 manager.addMemberInvite(invited.getUniqueId(), faction.getID());
                 invited.sendMessage("[Rivals] You have been invited to join " + faction.getColor() + faction.getName());
                 faction.sendMessageToOnlineMembers("[Rivals] " + invited.getName() + " has been invited to join your faction.");
