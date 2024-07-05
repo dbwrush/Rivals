@@ -258,7 +258,7 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage("[Rivals] You are now allies with " + ally.getName());
                 } else {
                     manager.addAllyInvite(faction.getID(), ally.getID());
-                    p.sendMessage("[Rivals] Sent alliance invite to " + ally.getName() + ", they can run the same command to accept the invite.");
+                    p.sendMessage("[Rivals] Sent alliance invite to " + ally.getName() + ". Ask them to run '/rivals ally " + faction.getName() + "' to accept.");
                 }
                 return true;
             }
