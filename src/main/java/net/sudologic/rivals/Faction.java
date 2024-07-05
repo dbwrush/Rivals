@@ -88,9 +88,9 @@ public class Faction implements ConfigurationSerializable {
         } else {
             homes = new HashMap<>();
         }
-        if(serializedFaction.containsKey("influence")) {
+        try{
             influence = (double) serializedFaction.get("influence");
-        } else {
+        } catch (Exception e) {
             influence = 0;
         }
     }
