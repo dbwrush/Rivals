@@ -116,9 +116,6 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public Home getHome(String s) {
-        if(homes.containsKey(s) && homes.get(s) == null) {
-            Bukkit.getLogger().log(java.util.logging.Level.INFO, "Home " + s + " is null, wtf?");
-        }
         return homes.get(s);
     }
 
