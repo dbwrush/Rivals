@@ -68,7 +68,7 @@ public class PoliticsManager implements ConfigurationSerializable {
             }
             case custodian -> {
                 custodian = p.getTarget();
-                custodianEnd = p.getTime();
+                custodianEnd = p.getTime() * 3600000 + System.currentTimeMillis();
                 announce = "Rivals] " + Rivals.getFactionManager().getFactionByID(custodian).getName() + " is now the Custodian";
             }
             case mandate -> {
@@ -84,15 +84,15 @@ public class PoliticsManager implements ConfigurationSerializable {
                 announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been unsanctioned";
             }
             case denounce -> {
-                denouncedFactions.put(p.getTarget(), p.getTime());
+                denouncedFactions.put(p.getTarget(), p.getTime() * 3600000 + System.currentTimeMillis());
                 announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been denounced";
             }
             case sanction -> {
-                sanctionedFactions.put(p.getTarget(), p.getTime());
+                sanctionedFactions.put(p.getTarget(), p.getTime() * 3600000 + System.currentTimeMillis());
                 announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been sanctioned";
             }
             case intervention -> {
-                interventionFactions.put(p.getTarget(), p.getTime());
+                interventionFactions.put(p.getTarget(), p.getTime() * 3600000 + System.currentTimeMillis());
                 announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is now under intervention";
             }
             case unintervention -> {
@@ -108,7 +108,7 @@ public class PoliticsManager implements ConfigurationSerializable {
     public void displayPolicy(String[] sel, Player player) {
         String reply = "";
         switch (sel[0]) {
-            case "budget" -> reply = "[Rivals] The Custodian's budget is currently " + String.valueOf(custodianBudget);
+            case "budget" -> reply = "[Rivals] The Custodian's budget is currently " + (custodianBudget * 100) + "%";
             case "custodian" -> {
                 if(custodian != -1) {
                     reply = "[Rivals] " + Rivals.getFactionManager().getFactionByID(custodian).getName() + " is the current Custodian";

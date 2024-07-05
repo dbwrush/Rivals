@@ -14,7 +14,7 @@ public class Policy implements ConfigurationSerializable {
     private int target;
     private int proposedBy;
     private long proposedTime;
-    private long time;
+    private int time;
     private String settingName;
     private String mandate;
     private String settingValue;
@@ -88,7 +88,7 @@ public class Policy implements ConfigurationSerializable {
         switch (type) {
             case denounce, sanction, intervention, custodian -> {
                 this.target = (int) one;
-                this.time = (long) two;
+                this.time = (int) two;
             }
             case unsanction -> this.target = (int) one;
             case setting -> {
@@ -100,6 +100,7 @@ public class Policy implements ConfigurationSerializable {
         }
         yays = new ArrayList<>();
         nays = new ArrayList<>();
+        this.proposedBy = proposedBy;
     }
 
     public void vote(int f, boolean yay) {
@@ -125,7 +126,7 @@ public class Policy implements ConfigurationSerializable {
         this.type = (PolicyType) serialized.get("type");
         this.proposedBy = (int) serialized.get("proposedBy");
         this.proposedTime = (long) serialized.get("proposedTime");
-        this.time = (long) serialized.getOrDefault("time", 0);
+        this.time = (int) serialized.getOrDefault("time", 0);
         this.settingName = (String) serialized.getOrDefault("settingName", null);
         this.mandate = (String) serialized.getOrDefault("mandate", null);
         this.settingValue = (String) serialized.getOrDefault("settingValue", null);

@@ -73,7 +73,7 @@ public class PolicyCommand implements CommandExecutor {
                             return true;
                         }
                         Faction target = Rivals.getFactionManager().getFactionByName(args[2]);
-                        Long time = Longs.tryParse(args[3]) * 3600000 + System.currentTimeMillis();
+                        Integer time = Ints.tryParse(args[3]);
                         if(target != null && time != null)
                             policy = Rivals.getPoliticsManager().propose(new Policy(type, target.getID(), time, f.getID()));
                         else {
@@ -122,9 +122,13 @@ public class PolicyCommand implements CommandExecutor {
                         return true;
                     }
                 }
+                if(policy == null) {
+                    commandSender.sendMessage("[Rivals] Failed to propose policy. Try again later.");
+                    return true;
+                }
                 commandSender.sendMessage("[Rivals] Proposed resolution.");
                 policy.vote(f.getID(), true);
-                describePolicy(Rivals.getPoliticsManager().getProposed().get(policy));
+                describePolicy(policy);
                 return true;
 
             } else if(args[0].equals("vote")) {
@@ -208,13 +212,13 @@ public class PolicyCommand implements CommandExecutor {
     public String describePolicy(Policy p) {
         String s = "" + p.getId() + ": " + (p.support() * 100) + "% support | Proposed by " + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getName() + " | " + (p.getTimeLeft() / 3600000) + " hours remaining\n";
         switch (p.getType()) {
-            case denounce -> s += "Denounce Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName();
-            case sanction -> s += "Sanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName();
-            case intervention -> s += "Intervene against Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName();
-            case custodian -> s += "Nominate Custodian" + p.getTargetFaction().getColor() + p.getTargetFaction().getName();
+            case denounce -> s += "Denounce Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
+            case sanction -> s += "Sanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
+            case intervention -> s += "Intervene against Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
+            case custodian -> s += "Nominate Custodian " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + " for " + p.getTime() + " hours";
             case unsanction -> s += "Unsanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName();
             case setting -> s += "Set " + p.getSettingName() + " to " + p.getSettingValue();
-            case budget -> s += "Set budget to " + (p.getBudget() * 100) + "%";
+            case budget -> s += "Set Custodian budget to " + (p.getBudget() * 100) + "%";
             case mandate -> s += "Set Custodian mandate to " + p.getMandate();
         }
 
