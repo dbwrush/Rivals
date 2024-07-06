@@ -112,11 +112,11 @@ public class EventManager implements Listener {
         if(!combatTime.containsKey(uuid)) {
             return false;
         }
-        double time = combatTime.get(uuid);
-        if(time == 0) {
+        Double time = combatTime.get(uuid);
+        if(time == null) {
             return false;
         }
-        if(System.currentTimeMillis() < time) {
+        if(System.currentTimeMillis() > time) {
             combatTime.remove(uuid);
             return false;
         }
