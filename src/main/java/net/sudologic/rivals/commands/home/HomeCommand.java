@@ -3,6 +3,7 @@ package net.sudologic.rivals.commands.home;
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,7 +26,7 @@ public class HomeCommand implements CommandExecutor {
         }
         Faction f = Rivals.getFactionManager().getFactionByPlayer(p.getUniqueId());
         if(f != null) {
-            Faction.Home h = f.getHome(args[0]);
+            Location h = f.getHome(args[0]);
             if(h != null) {
                 if(Rivals.getEventManager().getCombat(p.getUniqueId())) {
                     p.sendMessage("[Rivals] You cannot teleport in combat. Please wait " + (Rivals.getEventManager().combatTimeLeft(p.getUniqueId()) / 1000) + " seconds.");
@@ -36,7 +37,7 @@ public class HomeCommand implements CommandExecutor {
                     return true;
                 }
                 p.sendMessage("[Rivals] Teleporting to " + args[0]);
-                p.teleport(h.getLocation());
+                p.teleport(h);
                 return true;
             }
             p.sendMessage("[Rivals] Your faction has no home by that name.");

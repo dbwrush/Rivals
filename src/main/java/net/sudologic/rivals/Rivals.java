@@ -16,9 +16,11 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +59,7 @@ public final class Rivals extends JavaPlugin {
     private static ConfigurationSection settings;
     private static EventManager eventManager;
     private static ResourceManager resourceManager;
-    private Task t;
+    private BukkitTask t;
 
     public static boolean changeSetting(String settingName, String settingValue) {
         try {
@@ -130,19 +132,19 @@ public final class Rivals extends JavaPlugin {
         registerListeners();
         registerCommands();
 
-        t = new Task();
-        t.runTaskTimer(this, 0, 72000);
-    }
+        t = new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.getLogger().log(Level.INFO, "[Rivals] Updating!");
+                resourceManager.update();
+                factionManager.startWars();
+                politicsManager.update();
+            }
+        }.runTaskTimer(this, 0, 20L * 60L * 60L);//run once per hour
 
-    private class Task extends BukkitRunnable {
-        @Override
-        public void run() {
-            resourceManager.update();
-            factionManager.startWars();
-            politicsManager.update();
-        }
+        //t = new Task();
+        //t.runTaskTimer(this, 0, 72000);
     }
-
     @Override
     public void onDisable() {
         t.cancel();
@@ -282,7 +284,6 @@ public final class Rivals extends JavaPlugin {
         ConfigurationSerialization.registerClass(FactionManager.PeaceInvite.class);
         ConfigurationSerialization.registerClass(ShopManager.class);
         ConfigurationSerialization.registerClass(PoliticsManager.class);
-        ConfigurationSerialization.registerClass(Faction.Home.class);
         ConfigurationSerialization.registerClass(FactionManager.WarDeclaration.class);
         ConfigurationSerialization.registerClass(ResourceSpawner.class);
         ConfigurationSerialization.registerClass(ResourceManager.class);

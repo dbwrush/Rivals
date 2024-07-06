@@ -86,7 +86,11 @@ public class PolicyCommand implements CommandExecutor {
                         }
                     }
                     case budget -> {
-                        Float budget = Floats.tryParse(args[2]);
+                        Float budget = Floats.tryParse(args[2]) / 100;
+                        if(budget > 100 || budget < 0) {
+                            commandSender.sendMessage("[Rivals] Budget must be between 0 and 100.");
+                            return true;
+                        }
                         if(budget != null)
                             policy = Rivals.getPoliticsManager().propose(new Policy(type, budget, null, f.getID()));
                         else {

@@ -8,6 +8,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class Faction implements ConfigurationSerializable {
     private int factionID;
@@ -16,9 +17,9 @@ public class Faction implements ConfigurationSerializable {
     private List<Integer> allyFactions;
     private List<UUID> members;
     private double power;
-    private Map<String, Home> homes;
+    private Map<String, Location> homes;
     private ChatColor color;
-    private int influence;
+    private double influence;
 
     private List<String> regions;
 
@@ -51,14 +52,14 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public void payInfluence() {
-        influence += (int) (power * 0.1);
+        influence += power * 0.1;
     }
 
     public void addInfluence(int amount) {
         influence += amount;
     }
 
-    public int getInfluence() {
+    public double getInfluence() {
         return influence;
     }
 
@@ -83,14 +84,10 @@ public class Faction implements ConfigurationSerializable {
         this.power = (double) serializedFaction.get("power");
         this.regions = (List<String>) serializedFaction.get("regions");
         this.color = ChatColor.getByChar((String) serializedFaction.get("color"));
-        if(serializedFaction.containsKey("homes")) {
-            homes = (Map<String, Home>) serializedFaction.get("homes");
-        } else {
-            homes = new HashMap<>();
-        }
-        if(serializedFaction.containsKey("influence")) {
-            influence = (int) serializedFaction.get("influence");
-        } else {
+        this.homes = (Map<String, Location>) serializedFaction.get("homes");
+        try{
+            influence = (double) serializedFaction.get("influence");
+        } catch (Exception e) {
             influence = 0;
         }
     }
@@ -111,11 +108,11 @@ public class Faction implements ConfigurationSerializable {
         homes = new HashMap<>();
     }
 
-    public Map<String, Home> getHomes() {
+    public Map<String, Location> getHomes() {
         return homes;
     }
 
-    public Home getHome(String s) {
+    public Location getHome(String s) {
         return homes.get(s);
     }
 
@@ -124,14 +121,15 @@ public class Faction implements ConfigurationSerializable {
             return false;
         }
         if(homes.size() < getMaxHomes()) {
-            homes.put(s, new Home(location));
+            homes.put(s, location);
             return true;
         }
         return false;
     }
 
     public boolean delHome(String s) {
-        if(homes.remove(s) != null) {
+        if(homes.containsKey(s)) {
+            homes.remove(s);
             return true;
         }
         return false;
@@ -179,14 +177,14 @@ public class Faction implements ConfigurationSerializable {
         return power;
     }
 
-    public int remInfluence(int amount) {
-        int ret = 0;
+    public double remInfluence(double amount) {
+        double ret;
         if(amount < influence) {
             influence -= amount;
             ret = amount;
         } else {
-            ret = influence;
-            influence = 0;
+            ret = Math.floor(influence);
+            influence = influence - ret;
         }
         return ret;
     }
@@ -372,28 +370,6 @@ public class Faction implements ConfigurationSerializable {
             if(Bukkit.getOfflinePlayer(id).isOnline()) {
                 Bukkit.getPlayer(id).sendMessage("[Rivals] " + s);
             }
-        }
-    }
-
-    public class Home implements ConfigurationSerializable{
-        private Location location;
-        @Override
-        public Map<String, Object> serialize() {
-            Map<String, Object> serialized = new HashMap<>();
-            serialized.put("location", location);
-            return serialized;
-        }
-
-        public Home(Map<String, Object> serialized) {
-            this.location = (Location) serialized.get("location");
-        }
-
-        public Home(Location location) {
-            this.location = location;
-        }
-
-        public Location getLocation() {
-            return location;
         }
     }
 }
