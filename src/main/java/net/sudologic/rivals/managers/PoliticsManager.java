@@ -7,10 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PoliticsManager implements ConfigurationSerializable {
     private int custodian = -1;
@@ -192,15 +189,17 @@ public class PoliticsManager implements ConfigurationSerializable {
         }
         long a = (System.currentTimeMillis() - ((int)Rivals.getSettings().get("votePassTime") * 3600000l));//time in hours for vote to pass
         Collection<Policy> props = proposed.values();
+        List<Policy> toRemove = new ArrayList<>();
         for(Policy p : props) {
             if(p.getProposedTime() < a) {
-                if(p.support() > (float)Rivals.getSettings().get("votePassRatio") && p.getNumYays() > (float)Rivals.getSettings().get("minVotes")) {
+                if(p.support() > (double)Rivals.getSettings().get("votePassRatio") && p.getNumYays() > (int)Rivals.getSettings().get("minVotes")) {
                     implement(p);
                 }
                 Rivals.getFactionManager().getFactionByID(p.getProposedBy()).sendMessageToOnlineMembers("Your proposal, ID: " + p.getId() + " has been rejected.");
-                proposed.remove(p.getId());
+                toRemove.add(p);
             }
         }
+        props.removeAll(toRemove);
     }
 
     public long getVotePassTime() {
