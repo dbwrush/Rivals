@@ -452,7 +452,7 @@ public class RivalsCommand implements CommandExecutor {
             }
             else if("map".equals(args[0])) {
                 Chunk c = p.getLocation().getChunk();
-                String mess = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Map of your surroundings";
+                String mess = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Map of your surroundings" + ChatColor.RESET;
                 String facts = "\nFactions: ";
                 for(int x = 0; x < 9; x++) {
                     String row = "\n| ";
@@ -776,7 +776,7 @@ public class RivalsCommand implements CommandExecutor {
 
             mess += enemies;
 
-            String upcoming = "\nUpcoming Wars:";
+            String upcoming = "\nUpcoming Wars: ";
             List<Integer> u = manager.getUpcoming(f.getID());
             if(u.size() > 0) {
                 if(u.size() > 3) {

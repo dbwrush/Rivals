@@ -191,7 +191,7 @@ public class Faction implements ConfigurationSerializable {
 
     public boolean addMember(UUID member) {
         if(!members.contains(member)) {
-            sendMessageToOnlineMembers(Bukkit.getPlayer(member).getName() + " has joined your faction.");
+            sendMessageToOnlineMembers(Bukkit.getPlayer(member).getName() + ChatColor.LIGHT_PURPLE + " has joined your faction.");
             members.add(member);
             Rivals.getClaimManager().updateFactionMembers(this);
             return true;
@@ -205,7 +205,7 @@ public class Faction implements ConfigurationSerializable {
             Rivals.getClaimManager().updateFactionMembers(this);
             if(members.size() == 0) {
                 for(Player player : Bukkit.getOnlinePlayers()) {
-                    player.sendMessage("[Rivals] Faction " + factionName + " has disbanded because all its players have left.");
+                    player.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + ChatColor.RESET + factionName + ChatColor.LIGHT_PURPLE + " has disbanded because all its players have left.");
                 }
                 Rivals.getFactionManager().removeFaction(this);
                 return true;
