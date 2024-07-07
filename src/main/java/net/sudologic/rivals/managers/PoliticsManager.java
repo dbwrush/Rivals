@@ -194,7 +194,7 @@ public class PoliticsManager implements ConfigurationSerializable {
         Collection<Policy> props = proposed.values();
         for(Policy p : props) {
             if(p.getProposedTime() < a) {
-                if(p.support() > (float)Rivals.getSettings().get("votePassRatio") && p.getNumYays() > (float)Rivals.getSettings().get("minVotes")) {
+                if(p.support() > (double)Rivals.getSettings().get("votePassRatio") && p.getNumYays() > (double)Rivals.getSettings().get("minVotes")) {
                     implement(p);
                 }
                 Rivals.getFactionManager().getFactionByID(p.getProposedBy()).sendMessageToOnlineMembers("Your proposal, ID: " + p.getId() + " has been rejected.");
