@@ -4,6 +4,7 @@ import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import net.sudologic.rivals.util.Policy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
@@ -61,40 +62,40 @@ public class PoliticsManager implements ConfigurationSerializable {
         switch(p.getType()) {
             case budget -> {
                 custodianBudget = p.getBudget();
-                announce = "[Rivals] Influence will be taxed at " + (custodianBudget) * 100 + "% to the Custodian";
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Influence will be taxed at " + (custodianBudget) * 100 + "% to the Custodian" + ChatColor.RESET;
             }
             case custodian -> {
                 custodian = p.getTarget();
                 custodianEnd = p.getTime() * 3600000 + System.currentTimeMillis();
-                announce = "Rivals] " + Rivals.getFactionManager().getFactionByID(custodian).getName() + " is now the Custodian";
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(custodian).getName() + " is now the Custodian" + ChatColor.RESET;
             }
             case mandate -> {
                 custodianMandate = p.getMandate();
-                announce = "[Rivals] The Custodian's mandate has been set to " + custodianMandate;
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " The Custodian's mandate has been set to " + custodianMandate + ChatColor.RESET;
             }
             case setting -> {
                 Rivals.changeSetting(p.getSettingName(), p.getSettingValue());
-                announce = "[Rivals] The setting " + p.getSettingName() + " has been set to " + p.getSettingValue();
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " The setting " + p.getSettingName() + " has been set to " + p.getSettingValue() + ChatColor.RESET;
             }
             case unsanction -> {
                 sanctionedFactions.remove(p.getTarget());
-                announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been unsanctioned";
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been unsanctioned" + ChatColor.RESET;
             }
             case denounce -> {
                 denouncedFactions.put(p.getTarget(), p.getTime() * 3600000 + System.currentTimeMillis());
-                announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been denounced";
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been denounced" + ChatColor.RESET;
             }
             case sanction -> {
                 sanctionedFactions.put(p.getTarget(), p.getTime() * 3600000 + System.currentTimeMillis());
-                announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been sanctioned";
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been sanctioned" + ChatColor.RESET;
             }
             case intervention -> {
                 interventionFactions.put(p.getTarget(), p.getTime() * 3600000 + System.currentTimeMillis());
-                announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is now under intervention";
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is now under intervention" + ChatColor.RESET;
             }
             case unintervention -> {
                 interventionFactions.remove(p.getTarget());
-                announce = "[Rivals] " + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is no longer under intervention";
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is no longer under intervention" + ChatColor.RESET;
             }
         }
         for(Player pl : Bukkit.getOnlinePlayers()) {
@@ -105,43 +106,43 @@ public class PoliticsManager implements ConfigurationSerializable {
     public void displayPolicy(String[] sel, Player player) {
         String reply = "";
         switch (sel[0]) {
-            case "budget" -> reply = "[Rivals] The Custodian's budget is currently " + (custodianBudget * 100) + "%";
+            case "budget" -> reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " The Custodian's budget is currently " + (custodianBudget * 100) + "%" + ChatColor.RESET;
             case "custodian" -> {
                 if(custodian != -1) {
-                    reply = "[Rivals] " + Rivals.getFactionManager().getFactionByID(custodian).getName() + " is the current Custodian";
+                    reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(custodian).getName() + " is the current Custodian" + ChatColor.RESET;
                 } else {
-                    reply = "[Rivals] There is no current Custodian";
+                    reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " There is no current Custodian" + ChatColor.RESET;
                 }
             }
             case "mandate" -> {
                 if(custodianMandate != "") {
-                    reply = "[Rivals] " + custodianMandate + " is the current mandate";
+                    reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + custodianMandate + " is the current mandate" + ChatColor.RESET;
                 } else {
-                    reply = "[Rivals] There is no current mandate";
+                    reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " There is no current mandate" + ChatColor.RESET;
                 }
             }
             case "setting" -> {
                 if(Rivals.getSettings().contains(sel[1])) {
-                    reply = "[Rivals] The current " + sel[1] + " is: " + Rivals.getSettings().get(sel[1]).toString();
+                    reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " The current " + sel[1] + " is: " + Rivals.getSettings().get(sel[1]).toString() + ChatColor.RESET;
                 } else {
-                    reply = "[Rivals] No setting with that name";
+                    reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " No setting with that name" + ChatColor.RESET;
                 }
             }
             case "sanctioned" -> {
-                reply = "[Rivals] The current sanctioned factions are: ";
+                reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " The current sanctioned factions are: " + ChatColor.RESET;
                 for(int f : sanctionedFactions.keySet()) {
                     reply += Rivals.getFactionManager().getFactionByID(f).getName() + " ";
                 }
             }
             case "intervention" -> {
-                reply = "[Rivals] The current factions under intervention are: ";
+                reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " The current factions under intervention are: " + ChatColor.RESET;
                 for(int f : interventionFactions.keySet()) {
                     reply += Rivals.getFactionManager().getFactionByID(f).getName() + " ";
                 }
             }
         }
         if(reply.equals("")) {
-            reply = "[Rivals] Invalid request.";
+            reply = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Invalid request." + ChatColor.RESET;
         }
         player.sendMessage(reply);
     }
@@ -167,10 +168,10 @@ public class PoliticsManager implements ConfigurationSerializable {
             for (Faction f : Rivals.getFactionManager().getFactions()) {
                 int am = f.taxInfluence(custodianBudget);
                 taxRev += am;
-                f.sendMessageToOnlineMembers("[Rivals] You have paid " + am + " influence to the custodian");
+                f.sendMessageToOnlineMembers(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You have paid " + am + " influence to the custodian" + ChatColor.RESET);
             }
             Rivals.getFactionManager().getFactionByID(custodian).addInfluence(taxRev);
-            Rivals.getFactionManager().getFactionByID(custodian).sendMessageToOnlineMembers("[Rivals] You have received " + taxRev + " influence from taxes");
+            Rivals.getFactionManager().getFactionByID(custodian).sendMessageToOnlineMembers(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You have received " + taxRev + " influence from taxes" + ChatColor.RESET);
         }
         for(int f : sanctionedFactions.keySet()) {
             if(sanctionedFactions.get(f) < time) {
