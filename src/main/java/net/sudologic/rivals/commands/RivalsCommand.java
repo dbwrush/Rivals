@@ -227,7 +227,7 @@ public class RivalsCommand implements CommandExecutor {
                             p.sendMessage("There is a faction named " + imprecise.getName());
                         }
                     } else {
-                        manager.createWarDeclaration(faction.getID(), enemy.getID(), System.currentTimeMillis(), (long) Rivals.getSettings().get("warNowPower"));
+                        manager.createWarDeclaration(faction.getID(), enemy.getID(), System.currentTimeMillis(), (long) Rivals.getSettings().get("warDelay"));
                     }
                 }
                 return true;
