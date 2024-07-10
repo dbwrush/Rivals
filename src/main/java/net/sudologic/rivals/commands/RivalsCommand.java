@@ -466,7 +466,8 @@ public class RivalsCommand implements CommandExecutor {
             }
             else if("map".equals(args[0])) {
                 Chunk c = p.getLocation().getChunk();
-                int CHUNK_X, CHUNK_Z = c.getX(), c.getZ();
+                int CHUNK_Z =c.getZ();
+                int CHUNK_X = c.getX();
                 String mess = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Map of your surroundings" + ChatColor.RESET;
                 String facts = "\nFactions: ";
                 for(int z = -4; z <= 4; z++) {
