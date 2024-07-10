@@ -404,7 +404,8 @@ public class RivalsCommand implements CommandExecutor {
                 int perPage = 8;
                 List<Integer> rankings = manager.getFactionRankings();
                 List<Faction> factions = manager.getFactions();
-                int numPages = (rankings.size() / perPage) + 1;
+                // Calculate the number of pages correctly to avoid an extra empty page
+                int numPages = rankings.size() % perPage == 0 ? rankings.size() / perPage : (rankings.size() / perPage) + 1;
                 int start = 0;
                 if(rankings.size() == 0) {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " There aren't any factions yet." + ChatColor.RESET);
@@ -412,18 +413,30 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 String mess = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Factions List Page 1/" + numPages;
                 if(args.length >= 2) {
-                    Integer page = Integer.parseInt(args[1]);
-                    mess = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Factions List Page " + page + "/" + numPages;
-                    if (page > numPages) {
-                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " There are only " + numPages + " pages.");
+                    try {
+                        Integer page = Integer.parseInt(args[1]);
+                        if (page <= 0 || page > numPages) {
+                            p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Invalid page number. There are only " + numPages + " pages.");
+                            return true;
+                        }
+                        mess = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Factions List Page " + page + "/" + numPages;
+                        start = (page - 1) * perPage;
+                    } catch (NumberFormatException e) {
+                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Invalid page number format.");
                         return true;
                     }
-                    start = (page - 1) * perPage;
                 }
                 for(int i = start; i < perPage + start && i < rankings.size(); i++) {
                     manager.buildFactionRanks();
-                    Faction f = factions.get(rankings.get(i));
-                    mess += "\n" + ChatColor.YELLOW + i + " " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + " " + ChatColor.RESET + f.getPower();
+                    int factionIndex = rankings.get(i);
+                    // Check if the index is within the bounds of the factions list
+                    if (factionIndex < factions.size()) {
+                        Faction f = factions.get(factionIndex);
+                        mess += "\n" + ChatColor.YELLOW + (i + 1) + " " + ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + " " + ChatColor.RESET + f.getPower();
+                    } else {
+                        // Handle the case where the factionIndex is out of bounds
+                        mess += "\n" + ChatColor.RED + "Error: " + ChatColor.RESET + "Faction ranking out of bounds.";
+                    }
                 }
                 p.sendMessage(mess);
                 return true;
