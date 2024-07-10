@@ -466,12 +466,13 @@ public class RivalsCommand implements CommandExecutor {
             }
             else if("map".equals(args[0])) {
                 Chunk c = p.getLocation().getChunk();
+                int CHUNK_X, CHUNK_Z = c.getX(), c.getZ();
                 String mess = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Map of your surroundings" + ChatColor.RESET;
                 String facts = "\nFactions: ";
-                for(int x = 0; x < 9; x++) {
+                for(int z = -4; z <= 4; z++) {
                     String row = "\n| ";
-                    for(int z = 0; z < 9; z++) {
-                        Chunk loc = c.getWorld().getChunkAt(c.getX() - 4 + x, c.getZ() - 4 + z);
+                    for(int x = -4; x <= 4; x++) {
+                        Chunk loc = c.getWorld().getChunkAt(CHUNK_X + x, CHUNK_Z + z);
                         ProtectedRegion claim = Rivals.getClaimManager().getExistingClaim(loc);
                         if(claim != null) {
                             Faction f = manager.getFactionByID(Integer.parseInt(claim.getId().split("_")[2]));
