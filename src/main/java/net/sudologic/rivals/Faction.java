@@ -20,7 +20,7 @@ public class Faction implements ConfigurationSerializable {
     private Map<String, Location> homes;
     private ChatColor color;
     private double influence;
-    private int warmongering;
+    private double warmongering;
 
     private List<String> regions;
 
@@ -374,11 +374,11 @@ public class Faction implements ConfigurationSerializable {
         }
     }
 
-    public int getWarmongering(){
+    public double getWarmongering(){
         return warmongering;
     }
 
-    public void changeWarmongering(int amount){
+    public void changeWarmongering(double amount){
         warmongering += amount;
     }
 }
