@@ -360,9 +360,8 @@ public class RivalsCommand implements CommandExecutor {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be in a faction to unclaim land." + ChatColor.RESET);
                     return true;
                 }
-                ClaimManager claimManager = Rivals.getClaimManager();
                 Chunk c = p.getLocation().getChunk();
-                if(claimManager.removeClaim(c, faction)) {
+                if(faction.removeClaim(c)) {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Removed your claim to chunk " + ChatColor.RESET + c.getX() + " " + c.getZ());
                     return true;
                 } else {
