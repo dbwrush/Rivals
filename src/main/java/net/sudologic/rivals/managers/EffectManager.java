@@ -62,6 +62,9 @@ public class EffectManager {
         if(polMan.getInterventionFactions().getOrDefault(f.getID(), 0L) > time) {
             penalty += 3;
         }
+        if(penalty <= 0) {
+            return;
+        }
         applyEffects(p, penalty);
     }
 }
