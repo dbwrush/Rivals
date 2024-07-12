@@ -60,6 +60,7 @@ public final class Rivals extends JavaPlugin {
     private static ConfigurationSection settings;
     private static EventManager eventManager;
     private static ResourceManager resourceManager;
+    private static Rivals plugin;
     private BukkitTask t;
 
     public static boolean changeSetting(String settingName, String settingValue) {
@@ -122,6 +123,7 @@ public final class Rivals extends JavaPlugin {
     @Override
     public void onEnable() {
         Bukkit.getLogger().log(Level.INFO, "[Rivals] Starting!");
+        plugin = this;
 
         claimManager = new ClaimManager();
         resourceManager = new ResourceManager();
@@ -263,6 +265,10 @@ public final class Rivals extends JavaPlugin {
         PluginManager pm = Bukkit.getPluginManager();
         eventManager = new EventManager();
         pm.registerEvents(eventManager, this);
+    }
+
+    public static Rivals getPlugin() {
+        return plugin;
     }
 
     public static RivalsCommand getCommand() {
