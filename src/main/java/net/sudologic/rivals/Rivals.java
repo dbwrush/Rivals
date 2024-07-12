@@ -142,6 +142,8 @@ public final class Rivals extends JavaPlugin {
             }
         }.runTaskTimer(this, 0, 20L * 60L * 60L);//run once per hour
 
+
+
         //t = new Task();
         //t.runTaskTimer(this, 0, 72000);
     }
