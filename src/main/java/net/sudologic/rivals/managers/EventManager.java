@@ -108,6 +108,11 @@ public class EventManager implements Listener {
         }
     }
 
+    @EventHandler
+    public void onLogin(PlayerJoinEvent e) {
+        Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
+    }
+
     public boolean getCombat(UUID uuid) {
         if(!combatTime.containsKey(uuid)) {
             return false;

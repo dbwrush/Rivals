@@ -55,6 +55,7 @@ public final class Rivals extends JavaPlugin {
     private static ClaimManager claimManager;
     private static ShopManager shopManager;
     private static PoliticsManager politicsManager;
+    private static EffectManager effectManager;
     private static RivalsCommand command;
     private static ConfigurationSection settings;
     private static EventManager eventManager;
@@ -139,6 +140,7 @@ public final class Rivals extends JavaPlugin {
                 resourceManager.update();
                 factionManager.startWars();
                 politicsManager.update();
+                effectManager.update();
             }
         }.runTaskTimer(this, 0, 20L * 60L * 60L);//run once per hour
 
@@ -307,5 +309,9 @@ public final class Rivals extends JavaPlugin {
 
     public static PoliticsManager getPoliticsManager() {
         return politicsManager;
+    }
+
+    public static EffectManager getEffectManager() {
+        return effectManager;
     }
 }
