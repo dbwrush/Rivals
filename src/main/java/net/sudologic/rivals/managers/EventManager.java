@@ -3,6 +3,7 @@ package net.sudologic.rivals.managers;
 import com.nisovin.shopkeepers.api.events.*;
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
@@ -105,6 +107,13 @@ public class EventManager implements Listener {
                 combatTime.remove(victim);
             }
             combatTime.put(victim.getUniqueId(), System.currentTimeMillis() + (double)Rivals.getSettings().get("combatTeleportDelay") * 1000);
+        }
+    }
+
+    @EventHandler
+    public void onMilk(PlayerItemConsumeEvent e) {
+        if(e.getItem().getType().equals(Material.MILK_BUCKET)) {
+            Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
         }
     }
 
