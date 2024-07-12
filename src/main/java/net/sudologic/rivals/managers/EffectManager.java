@@ -20,19 +20,19 @@ public class EffectManager {
     - If a faction is denounced, sanctioned, or intervened, apply the appropriate effects
      */
 
-    public void applyEffects(Player player, int intensity) {
+    public void applyEffects(Player player, double intensity) {
         List<PotionEffect> effects = new ArrayList<>();
-        if(intensity > 5) {
-            effects.add(new PotionEffect(PotionEffectType.HUNGER, 20 * 60 * 60, intensity));
+        if(intensity >= 5) {
+            effects.add(new PotionEffect(PotionEffectType.HUNGER, 20 * 60 * 60, (int)intensity - 2));
         }
-        if(intensity > 4) {
-            effects.add(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 60, intensity));
+        if(intensity >= 4) {
+            effects.add(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 60, (int)intensity - 3));
         }
-        if(intensity > 3) {
-            effects.add(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 60, intensity));
+        if(intensity >= 3) {
+            effects.add(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 60, (int)intensity - 2));
         }
-        if(intensity > 1) {
-            effects.add(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 60 * 60, intensity));
+        if(intensity >= 1) {
+            effects.add(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 60 * 60, (int)intensity));
         }
         player.addPotionEffects(effects);
     }
@@ -52,7 +52,7 @@ public class EffectManager {
     public void updatePlayer(Player p, PoliticsManager polMan) {
         long time = System.currentTimeMillis();
         Faction f = Rivals.getFactionManager().getFactionByPlayer(p.getUniqueId());
-        int penalty = 0; //f.getWarMongering();
+        double penalty = f.getWarmongering();
         if(polMan.getDenouncedFactions().getOrDefault(f.getID(), 0L) > time) {
             penalty += 1;
         }
