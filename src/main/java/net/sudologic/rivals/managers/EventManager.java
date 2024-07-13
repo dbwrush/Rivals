@@ -161,6 +161,9 @@ public class EventManager implements Listener {
     }
 
     public double combatTimeLeft(UUID uuid) {
+        if(!combatTime.containsKey(uuid)) {
+            return 0;
+        }
         double time = combatTime.get(uuid);
         if(time == 0) {
             return 0;

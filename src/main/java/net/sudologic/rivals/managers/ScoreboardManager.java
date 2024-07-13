@@ -26,6 +26,7 @@ public class ScoreboardManager {
         FastBoard board = new FastBoard(p);
         boards.put(p.getUniqueId(), board);
         board.updateTitle(ChatColor.YELLOW + "-= Rivals =-");
+        updateScoreboard(p.getUniqueId());
     }
 
     public void removeScoreboard(Player p) {
@@ -37,15 +38,7 @@ public class ScoreboardManager {
 
     public void updateScoreboard(UUID id) {
         FastBoard b = boards.get(id);
-        /*
-        - Current Faction
-        - Faction Members (online/total)
-        - Faction Power
-        - Faction Influence
-        - Faction warmongering + Player warmongering
-        - Faction status
-        - Currently In Combat
-         */
+
         Faction f = Rivals.getFactionManager().getFactionByPlayer(id);
         if(f != null) {
             b.updateLines("Faction: " + f.getColor() + f.getName(),
