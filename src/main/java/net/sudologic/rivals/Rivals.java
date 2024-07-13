@@ -60,6 +60,7 @@ public final class Rivals extends JavaPlugin {
     private static ConfigurationSection settings;
     private static EventManager eventManager;
     private static ResourceManager resourceManager;
+    private static ScoreboardManager scoreboardManager;
     private static Rivals plugin;
     private BukkitTask t;
 
@@ -128,6 +129,7 @@ public final class Rivals extends JavaPlugin {
         claimManager = new ClaimManager();
         resourceManager = new ResourceManager();
         effectManager = new EffectManager();
+        scoreboardManager = new ScoreboardManager(Bukkit.getServer());
 
 
         registerClasses();
@@ -321,5 +323,13 @@ public final class Rivals extends JavaPlugin {
 
     public static EffectManager getEffectManager() {
         return effectManager;
+    }
+
+    public static ScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
+    }
+
+    public static double getRoundedDecimal(double value) {
+        return Math.round(value * 100) / 100;
     }
 }

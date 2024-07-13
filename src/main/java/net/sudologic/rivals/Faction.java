@@ -201,6 +201,32 @@ public class Faction implements ConfigurationSerializable {
         return false;
     }
 
+    public String getStatus() {
+        if(Rivals.getPoliticsManager().getInterventionFactions().containsKey(factionID)) {
+            return "Intervention";
+        }
+        if(Rivals.getPoliticsManager().getSanctionedFactions().containsKey(factionID)) {
+            return "Sanctioned";
+        }
+        if(getEnemies().size() > 0) {
+            return "At War";
+        }
+        if(Rivals.getPoliticsManager().getDenouncedFactions().containsKey(factionID)) {
+            return "Denounced";
+        }
+        return "At Peace";
+    }
+
+    public int countOnlineMembers() {
+        int count = 0;
+        for(UUID id : members) {
+            if(Bukkit.getOfflinePlayer(id).isOnline()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public boolean removeMember(UUID member) {
         if(members.contains(member)) {
             members.remove(member);

@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
@@ -72,6 +73,8 @@ public class EventManager implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         FactionManager manager = Rivals.getFactionManager();
         List<Integer> invites = manager.getInvitesForPlayer(e.getPlayer().getUniqueId());
+        Rivals.getScoreboardManager().assignScoreboard(e.getPlayer());
+        Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
         if(manager.getFactionByPlayer(e.getPlayer().getUniqueId()) == null && invites.size() > 0) {
             String inviteMess = "[Rivals] You're invited to join " + manager.getFactionByID(invites.get(0)).getColor() + manager.getFactionByID(invites.get(0)).getName();
             e.getPlayer().sendMessage(inviteMess);
@@ -87,6 +90,11 @@ public class EventManager implements Listener {
             Rivals.getPoliticsManager().displayPolicy(new String[]{"custodian"}, e.getPlayer());
             e.getPlayer().sendMessage("[Rivals] Use /policy for more information on politics");
         }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        Rivals.getScoreboardManager().removeScoreboard(e.getPlayer());
     }
 
     @EventHandler
@@ -134,11 +142,6 @@ public class EventManager implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
-        Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
-    }
-
-    @EventHandler
-    public void onLogin(PlayerJoinEvent e) {
         Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
     }
 
