@@ -33,10 +33,10 @@ public class EffectManager {
             effects.add(new PotionEffect(PotionEffectType.HUNGER, 20 * 60 * 60, (int)intensity - 2, true, true));
         }
         if(intensity >= 4) {
-            effects.add(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 60, (int)intensity - 3, true, true));
+            effects.add(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 60, (int)(intensity - 2)/2, true, true));
         }
         if(intensity >= 3) {
-            effects.add(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 60, (int)intensity - 2, true, true));
+            effects.add(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 60, (int)intensity/2, true, true));
         }
         if(intensity >= 1) {
             effects.add(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 60 * 60, (int)intensity, true, true));
