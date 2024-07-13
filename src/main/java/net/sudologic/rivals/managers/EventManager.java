@@ -3,6 +3,8 @@ package net.sudologic.rivals.managers;
 import com.nisovin.shopkeepers.api.events.*;
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -11,7 +13,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityResurrectEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
 import java.util.HashMap;
@@ -109,6 +114,27 @@ public class EventManager implements Listener {
             }
             combatTime.put(victim.getUniqueId(), System.currentTimeMillis() + (double)Rivals.getSettings().get("combatTeleportDelay") * 1000);
         }
+    }
+
+    @EventHandler
+    public void onClearPotions(PlayerItemConsumeEvent e) {
+        if(e.getItem().getType().equals(Material.MILK_BUCKET) || e.getItem().getType().equals(Material.HONEY_BOTTLE)) {
+            Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
+        }
+    }
+
+    @EventHandler
+    public void onUseTotem(EntityResurrectEvent e) {
+        if(e.getEntity() instanceof Player) {
+            Bukkit.getScheduler().runTaskLater(Rivals.getPlugin(), () -> {
+                Rivals.getEffectManager().updatePlayer((Player) e.getEntity(), Rivals.getPoliticsManager());
+            }, 1L);
+        }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e) {
+        Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
     }
 
     @EventHandler
