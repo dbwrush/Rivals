@@ -213,6 +213,7 @@ public class RivalsCommand implements CommandExecutor {
                             faction.rawPowerChange((double)Rivals.getSettings().get("nowWarPower") * -1);
                         if(faction.addEnemy(enemy.getID())) {
                             p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You are now enemies with " + ChatColor.RESET + enemyName);
+                            faction.changeWarmongering(.5);
                         } else {
                             p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Could not declare war on " + ChatColor.RESET + enemyName + ChatColor.LIGHT_PURPLE + ", there might not be a faction by that name." + ChatColor.RESET);
                             Faction imprecise = manager.getFactionByNameImprecise(enemyName);
@@ -234,6 +235,7 @@ public class RivalsCommand implements CommandExecutor {
                         int delay = (int) Rivals.getSettings().get("warDelay");
                         p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Sent war declaration to " + ChatColor.RESET + enemyName + ChatColor.LIGHT_PURPLE + ". They have " + delay + " hours to prepare." + ChatColor.RESET);
                         manager.createWarDeclaration(faction.getID(), enemy.getID(), System.currentTimeMillis(), delay);
+                        faction.changeWarmongering(.1);
                     }
                 }
                 return true;
@@ -739,7 +741,7 @@ public class RivalsCommand implements CommandExecutor {
         FactionManager manager = Rivals.getFactionManager();
         String mess = "";
         if("".equals(s)) {
-            mess = f.getName() + "\nPower: " + Rivals.getRoundedDecimal(f.getPower()) + "\nInfluence: " + Rivals.getRoundedDecimal(f.getInfluence()) + "\nWarmongering: " + Rivals.getRoundedDecimal(f.getWarmongering());
+            mess = f.getName() + "\nPower: " + f.getPower() + "\nInfluence: " + f.getInfluence();
             String members = ChatColor.COLOR_CHAR + ChatColor.RESET.toString() + "\nMembers: ";
             if(f.getMembers().size() > 3) {
                 for(int i = 0; i < 3; i++) {

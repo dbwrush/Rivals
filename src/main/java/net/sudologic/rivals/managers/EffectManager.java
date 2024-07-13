@@ -30,16 +30,16 @@ public class EffectManager {
     public void applyEffects(Player player, double intensity) {
         List<PotionEffect> effects = new ArrayList<>();
         if(intensity >= 5) {
-            effects.add(new PotionEffect(PotionEffectType.HUNGER, 20 * 60 * 60, (int)intensity - 2, true, true));
+            effects.add(new PotionEffect(PotionEffectType.HUNGER, 20 * 60 * 60, (int)intensity - 2));
         }
         if(intensity >= 4) {
-            effects.add(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 60, (int)intensity - 3, true, true));
+            effects.add(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 60 * 60, (int)(intensity - 2)/2));
         }
         if(intensity >= 3) {
-            effects.add(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 60, (int)intensity - 2, true, true));
+            effects.add(new PotionEffect(PotionEffectType.SLOW, 20 * 60 * 60, (int)intensity/3));
         }
         if(intensity >= 1) {
-            effects.add(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 60 * 60, (int)intensity, true, true));
+            effects.add(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 60 * 60, (int)intensity));
         }
         player.addPotionEffects(effects);
     }
