@@ -195,6 +195,7 @@ public class Faction implements ConfigurationSerializable {
             sendMessageToOnlineMembers(Bukkit.getPlayer(member).getName() + ChatColor.LIGHT_PURPLE + " has joined your faction.");
             members.add(member);
             Rivals.getClaimManager().updateFactionMembers(this);
+            Rivals.getEffectManager().updatePlayer(Bukkit.getPlayer(member), Rivals.getPoliticsManager());
             return true;
         }
         return false;

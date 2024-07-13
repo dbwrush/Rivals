@@ -5,7 +5,6 @@ import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -25,10 +24,10 @@ import java.util.Map;
 import java.util.UUID;
 
 public class EventManager implements Listener {
-    private Map<UUID, Double> combatTime;
+    private Map<UUID, Double> lastCombat;
 
     public EventManager() {
-        combatTime = new HashMap<>();
+        lastCombat = new HashMap<>();
     }
 
     @EventHandler
@@ -43,17 +42,21 @@ public class EventManager implements Listener {
             } else if(e.getEntity() instanceof Player) {
                 //power = Math.round((double)Rivals.getSettings().get("killPlayerPower") * 100.0) / 100.0;
                 Faction victimFaction = manager.getFactionByPlayer(e.getEntity().getUniqueId());
-                if(victimFaction == null && killerFaction == null) {
-                    power = Math.round((double)Rivals.getSettings().get("killNeutralPower") * 100.0) / 100.0;
-                    killerFaction.changeWarmongering(.25);
+                if(victimFaction == null || killerFaction == null) {
+                    Rivals.getEffectManager().changePlayerWarMongering(killer.getUniqueId(), .25);
                 } else if(killerFaction.getHostileFactions().contains(victimFaction.getID())) {
                     power = Math.round((double)Rivals.getSettings().get("killEnemyPower") * 100.0) / 100.0;
                     killerFaction.changeWarmongering(.05);
+                    Rivals.getEffectManager().changePlayerWarMongering(killer.getUniqueId(), .05);
                 } else if(killerFaction.getAllies().contains(victimFaction.getID())) {
                     power = Math.round((double)Rivals.getSettings().get("killAllyPower") * 100.0) / 100.0;
                     killerFaction.changeWarmongering(.5);
+                    Rivals.getEffectManager().changePlayerWarMongering(killer.getUniqueId(), .5);
                 } else {
                     power = Math.round((double) Rivals.getSettings().get("killNeutralPower") * 100.0) / 100.0;
+                    if(killerFaction != null)
+                        killerFaction.changeWarmongering(.25);
+                    Rivals.getEffectManager().changePlayerWarMongering(killer.getUniqueId(), .25);
                 }
             }
             if(killerFaction != null) {
@@ -109,10 +112,10 @@ public class EventManager implements Listener {
     public void onHit(EntityDamageByEntityEvent e) {
         if(e.getEntityType() == EntityType.PLAYER) {
             Player victim = (Player) e.getEntity();
-            if(combatTime.containsKey(victim.getUniqueId())) {
-                combatTime.remove(victim);
+            if(lastCombat.containsKey(victim.getUniqueId())) {
+                lastCombat.remove(victim);
             }
-            combatTime.put(victim.getUniqueId(), System.currentTimeMillis() + (double)Rivals.getSettings().get("combatTeleportDelay") * 1000);
+            lastCombat.put(victim.getUniqueId(), System.currentTimeMillis() + (double)Rivals.getSettings().get("combatTeleportDelay") * 1000);
         }
     }
 
@@ -143,22 +146,22 @@ public class EventManager implements Listener {
     }
 
     public boolean getCombat(UUID uuid) {
-        if(!combatTime.containsKey(uuid)) {
+        if(!lastCombat.containsKey(uuid)) {
             return false;
         }
-        Double time = combatTime.get(uuid);
+        Double time = lastCombat.get(uuid);
         if(time == null) {
             return false;
         }
         if(System.currentTimeMillis() > time) {
-            combatTime.remove(uuid);
+            lastCombat.remove(uuid);
             return false;
         }
         return true;
     }
 
     public double combatTimeLeft(UUID uuid) {
-        double time = combatTime.get(uuid);
+        double time = lastCombat.get(uuid);
         if(time == 0) {
             return 0;
         }
