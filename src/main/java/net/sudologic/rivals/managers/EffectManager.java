@@ -46,6 +46,7 @@ public class EffectManager {
                     updatePlayer(p, polMan);
                 }
             }
+            f.setWarmongering(f.getWarmongering() * .9);
         }
     }
 

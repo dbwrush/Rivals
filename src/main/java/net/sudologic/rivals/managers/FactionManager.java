@@ -15,7 +15,6 @@ public class FactionManager implements ConfigurationSerializable {
     private List<MemberInvite> memberInvites;
     private List<AllyInvite> allyInvites;
     private List<PeaceInvite> peaceInvites;
-
     private List<WarDeclaration> upcomingWars;
 
     public FactionManager(Map<String, Object> serializedFactionManager) {

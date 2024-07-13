@@ -381,4 +381,8 @@ public class Faction implements ConfigurationSerializable {
     public void changeWarmongering(double amount){
         warmongering += amount;
     }
+
+    public void setWarmongering(double n){
+        warmongering = n;
+    }
 }

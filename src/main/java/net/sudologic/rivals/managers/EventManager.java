@@ -43,7 +43,7 @@ public class EventManager implements Listener {
             } else if(e.getEntity() instanceof Player) {
                 //power = Math.round((double)Rivals.getSettings().get("killPlayerPower") * 100.0) / 100.0;
                 Faction victimFaction = manager.getFactionByPlayer(e.getEntity().getUniqueId());
-                if(victimFaction == null || killerFaction == null) {
+                if(victimFaction == null && killerFaction == null) {
                     power = Math.round((double)Rivals.getSettings().get("killNeutralPower") * 100.0) / 100.0;
                     killerFaction.changeWarmongering(.25);
                 } else if(killerFaction.getHostileFactions().contains(victimFaction.getID())) {
