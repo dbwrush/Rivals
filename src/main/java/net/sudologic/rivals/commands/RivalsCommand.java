@@ -203,7 +203,11 @@ public class RivalsCommand implements CommandExecutor {
                 Faction enemy = manager.getFactionByName(enemyName);
 
                 if(now) {
-                    boolean mutual = enemy != null && enemy.getEnemies().contains(faction.getAllies());
+                    boolean mutual = enemy != null;
+                    for(Integer a : faction.getAllies()) {
+                        if(enemy.getEnemies().contains(a))
+                            mutual = true;
+                    }
                     if(faction.getPower() > (double)Rivals.getSettings().get("nowWarPower") || mutual) {
                         if(!mutual)
                             faction.rawPowerChange((double)Rivals.getSettings().get("nowWarPower") * -1);
@@ -227,7 +231,9 @@ public class RivalsCommand implements CommandExecutor {
                             p.sendMessage("There is a faction named " + imprecise.getName());
                         }
                     } else {
-                        manager.createWarDeclaration(faction.getID(), enemy.getID(), System.currentTimeMillis(), (long) Rivals.getSettings().get("warDelay"));
+                        int delay = (int) Rivals.getSettings().get("warDelay");
+                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Sent war declaration to " + ChatColor.RESET + enemyName + ChatColor.LIGHT_PURPLE + ". They have " + delay + " hours to prepare." + ChatColor.RESET);
+                        manager.createWarDeclaration(faction.getID(), enemy.getID(), System.currentTimeMillis(), delay);
                     }
                 }
                 return true;

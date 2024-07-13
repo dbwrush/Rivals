@@ -127,6 +127,8 @@ public final class Rivals extends JavaPlugin {
 
         claimManager = new ClaimManager();
         resourceManager = new ResourceManager();
+        effectManager = new EffectManager();
+
 
         registerClasses();
         createCustomConfig();
@@ -199,7 +201,7 @@ public final class Rivals extends JavaPlugin {
         if(!settings.contains("maxNameLength"))
             settings.set("maxNameLength", 16);
         if(!settings.contains("warDelay"))
-            settings.set("warDelay", 48.0);//in hours
+            settings.set("warDelay", 48);//in hours
         if(!settings.contains("nowWarPower"))
             settings.set("nowWarPower", 20.0);
         if(!settings.contains("votePassRatio"))

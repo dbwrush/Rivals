@@ -45,13 +45,13 @@ public class EventManager implements Listener {
                 Faction victimFaction = manager.getFactionByPlayer(e.getEntity().getUniqueId());
                 if(victimFaction == null && killerFaction == null) {
                     power = Math.round((double)Rivals.getSettings().get("killNeutralPower") * 100.0) / 100.0;
-                    killerFaction.changeWarmongering(.5);
+                    killerFaction.changeWarmongering(.25);
                 } else if(killerFaction.getHostileFactions().contains(victimFaction.getID())) {
                     power = Math.round((double)Rivals.getSettings().get("killEnemyPower") * 100.0) / 100.0;
-                    killerFaction.changeWarmongering(.1);
+                    killerFaction.changeWarmongering(.05);
                 } else if(killerFaction.getAllies().contains(victimFaction.getID())) {
                     power = Math.round((double)Rivals.getSettings().get("killAllyPower") * 100.0) / 100.0;
-                    killerFaction.changeWarmongering(1);
+                    killerFaction.changeWarmongering(.5);
                 } else {
                     power = Math.round((double) Rivals.getSettings().get("killNeutralPower") * 100.0) / 100.0;
                 }

@@ -334,7 +334,7 @@ public class FactionManager implements ConfigurationSerializable {
         upcomingWars.add(w);
     }
 
-    public boolean createWarDeclaration(int fid1, int fid2, long declareTime, long delay) {
+    public boolean createWarDeclaration(int fid1, int fid2, long declareTime, int delay) {
         if(factions.containsKey(fid1) && factions.containsKey(fid2)) {
             WarDeclaration w = new WarDeclaration(fid1, fid2, declareTime, delay);
             addUpcomingWar(w);
@@ -557,8 +557,8 @@ public class FactionManager implements ConfigurationSerializable {
     }
 
     public class WarDeclaration implements ConfigurationSerializable{
-        private int fid1, fid2;
-        private long declareTime, delay;
+        private int fid1, fid2, delay;
+        private long declareTime;
 
         public void startWar() {
             getFactionByID(fid1).addEnemy(fid2);
@@ -572,7 +572,7 @@ public class FactionManager implements ConfigurationSerializable {
             this.delay = (int) serialized.get("delay");
         }
 
-        public WarDeclaration(int fid1, int fid2, long declareTime, long delay) {
+        public WarDeclaration(int fid1, int fid2, long declareTime, int delay) {
             this.fid1 = fid1;
             this.fid2 = fid2;
             this.declareTime = declareTime;
