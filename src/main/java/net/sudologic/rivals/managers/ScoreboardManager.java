@@ -3,16 +3,20 @@ package net.sudologic.rivals.managers;
 import net.sudologic.rivals.Faction;
 import net.sudologic.rivals.Rivals;
 import net.sudologic.rivals.fastboard.FastBoard;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public class ScoreboardManager {
+public class ScoreboardManager implements CommandExecutor {
     private final Map<UUID, FastBoard> boards = new HashMap<>();
+    private List<String> excluded;
 
     public ScoreboardManager(Server server) {
         server.getScheduler().runTaskTimer(Rivals.getPlugin(), () -> {
@@ -20,6 +24,7 @@ public class ScoreboardManager {
                 updateScoreboard(id);
             }
         }, 0, 20 * 10);
+        excluded = new ArrayList<>();
     }
 
     public void assignScoreboard(Player p) {
@@ -38,8 +43,9 @@ public class ScoreboardManager {
 
     public void updateScoreboard(UUID id) {
         FastBoard b = boards.get(id);
-
         Faction f = Rivals.getFactionManager().getFactionByPlayer(id);
+        Location l = Bukkit.getPlayer(id).getLocation();
+        String loc = "Location: " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ();
         if(f != null) {
             b.updateLines("Faction: " + f.getColor() + f.getName(),
                     "Members: " + ChatColor.WHITE + f.countOnlineMembers() + "/" + f.getMembers().size(),
@@ -47,10 +53,12 @@ public class ScoreboardManager {
                     "Influence: " + ChatColor.WHITE + Rivals.getRoundedDecimal(f.getInfluence()),
                     "Warmongering: " + ChatColor.WHITE + Rivals.getRoundedDecimal(f.getWarmongering()) + " + " + Rivals.getRoundedDecimal(Rivals.getEffectManager().getPlayerWarMongering(id)),
                     "In Combat: " + ChatColor.WHITE + combatString(Rivals.getEventManager().combatTimeLeft(id)),
-                    "Status: " + ChatColor.WHITE + f.getStatus());
+                    "Status: " + ChatColor.WHITE + f.getStatus(),
+                    loc);
         } else {
             b.updateLines("Faction: " + ChatColor.WHITE + "None",
-                    "Join or create a faction", "using /rivals");
+                    "Join or create a faction", "using /rivals",
+                    loc);
         }
     }
 
@@ -60,5 +68,26 @@ public class ScoreboardManager {
         } else {
             return ChatColor.RED + String.valueOf(Rivals.getRoundedDecimal(time / 1000));
         }
+    }
+
+    @Override
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+        if(!(commandSender instanceof Player)) {
+            commandSender.sendMessage("[Rivals] Only players may run this command.");
+            return true;
+        }
+        Player p = (Player) commandSender;
+        if(excluded.contains(p.getUniqueId().toString())) {
+            excluded.remove(p.getUniqueId().toString());
+            assignScoreboard(p);
+        } else {
+            excluded.add(p.getUniqueId().toString());
+            removeScoreboard(p);
+        }
+        return true;
+    }
+
+    public boolean getExcluded(UUID uuid) {
+        return excluded.contains(uuid.toString());
     }
 }

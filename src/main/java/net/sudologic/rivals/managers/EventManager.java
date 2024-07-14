@@ -73,7 +73,8 @@ public class EventManager implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         FactionManager manager = Rivals.getFactionManager();
         List<Integer> invites = manager.getInvitesForPlayer(e.getPlayer().getUniqueId());
-        Rivals.getScoreboardManager().assignScoreboard(e.getPlayer());
+        if(!Rivals.getScoreboardManager().getExcluded(e.getPlayer().getUniqueId()))
+            Rivals.getScoreboardManager().assignScoreboard(e.getPlayer());
         Rivals.getEffectManager().updatePlayer(e.getPlayer(), Rivals.getPoliticsManager());
         if(manager.getFactionByPlayer(e.getPlayer().getUniqueId()) == null && invites.size() > 0) {
             String inviteMess = "[Rivals] You're invited to join " + manager.getFactionByID(invites.get(0)).getColor() + manager.getFactionByID(invites.get(0)).getName();
@@ -94,7 +95,8 @@ public class EventManager implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        Rivals.getScoreboardManager().removeScoreboard(e.getPlayer());
+        if(!Rivals.getScoreboardManager().getExcluded(e.getPlayer().getUniqueId()))
+            Rivals.getScoreboardManager().removeScoreboard(e.getPlayer());
     }
 
     @EventHandler
