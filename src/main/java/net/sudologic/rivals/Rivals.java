@@ -288,6 +288,7 @@ public final class Rivals extends JavaPlugin {
         this.getCommand("delHome").setExecutor(new DelHomeCommand());
         this.getCommand("homes").setExecutor(new HomesCommand());
         this.getCommand("policy").setExecutor(new PolicyCommand());
+        this.getCommand("rsb").setExecutor(scoreboardManager);
     }
 
     public void registerClasses() {

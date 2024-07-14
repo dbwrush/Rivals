@@ -16,7 +16,7 @@ import java.util.*;
 
 public class ScoreboardManager implements CommandExecutor {
     private final Map<UUID, FastBoard> boards = new HashMap<>();
-    private List<String> excluded;
+    private final List<String> excluded;
 
     public ScoreboardManager(Server server) {
         server.getScheduler().runTaskTimer(Rivals.getPlugin(), () -> {

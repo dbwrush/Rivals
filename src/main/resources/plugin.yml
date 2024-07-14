@@ -28,6 +28,9 @@ commands:
   policy:
     description: Propose policy changes
     usage: /policy
+  rsb:
+    description: Toggle the Rivals scoreboard
+    usage: /rsb
 
 permissions:
   rivals.admin:
