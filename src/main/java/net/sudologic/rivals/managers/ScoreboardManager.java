@@ -23,7 +23,7 @@ public class ScoreboardManager implements CommandExecutor {
             for(UUID id : boards.keySet()) {
                 updateScoreboard(id);
             }
-        }, 0, 20 * 10);
+        }, 0, 20);
         excluded = new ArrayList<>();
     }
 
