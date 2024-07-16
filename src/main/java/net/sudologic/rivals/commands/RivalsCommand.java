@@ -66,33 +66,6 @@ public class RivalsCommand implements CommandExecutor {
                 }
                 return true;
             }
-            else if("sharechunk".equals(args[0])) {
-                if(faction == null) {
-                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be in a faction to share a chunk." + ChatColor.RESET);
-                    return true;
-                }
-                if(args.length < 3) {
-                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Usage: /rivals sharechunk <x> <z> <allyName>" + ChatColor.RESET);
-                    return true;
-                }
-                int x = Integer.parseInt(args[1]);
-                int z = Integer.parseInt(args[2]);
-                Chunk chunk = p.getWorld().getChunkAt(x, z);
-                String allyName = args[3];
-                Faction ally = manager.getFactionByName(allyName);
-                
-                if(faction.getAllies().contains(ally.getID())) {
-                    // Share the chunk with the allied faction
-                    if(faction.shareChunk(chunk, ally)) {
-                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Shared chunk at (" + x + ", " + z + ") with " + allyName + ChatColor.RESET);
-                    } else {
-                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Chunk sharing failed." + ChatColor.RESET);
-                    }
-                } else {
-                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You are not allied with " + ChatColor.RESET + allyName);
-                }
-                return true;
-            }
             else if("kick".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be a part of a faction to kick people out of a faction." + ChatColor.RESET);
