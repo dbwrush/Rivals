@@ -328,7 +328,7 @@ public class RivalsCommand implements CommandExecutor {
                 ClaimManager claimManager = Rivals.getClaimManager();
                 Chunk c = p.getLocation().getChunk();
                 double myStrength = claimManager.getClaimStrength(faction);
-                if(myStrength < 1) {
+                if(3 * myStrength < 1) {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Your faction is not powerful enough to claim this land." + ChatColor.RESET);
                     return true;
                 }

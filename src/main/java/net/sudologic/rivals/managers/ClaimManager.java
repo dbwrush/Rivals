@@ -140,7 +140,6 @@ public class ClaimManager {
     public double getClaimStrength(Faction f) {
         int claims = f.getRegions().size();
         double power = f.getPower();
-
         return power / claims;
     }
 }
