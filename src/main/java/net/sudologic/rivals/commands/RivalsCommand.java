@@ -501,7 +501,11 @@ public class RivalsCommand implements CommandExecutor {
                         ProtectedRegion claim = Rivals.getClaimManager().getExistingClaim(loc);
                         if(claim != null) {
                             Faction f = manager.getFactionByID(Integer.parseInt(claim.getId().split("_")[2]));
-                            row += ChatColor.COLOR_CHAR + f.getColor().toString() + "X " + ChatColor.COLOR_CHAR + ChatColor.RESET + "| ";
+                            if(z == 0 && (x == -1 || x == 0)){
+                                row += ChatColor.COLOR_CHAR + f.getColor().toString() + "X " + ChatColor.COLOR_CHAR + ChatColor.GREEN + "| ";
+                            } else{
+                                row += ChatColor.COLOR_CHAR + f.getColor().toString() + "X " + ChatColor.COLOR_CHAR + ChatColor.RESET + "| ";
+                            }
                             if(!facts.contains(f.getName())) {
                                 facts += ChatColor.COLOR_CHAR + f.getColor().toString() + f.getName() + ChatColor.COLOR_CHAR + ChatColor.RESET + " ";
                             }
