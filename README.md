@@ -49,17 +49,17 @@
     - [x] Determine resource spawn based on a random chance, decreasing over time on a decay curve.
     - [x] Move resource chunk to a new location and reset its chance when the random chance falls below a configurable threshold.
 
-8. **Politics:**
-    - [ ] Enable factions to propose one resolution at a time.
-    - [ ] Allow voting for or against resolutions, with vote strength controlled by faction power.
-    - [ ] Pass resolutions with a majority vote after an allotted time.
-    - [ ] Adjust proposing faction's power change relative to the support for the proposal.
-    - [ ] Proposal Types:
-        - [ ] Denounce: Immediate loss of power relative to support.
-        - [ ] Sanction: Reduce power changes for perceived misbehavior.
-        - [ ] Unsanction: Remove sanctions.
-        - [ ] Intervention: Declare a faction a threat to all players.
-        - [ ] Change Setting: Modify a setting in the config.
-        - [ ] Custodian (Add/Remove): Custodian faction gets special powers.
-            - [ ] Set Budget: Declare the need for materials, rewarding providing factions with power.
-            - [ ] Set Mandate: Require Custodians to work towards a goal.
+8. **~~Politics:~~** IMPLEMENTED
+    - [x] Enable factions to propose one resolution at a time.
+    - [x] Allow voting for or against resolutions, with vote strength controlled by faction power.
+    - [x] Pass resolutions with a majority vote after an allotted time.
+    - [x] Adjust proposing faction's power change relative to the support for the proposal.
+    - [x] Proposal Types:
+        - [x] Denounce: Immediate loss of power relative to support.
+        - [x] Sanction: Reduce power changes for perceived misbehavior.
+        - [x] Unsanction: Remove sanctions.
+        - [x] Intervention: Declare a faction a threat to all players.
+        - [x] Change Setting: Modify a setting in the config.
+        - [x] Custodian (Add/Remove): Custodian faction gets special powers.
+            - [x] Set Budget: Declare the need for materials, rewarding providing factions with power.
+            - [x] Set Mandate: Require Custodians to work towards a goal.
