@@ -332,7 +332,6 @@ public class Faction implements ConfigurationSerializable {
         if(power < 0) {
             power = 0;
         }
-        power = Math.round(power * 100.0) / 100.0;
         Rivals.getFactionManager().updateFactionRank(this);
     }
 

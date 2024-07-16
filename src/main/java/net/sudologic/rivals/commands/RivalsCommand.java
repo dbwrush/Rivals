@@ -363,6 +363,23 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
             }
+            else if("claims".equals(args[0])) {
+                if(faction == null) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be in a faction to view your claims." + ChatColor.RESET);
+                    return true;
+                }
+                List<String> claims = faction.getRegions();
+                if(claims.size() == 0) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Your faction has no claims." + ChatColor.RESET);
+                    return true;
+                }
+                p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Your faction's claims:" + ChatColor.RESET);
+                for(String claim : claims) {
+                    String[] parts = claim.split("_");
+                    p.sendMessage(ChatColor.LIGHT_PURPLE + "World: " + parts[1] + " X: " + parts[3] + " Z: " + parts[4]);
+                }
+                return true;
+            }
             else if("unclaim".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be in a faction to unclaim land." + ChatColor.RESET);
