@@ -342,7 +342,7 @@ public class RivalsCommand implements CommandExecutor {
                         if(f != null) {
                             if(faction.getHostileFactions().contains(f.getID())) {
                                 double enemyStrength = claimManager.getClaimStrength(f);
-                                f.rawPowerChange(-5);
+                                f.rawPowerChange(-2.5);
                                 myStrength = claimManager.getClaimStrength(faction);
                                 if(myStrength > enemyStrength && 3 * myStrength >= 1) {
                                     claimManager.removeClaim(c, f);
@@ -350,7 +350,7 @@ public class RivalsCommand implements CommandExecutor {
                                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You have taken this chunk from " + ChatColor.RESET + f.getName());
                                 } else {
                                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Your faction is not powerful enough to take this claim from " + ChatColor.RESET + f.getName());
-                                    f.rawPowerChange(5);
+                                    f.rawPowerChange(2.5);
                                 }
                             } else {
                                 if(f.equals(faction)) {
