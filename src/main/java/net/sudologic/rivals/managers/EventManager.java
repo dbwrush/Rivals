@@ -9,8 +9,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityResurrectEvent;
@@ -19,11 +21,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldSaveEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.Recipe;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class EventManager implements Listener {
     private Map<UUID, Double> combatTime;
@@ -112,6 +115,25 @@ public class EventManager implements Listener {
         Faction pFaction = Rivals.getFactionManager().getFactionByPlayer(p.getUniqueId());
         if(f != pFaction) {
             f.powerChange((double)Rivals.getSettings().get("tradePower"));
+        }
+    }
+
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent e) {
+        if(e.getSpawnReason().equals("CURED")){
+            Villager v = (Villager) e.getEntity();
+            for (int i = 0; i < v.getRecipes().size(); i++) {
+                Recipe oldTrade = v.getRecipes().get(i);
+                MerchantRecipe newTrade = new MerchantRecipe(new ItemStack(oldTrade.getResult()), Integer.MAX_VALUE);
+                ArrayList<ItemStack> ingredients = new ArrayList<>();
+                for (ItemStack x: v.getRecipes().get(i).getIngredients()) {
+                    //why does v.getRecipes().get(i).getIngredients() work but not oldTrade.getIngredients()?
+                    x.setAmount(1);
+                    ingredients.add(x);
+                }
+                newTrade.setIngredients(ingredients);
+                v.setRecipe(i,newTrade);
+            }
         }
     }
 
