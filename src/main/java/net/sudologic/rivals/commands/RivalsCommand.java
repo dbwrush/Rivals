@@ -366,6 +366,84 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 }
             }
+            else if("trust".equals(args[0])) {//share the claim you're standing in with a faction
+                if(faction == null) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be in a faction to share claims." + ChatColor.RESET);
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must specify a faction to share the claim with" + ChatColor.RESET);
+                    return true;
+                }
+                String shareName = args[1];
+                Faction share = manager.getFactionByName(shareName);
+                if(share == null) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " There is no faction by that name." + ChatColor.RESET);
+                    Faction imprecise = manager.getFactionByNameImprecise(shareName);
+                    if(imprecise != null) {
+                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Maybe you meant " + ChatColor.RESET + imprecise.getName());
+                    }
+                    return true;
+                }
+                if(!faction.getAllies().contains(share.getID())) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be allied with a faction to share claims." + ChatColor.RESET);
+                    return true;
+                }
+                Chunk c = p.getLocation().getChunk();
+                ProtectedRegion region = Rivals.getClaimManager().getExistingClaim(c);
+                if(region == null) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be standing in a claimed chunk to share it." + ChatColor.RESET);
+                    return true;
+                }
+                if(region.getId().split("_")[2].equals(String.valueOf(faction.getID()))) {
+                    if(Rivals.getClaimManager().addFactionToRegion(share, c)) {
+                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Shared your claim with " + ChatColor.RESET + share.getName());
+                        return true;
+                    }
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Could not share your claim with " + ChatColor.RESET + share.getName());
+                    return true;
+                } else {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be standing in a claim owned by your faction to share it." + ChatColor.RESET);
+                    return true;
+                }
+            }
+            else if("untrust".equals(args[0])) {
+                if(faction == null) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be in a faction to unshare claims." + ChatColor.RESET);
+                    return true;
+                }
+                if(args.length < 2) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must specify a faction to unshare the claim with" + ChatColor.RESET);
+                    return true;
+                }
+                String unshareName = args[1];
+                Faction unshare = manager.getFactionByName(unshareName);
+                if(unshare == null) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " There is no faction by that name." + ChatColor.RESET);
+                    Faction imprecise = manager.getFactionByNameImprecise(unshareName);
+                    if(imprecise != null) {
+                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Maybe you meant " + ChatColor.RESET + imprecise.getName());
+                    }
+                    return true;
+                }
+                Chunk c = p.getLocation().getChunk();
+                ProtectedRegion region = Rivals.getClaimManager().getExistingClaim(c);
+                if(region == null) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be standing in a claimed chunk to unshare it." + ChatColor.RESET);
+                    return true;
+                }
+                if(region.getId().split("_")[2].equals(String.valueOf(faction.getID()))) {
+                    if(Rivals.getClaimManager().removeFactionFromRegion(unshare, c)) {
+                        p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Unshared your claim with " + ChatColor.RESET + unshare.getName());
+                        return true;
+                    }
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Could not unshare your claim with " + ChatColor.RESET + unshare.getName());
+                    return true;
+                } else {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be standing in a claim owned by your faction to unshare it." + ChatColor.RESET);
+                    return true;
+                }
+            }
             else if("claims".equals(args[0])) {
                 if(faction == null) {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be in a faction to view your claims." + ChatColor.RESET);

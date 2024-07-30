@@ -390,6 +390,14 @@ public class Faction implements ConfigurationSerializable {
 
     public String getClaimName(Chunk c) {
         return "rfclaims_" + c.getWorld().getName() + "_" + factionID + "_" + c.getX() + "_" + c.getZ();
+        /*
+        0 - rfclaims
+        1 - world
+        2 - factionID
+        3 - x
+        4 - z
+        5+- trusted factions
+         */
     }
 
     public void sendMessageToOnlineMembers(String s) {
