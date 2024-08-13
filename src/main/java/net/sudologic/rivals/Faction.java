@@ -413,6 +413,9 @@ public class Faction implements ConfigurationSerializable {
     }
 
     public void changeWarmongering(double amount){
+        if(Rivals.getPoliticsManager().getAmnestyFactions().containsKey(factionID)){
+            amount = 0;
+        }
         warmongering += amount;
     }
 

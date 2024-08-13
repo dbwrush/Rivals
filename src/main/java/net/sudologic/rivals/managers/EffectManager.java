@@ -20,6 +20,10 @@ public class EffectManager {
     }
 
     public void changePlayerWarMongering(UUID playerID, double amount) {
+        Faction f = Rivals.getFactionManager().getFactionByPlayer(playerID);
+        if(f != null && Rivals.getPoliticsManager().getAmnestyFactions().containsKey(f.getID())) {
+            amount = 0;
+        }
         playerWarMongering.put(playerID, getPlayerWarMongering(playerID) + amount);
     }
 

@@ -71,7 +71,7 @@ public class PolicyCommand implements CommandExecutor {
                 }
                 Policy policy = null;
                 switch (type) {
-                    case denounce, sanction, intervention, custodian -> {
+                    case denounce, sanction, intervention, custodian, amnesty -> {
                         if(args.length < 4) {
                             commandSender.sendMessage("[Rivals] Usage: /policy propose " + type.name() + " <faction> <hours>");
                             return true;
@@ -237,6 +237,7 @@ public class PolicyCommand implements CommandExecutor {
             case setting -> s += "Set " + p.getSettingName() + " to " + p.getSettingValue();
             case budget -> s += "Set Custodian budget to " + (p.getBudget() * 100) + "%";
             case mandate -> s += "Set Custodian mandate to " + p.getMandate();
+            case amnesty -> s += "Amnesty for Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET + " for " + p.getTime() + " hours";
         }
         s += "\nSupporters: ";
         for(int i : p.getYays()) {

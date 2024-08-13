@@ -17,6 +17,7 @@ public class PoliticsManager implements ConfigurationSerializable {
     private HashMap<Integer, Long> sanctionedFactions;//this faction has reduced power
     private HashMap<Integer, Long> denouncedFactions;//this faction is given a warning
     private HashMap<Integer, Long> interventionFactions;//all factions are at war with this faction
+    private HashMap<Integer, Long> amnestyFactions;//this faction is given amnesty
     private long custodianEnd = 0;
     private Map<Integer, Policy> proposed;
 
@@ -96,6 +97,10 @@ public class PoliticsManager implements ConfigurationSerializable {
             case unintervention -> {
                 interventionFactions.remove(p.getTarget());
                 announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " is no longer under intervention" + ChatColor.RESET;
+            }
+            case amnesty -> {
+                amnestyFactions.put(p.getTarget(), p.getTime() * 3600000 + System.currentTimeMillis());
+                announce = ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + Rivals.getFactionManager().getFactionByID(p.getTarget()).getName() + " has been given amnesty" + ChatColor.RESET;
             }
         }
         for(Player pl : Bukkit.getOnlinePlayers()) {
@@ -188,6 +193,11 @@ public class PoliticsManager implements ConfigurationSerializable {
                 interventionFactions.remove(f);
             }
         }
+        for(int f : amnestyFactions.keySet()) {
+            if(amnestyFactions.get(f) < time) {
+                amnestyFactions.remove(f);
+            }
+        }
         long a = (System.currentTimeMillis() - ((int)Rivals.getSettings().get("votePassTime") * 3600000l));//time in hours for vote to pass
         Collection<Policy> props = proposed.values();
         List<Policy> toRemove = new ArrayList<>();
@@ -250,6 +260,10 @@ public class PoliticsManager implements ConfigurationSerializable {
 
     public HashMap<Integer, Long> getInterventionFactions() {
         return interventionFactions;
+    }
+
+    public HashMap<Integer, Long> getAmnestyFactions() {
+        return amnestyFactions;
     }
 
     public long getCustodianEnd() {

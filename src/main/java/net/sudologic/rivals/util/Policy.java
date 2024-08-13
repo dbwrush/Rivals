@@ -29,7 +29,8 @@ public class Policy implements ConfigurationSerializable {
         setting, //settingName, newValue
         custodian, //target, time
         budget, //amount
-        mandate //text
+        mandate, //text
+        amnesty //target, time
     }
 
     private ArrayList<Integer> yays, nays;
@@ -86,7 +87,7 @@ public class Policy implements ConfigurationSerializable {
         this.type = type;
         this.proposedTime = System.currentTimeMillis();
         switch (type) {
-            case denounce, sanction, intervention, custodian -> {
+            case denounce, sanction, intervention, custodian, amnesty -> {
                 this.target = (int) one;
                 this.time = (int) two;
             }
