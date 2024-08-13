@@ -30,9 +30,11 @@ import java.util.*;
 
 public class EventManager implements Listener {
     private Map<UUID, Double> combatTime;
+    private EffectManager effectManager;
 
-    public EventManager() {
+    public EventManager(EffectManager effectManager) {
         combatTime = new HashMap<>();
+        this.effectManager = effectManager;
     }
 
     @EventHandler
@@ -47,15 +49,20 @@ public class EventManager implements Listener {
             } else if(e.getEntity() instanceof Player) {
                 //power = Math.round((double)Rivals.getSettings().get("killPlayerPower") * 100.0) / 100.0;
                 Faction victimFaction = manager.getFactionByPlayer(e.getEntity().getUniqueId());
-                if(victimFaction == null && killerFaction == null) {
+                if(killerFaction == null) {
+                    effectManager.changePlayerWarMongering(killer.getUniqueId(), .5);
+                } else if(victimFaction == null) {
                     power = Math.round((double)Rivals.getSettings().get("killNeutralPower") * 100.0) / 100.0;
                     killerFaction.changeWarmongering(.25);
+                    effectManager.changePlayerWarMongering(killer.getUniqueId(), .25);
                 } else if(killerFaction.getHostileFactions().contains(victimFaction.getID())) {
                     power = Math.round((double)Rivals.getSettings().get("killEnemyPower") * 100.0) / 100.0;
                     killerFaction.changeWarmongering(.05);
+                    effectManager.changePlayerWarMongering(killer.getUniqueId(), .5);
                 } else if(killerFaction.getAllies().contains(victimFaction.getID())) {
                     power = Math.round((double)Rivals.getSettings().get("killAllyPower") * 100.0) / 100.0;
                     killerFaction.changeWarmongering(.5);
+                    effectManager.changePlayerWarMongering(killer.getUniqueId(), .5);
                 } else {
                     power = Math.round((double) Rivals.getSettings().get("killNeutralPower") * 100.0) / 100.0;
                 }

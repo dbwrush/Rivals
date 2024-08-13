@@ -267,7 +267,7 @@ public final class Rivals extends JavaPlugin {
 
     public void registerListeners() {
         PluginManager pm = Bukkit.getPluginManager();
-        eventManager = new EventManager();
+        eventManager = new EventManager(effectManager);
         pm.registerEvents(eventManager, this);
     }
 
