@@ -22,7 +22,7 @@ This plugin is still under active development, which means the default configura
    - Claimed land can only be edited by Faction members
    - Factions at war can steal land from each other using power.
    - Land claims can be visualized using a command.
-   - Faction claim strenght is spread evenly across all chunks.
+   - Faction claim strength is spread evenly across all chunks.
         The more chunks a faction claims, the weaker their claims are
         The more chunks you take from a faction, the harder it is to take more
 4. **Homes**
