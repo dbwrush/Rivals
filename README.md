@@ -7,7 +7,7 @@ This plugin is still under active development, which means the default configura
    - Players can create factions with custom names and colors.
    - Factions can invite new players to join
    - Factions can claim land
-   - Factions can decalre war, make peace, and form alliances
+   - Factions can declare war, make peace, and form alliances
    - Factions can create shops
    - Factions can gain or lose power in combat with players and mobs, or through commerce
    - Power changes follow a curve so that it changes slowly once a high power is achieved
