@@ -1,3 +1,7 @@
+Rivals intends to address the common shortcomings of traditional Minecraft factions by promoting balance and variety in gameplay. The plugin aims to level the playing field between large and small factions, ensuring solo players can still thrive through strategic choices. It supports diverse playstyles, allowing players to focus on commerce, politics, or combat as they see fit. By introducing a political system, Rivals gives players a voice in shaping the game's balance, while resource-rich territories provide clear incentives to capture and defend land, making every piece of land truly valuable.
+
+This plugin is still under active development, which means the default configuration is somewhat unbalanced. We are open to feedback on all aspects of the plugin.
+
 ## Features
 1. **Factions**
    - Players can create factions with custom names and colors.
@@ -6,6 +10,9 @@
    - Factions can decalre war, make peace, and form alliances
    - Factions can create shops
    - Factions can gain or lose power in combat with players and mobs, or through commerce
+   - Power changes follow a curve so that it changes slowly once a high power is achieved
+   - Power changes more slowly for factions with many members
+   - Power is converted to influence over time, which is useful in politics
    - Help/Info command
 2. **Shops**
    - Implemented with Shopkeepers plugin API
@@ -15,51 +22,34 @@
    - Claimed land can only be edited by Faction members
    - Factions at war can steal land from each other using power.
    - Land claims can be visualized using a command.
+   - Faction claim strenght is spread evenly across all chunks.
+        The more chunks a faction claims, the weaker their claims are
+        The more chunks you take from a faction, the harder it is to take more
 4. **Homes**
    - Factions may set homes to teleport between.
    - Number of homes scales with faction power.
    - Players may not use homes while in combat.
-
-### TODO List:
-
-1. **~~Tweak Power Change:~~ IMPLEMENTED**
-    - [x] Make power change logarithmic for increased difficulty as power is gained (similar to enchanting levels in Minecraft).
-2. **~~/rivals command~~ IMPLEMENTED**
-    - [x] Add subcommand to check current invites. Should include invites to factions, alliances, and peace.
-    - [x] Add a command to kick a member from a faction.
-3. **Scoreboard**
-    - [ ] Players should be shown their current faction name in its color, along with the faction's current power.
-    - [ ] Display count of faction members and the number that are currently online.
-4. **~~Faction Home:~~ IMPLEMENTED**
-    - [x] Grant access to a faction home based on sufficient faction power.
-    - [x] Scale the quantity of available homes with power.
-
-5. **~~Time-Delay War Declarations:~~ IMPLEMENTED**
-    - [x] Implement time-delayed war declarations.
-    - [x] Immediate declarations have a power penalty, while time-delayed ones do not.
-    - [x] Allow configuration of delay time in `config.yml`.
-
-6. **~~Faction Ranking:~~** IMPLEMENTED
-    - [x] Convert ranks from a list to a number stored with the faction upon serialization/deserialization.
-    - [x] Consider reordering factions whenever `Faction.powerChange()` is called.
-
-7. **~~Resource Chunks:~~** IMPLEMENTED
-    - [x] Spawn resource chunks randomly with quantity controlled by `config.yml`.
-    - [x] Allow resource chunks to have periodic resource spawn opportunities.
-    - [x] Determine resource spawn based on a random chance, decreasing over time on a decay curve.
-    - [x] Move resource chunk to a new location and reset its chance when the random chance falls below a configurable threshold.
-
-8. **~~Politics:~~** IMPLEMENTED
-    - [x] Enable factions to propose one resolution at a time.
-    - [x] Allow voting for or against resolutions, with vote strength controlled by faction power.
-    - [x] Pass resolutions with a majority vote after an allotted time.
-    - [x] Adjust proposing faction's power change relative to the support for the proposal.
-    - [x] Proposal Types:
-        - [x] Denounce: Immediate loss of power relative to support.
-        - [x] Sanction: Reduce power changes for perceived misbehavior.
-        - [x] Unsanction: Remove sanctions.
-        - [x] Intervention: Declare a faction a threat to all players.
-        - [x] Change Setting: Modify a setting in the config.
-        - [x] Custodian (Add/Remove): Custodian faction gets special powers.
-            - [x] Set Budget: Declare the need for materials, rewarding providing factions with power.
-            - [x] Set Mandate: Require Custodians to work towards a goal.
+5. **Scoreboard**
+   - Displayed on right side of screen to show current info on your faction
+6. **War Declarations**
+   - War declarations have a time delay by default.
+   - Factions can skip the delay in exchange for a power penalty.
+7. **Resource Chunks**
+   - Produce items at certain intervals
+   - Item type and quantity are random
+   - Chance of producing items decays over time
+   - When a chunk stops producing resources, it is reset and moved to a new random location
+   - Resource types are somewhat biome-specific
+   - **TODO**: Add command to list all resource chunks, with options to filter by item type and distance
+8. **Politics**
+   - Factions can vote on resolutions to buff/debuff certain factions or adjust game rules
+   - Vote strength determined by faction influence.
+   - Proposal types:
+        - Denounce: Condemn a faction's actions
+        - Sanction: Reduces a faction's power temporarily
+        - Unsanction: Removes sanction on a faction
+        - Intervention: All factions may freely attack the target faction except their allies.
+        - Setting: Modify a game balancing setting.
+        - Custodian: Declares a faction to be the custodian for a set time
+        - Budget: Sets the amount of influence the custodian taxes from the other factions
+        - Mandate: Sets the Custodian's official goal
