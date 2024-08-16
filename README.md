@@ -45,11 +45,17 @@ This plugin is still under active development, which means the default configura
    - Factions can vote on resolutions to buff/debuff certain factions or adjust game rules
    - Vote strength determined by faction influence.
    - Proposal types:
-        - Denounce: Condemn a faction's actions
+        - Denounce: Condemn a faction's actions temporarily
         - Sanction: Reduces a faction's power temporarily
         - Unsanction: Removes sanction on a faction
-        - Intervention: All factions may freely attack the target faction except their allies.
+        - Intervention: Faction may be attacked by all non-allied 
         - Setting: Modify a game balancing setting.
         - Custodian: Declares a faction to be the custodian for a set time
         - Budget: Sets the amount of influence the custodian taxes from the other factions
         - Mandate: Sets the Custodian's official goal
+        - Amnesty: Prevents a faction from recieving WarMongering debuffs temporarily
+9. **WarMongering**
+   - A per-player AND per-faction stat which tracks violence
+   - Debuffs are applied as WarMongering increases
+   - Value decreases gradually over time
+   - Factions with Amnesty do not gain WarMongering, intended to deter factions from starting wars of aggression
