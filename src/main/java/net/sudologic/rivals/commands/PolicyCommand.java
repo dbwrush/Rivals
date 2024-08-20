@@ -179,6 +179,7 @@ public class PolicyCommand implements CommandExecutor {
                     amount = -amount;
                 }
                 policy.vote(f.getID(), amount);
+                f.remInfluence(Math.abs(amount));
                 String vote = yay ? "yay" : "nay";
                 commandSender.sendMessage("[Rivals] Voted " + vote + " on resolution " + policy.getId() + " with " + Math.abs(amount) + " influence.");
                 return true;
