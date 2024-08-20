@@ -25,6 +25,7 @@ public class PoliticsManager implements ConfigurationSerializable {
         sanctionedFactions = new HashMap<>();
         denouncedFactions = new HashMap<>();
         interventionFactions = new HashMap<>();
+        amnestyFactions = new HashMap<>();
         proposed = new HashMap<>();
     }
     public PoliticsManager(Map<String, Object> serialized) {
@@ -39,6 +40,11 @@ public class PoliticsManager implements ConfigurationSerializable {
         sanctionedFactions = (HashMap<Integer, Long>) serialized.get("sanctionedFactions");
         denouncedFactions = (HashMap<Integer, Long>) serialized.get("denouncedFactions");
         interventionFactions = (HashMap<Integer, Long>) serialized.get("interventionFactions");
+        if(serialized.containsKey("amnestyFactions")) {
+            amnestyFactions = (HashMap<Integer, Long>) serialized.get("amnestyFactions");
+        } else {
+            amnestyFactions = new HashMap<>();
+        }
     }
     @Override
     public Map<String, Object> serialize() {
@@ -54,6 +60,7 @@ public class PoliticsManager implements ConfigurationSerializable {
         serialized.put("sanctionedFactions", sanctionedFactions);
         serialized.put("denouncedFactions", denouncedFactions);
         serialized.put("interventionFactions", interventionFactions);
+        serialized.put("amnestyFactions", amnestyFactions);
 
         return serialized;
     }
@@ -203,7 +210,7 @@ public class PoliticsManager implements ConfigurationSerializable {
         List<Policy> toRemove = new ArrayList<>();
         for(Policy p : props) {
             if(p.getProposedTime() < a) {
-                if(p.support() > (double)Rivals.getSettings().get("votePassRatio") && p.getNumYays() > (int)Rivals.getSettings().get("minVotes")) {
+                if(p.getSupport() > (double)Rivals.getSettings().get("votePassRatio") && p.getNumSupporters() > (int)Rivals.getSettings().get("minVotes")) {
                     implement(p);
                 }
                 Rivals.getFactionManager().getFactionByID(p.getProposedBy()).sendMessageToOnlineMembers("Your proposal, ID: " + p.getId() + " has been rejected.");

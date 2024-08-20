@@ -20,6 +20,8 @@ public class Policy implements ConfigurationSerializable {
     private String settingValue;
     private float budget;
     private PolicyType type;
+    private int support;
+    private ArrayList<Integer> supporters;
     public enum PolicyType {
         denounce, //target, time
         sanction, //target, time
@@ -32,8 +34,6 @@ public class Policy implements ConfigurationSerializable {
         mandate, //text
         amnesty //target, time
     }
-
-    private ArrayList<Integer> yays, nays;
 
     public int getTarget() {
         return target;
@@ -75,12 +75,8 @@ public class Policy implements ConfigurationSerializable {
         return type;
     }
 
-    public ArrayList<Integer> getYays() {
-        return yays;
-    }
-
-    public ArrayList<Integer> getNays() {
-        return nays;
+    public int getSupport() {
+        return support;
     }
 
     public Policy(PolicyType type, Object one, Object two, int proposedBy) {
@@ -99,28 +95,24 @@ public class Policy implements ConfigurationSerializable {
             case budget -> this.budget = (float) one;
             case mandate -> this.mandate = (String) one;
         }
-        yays = new ArrayList<>();
-        nays = new ArrayList<>();
+        this.supporters = new ArrayList<>();
+        this.support = 0;
         this.proposedBy = proposedBy;
     }
 
-    public void vote(int f, boolean yay) {
-        if(yay) {
-            if(!yays.contains(f)) {
-                yays.add(f);
-            }
-            if(nays.contains(f)) {
-                nays.remove(f);
-            }
-        } else {
-            if(yays.contains(f)) {
-                yays.remove(f);
-            }
-            if(!nays.contains(f)) {
-                nays.add(f);
-            }
+    public void vote(int f, int amount) {
+        support += amount;
+        if(amount > 0 && !supporters.contains(f)) {
+            supporters.add(f);
         }
+    }
 
+    public ArrayList<Integer> getSupporters() {
+        return supporters;
+    }
+
+    public int getNumSupporters() {
+        return supporters.size();
     }
 
     public Policy(Map<String, Object> serialized) {
@@ -136,32 +128,10 @@ public class Policy implements ConfigurationSerializable {
         } catch (Exception e) {
             this.budget = (float) (double)serialized.getOrDefault("budget", 0d);
         }
+        this.supporters = (ArrayList<Integer>) serialized.getOrDefault("supporters", new ArrayList<>());
         this.id = (int) serialized.get("id");
-        this.yays = (ArrayList<Integer>) serialized.get("yays");
-        this.nays = (ArrayList<Integer>) serialized.get("nays");
+        this.support = (int) serialized.get("support");
     }
-
-    public double support() {
-        double yay = 0;
-        double total = 0;
-        FactionManager manager = Rivals.getFactionManager();
-        for(int i : yays) {
-            yay += manager.getFactionByID(i).getInfluence();
-            total += manager.getFactionByID(i).getInfluence();
-        }
-        for(int i : nays) {
-            total += manager.getFactionByID(i).getInfluence();
-        }
-        if(total == 0) {
-            return 0;
-        }
-        return yay / total;
-    }
-
-    public int getNumYays() {
-        return yays.size();
-    }
-
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> serialized = new HashMap<>();
@@ -174,8 +144,8 @@ public class Policy implements ConfigurationSerializable {
         serialized.put("mandate", mandate);
         serialized.put("budget", budget);
         serialized.put("id", id);
-        serialized.put("yays", yays);
-        serialized.put("nays", nays);
+        serialized.put("support", support);
+        serialized.put("supporters", supporters);
 
         return serialized;
     }

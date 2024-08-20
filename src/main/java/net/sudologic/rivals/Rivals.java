@@ -26,29 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-/*
-TODO:
-    - Scoreboard: Show faction name in its color, along with faction power.
-        Number of online members and number of total members should also be shown.
-        War status shown here (peace, imminent war, active war)
-        Current proposal status
-        Current invites
-    - Politics
-        Each Faction can propose one resolution at a time.
-        Factions can vote for or against, strength of vote controlled by Faction power.
-        If a resolution has a majority vote after the allotted time, it passes.
-        Proposing faction gets a power change relative to the amount of support for the proposal, positive or negative.
-        Proposal types: All Proposals will have a description for why it should be passed
-            - Denounce: Faction faces an immediate loss of power relative to support to this proposal, but no lasting consequences.
-            - Sanction: Punish a faction for perceived misbehavior. Reduce their power changes by some proportion relative to support to this proposal.
-            - Unsanction: Removes sanctions.
-            - Intervention: Declare a single Faction to be a threat to all players, all Factions are effectively at war with this one.
-            - Change setting: Changes some setting in the config (this behavior can be enabled/disabled in the config).
-            - Custodian (add/remove): Custodian faction gets faster power gain and is able to build within the shopping area. Powers are assumed to benefit common good.
-                - Set Budget: Declare need for materials which will be given to the Custodian who requested them. Factions which provide materials can gain power from it.
-                - Set Mandate: Require the Custodian(s) to work towards a certain goal.
- */
-
 public final class Rivals extends JavaPlugin {
     private static FileConfiguration customConfig;
     private static FactionManager factionManager;
@@ -302,6 +279,10 @@ public final class Rivals extends JavaPlugin {
         ConfigurationSerialization.registerClass(FactionManager.WarDeclaration.class);
         ConfigurationSerialization.registerClass(ResourceSpawner.class);
         ConfigurationSerialization.registerClass(ResourceManager.class);
+    }
+
+    public static ResourceManager getResourceManager() {
+        return resourceManager;
     }
 
     public static FactionManager getFactionManager() {

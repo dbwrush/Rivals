@@ -65,6 +65,30 @@ public class ResourceManager implements ConfigurationSerializable {
         return null;
     }
 
+    public ArrayList<ResourceSpawner> getSpawners() {
+        return new ArrayList<>(spawners.values());
+    }
+
+    public ArrayList<ResourceSpawner> filterByDist(Location l, double d, ArrayList <ResourceSpawner> spawners) {
+        ArrayList<ResourceSpawner> filtered = new ArrayList<>();
+        for(ResourceSpawner s : spawners) {
+            if(s.getLocation().distance(l) < d) {
+                filtered.add(s);
+            }
+        }
+        return filtered;
+    }
+
+    public ArrayList<ResourceSpawner> filterByType(Material t, ArrayList <ResourceSpawner> spawners) {
+        ArrayList<ResourceSpawner> filtered = new ArrayList<>();
+        for(ResourceSpawner s : spawners) {
+            if(s.getMaterial().equals(t)) {
+                filtered.add(s);
+            }
+        }
+        return filtered;
+    }
+
     public ResourceManager(Map<String, Object> serialized) {
         spawners = new HashMap<>();
         ArrayList<Map<String, Object>> sObjects = (ArrayList<Map<String, Object>>) serialized.get("spawners");
@@ -81,11 +105,8 @@ public class ResourceManager implements ConfigurationSerializable {
             if(s.getChance() < 0.1)
                 spawners.remove(s.getLocation().getChunk());
         }
-
         if(spawners.size() < maxSpawners) {
             addSpawner();
         }
     }
-
-
 }

@@ -1,5 +1,6 @@
 package net.sudologic.rivals.commands;
 
+import com.google.common.primitives.Ints;
 import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
 import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -7,6 +8,7 @@ import net.sudologic.rivals.*;
 import net.sudologic.rivals.managers.ClaimManager;
 import net.sudologic.rivals.managers.FactionManager;
 import net.sudologic.rivals.managers.ShopManager;
+import net.sudologic.rivals.resources.ResourceSpawner;
 import net.sudologic.rivals.util.NameFetcher;
 import net.sudologic.rivals.util.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -22,6 +24,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -404,6 +407,72 @@ public class RivalsCommand implements CommandExecutor {
                     return true;
                 } else {
                     p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must be standing in a claim owned by your faction to share it." + ChatColor.RESET);
+                    return true;
+                }
+            }
+            else if("resource".equals(args[0])) {//list all resource chunks with certain parameters
+                //syntax: /resource <type | distance>, returns all chunks with that resource type or within that distance.
+                //user can also supply both a type and a distance to use both filters.
+                //Returned list will also display chunk owning faction if applicable.
+                if(args.length < 1) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You must specify a resource type or distance." + ChatColor.RESET);
+                    return true;
+                }
+                Integer distance = Ints.tryParse(args[0]);
+                String typeString = args[0];
+                Material type;
+                if(distance != null) {
+                    if(args.length > 1) {
+                        typeString = args[1];
+                    }
+                }
+                try {
+                    type = Material.valueOf(typeString);
+                } catch (IllegalArgumentException e) {
+                    type = null;
+                }
+                ArrayList<ResourceSpawner> spawners = Rivals.getResourceManager().getSpawners();
+                if(distance != null) {
+                    spawners = Rivals.getResourceManager().filterByDist(p.getLocation(), distance, spawners);
+                }
+                if(type != null) {
+                    spawners = Rivals.getResourceManager().filterByType(type, spawners);
+                }
+                if(spawners.size() == 0) {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " No resources found." + ChatColor.RESET);
+                    return true;
+                }
+                //sort by distance to player
+                spawners.sort((ResourceSpawner a, ResourceSpawner b) -> {
+                    return (int)(a.getLocation().distance(p.getLocation()) - b.getLocation().distance(p.getLocation()));
+                });
+                //trim to only the first 10 chunks
+                if(spawners.size() > 10) {
+                    spawners = new ArrayList<>(spawners.subList(0, 10));
+                }
+                p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Resource Chunks:" + ChatColor.RESET);
+                String rep = "";
+                if(spawners.size() > 0) {
+                    for (ResourceSpawner spawner : spawners) {
+                        Chunk c = spawner.getLocation().getChunk();
+                        ProtectedRegion region = Rivals.getClaimManager().getExistingClaim(c);
+                        Faction f = null;
+                        if (region != null) {
+                            String[] parts = region.getId().split("_");
+                            f = manager.getFactionByID(Integer.valueOf(parts[2]));
+                        }
+                        rep += ChatColor.LIGHT_PURPLE + "World: " + spawner.getLocation().getWorld().getName() + " X: " + spawner.getLocation().getBlockX() + " Z: " + spawner.getLocation().getBlockZ() + " Type: " + spawner.getMaterial();
+                        if (f != null) {
+                            rep += " Owner: " + f.getColor() + f.getName() + "\n";
+                        }
+                    }
+                    p.sendMessage(rep);
+                    return true;
+                } else {
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " No resources found." + ChatColor.RESET);
+                    //display syntax
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " Syntax: /resource <type | distance>, returns all chunks with that resource type or within that distance." + ChatColor.RESET);
+                    p.sendMessage(ChatColor.YELLOW + "[Rivals]" + ChatColor.LIGHT_PURPLE + " You can also supply both a type and a distance to use both filters." + ChatColor.RESET);
                     return true;
                 }
             }

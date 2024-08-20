@@ -142,14 +142,13 @@ public class PolicyCommand implements CommandExecutor {
                     commandSender.sendMessage("[Rivals] Failed to propose policy. Try again later.");
                     return true;
                 }
-                commandSender.sendMessage("[Rivals] Proposed resolution.");
-                policy.vote(f.getID(), true);
+                commandSender.sendMessage("[Rivals] Proposed resolution. Vote on it with /policy vote " + policy.getId());
                 commandSender.sendMessage(describePolicy(policy));
                 return true;
 
             } else if(args[0].equals("vote")) {
-                if(args.length < 3) {
-                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay>");
+                if(args.length < 4) {
+                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay> <influence>");
                     return true;
                 }
                 Integer id = Ints.tryParse(args[1]);
@@ -157,26 +156,32 @@ public class PolicyCommand implements CommandExecutor {
                     commandSender.sendMessage("[Rivals] No resolution with that id.");
                     return true;
                 }
-                boolean yay = false;
-                if(args[2].equals("yay") || args[2].equals("yes") || args[2].equals("aye") || args[2].equals("y")) {
-                    yay = true;
-                } else if(!args[2].equals("nay") && !args[2].equals("no") && !args[2].equals("n")) {
-                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay>");
+                Policy policy = Rivals.getPoliticsManager().getProposed().get(id);
+                Integer amount = Ints.tryParse(args[3]);
+                Faction f = Rivals.getFactionManager().getFactionByPlayer(p.getUniqueId());
+                boolean yay = true;
+                if(args[2].equalsIgnoreCase("nay") || args[2].equalsIgnoreCase("no")) {
+                    yay = false;
+                }
+                if(f == null) {
+                    commandSender.sendMessage("[Rivals] You must be in a faction to vote on a policy.");
                     return true;
                 }
-                Faction faction = Rivals.getFactionManager().getFactionByPlayer(((Player) commandSender).getUniqueId());
-                if(faction != null) {
-                    Rivals.getPoliticsManager().getProposed().get(id).vote(faction.getID(), yay);
-                    if(yay) {
-                        commandSender.sendMessage("[Rivals] Your faction has voted in favor of resolution " + id);
-                    } else {
-                        commandSender.sendMessage("[Rivals] Your faction has voted in opposition of resolution " + id);
-                    }
-                } else {
-                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay>");
+                if(amount == null) {
+                    commandSender.sendMessage("[Rivals] Usage /policy vote <proposal-id> <yay|nay> <influence>");
+                    return true;
                 }
+                if(amount > f.getInfluence() || amount < 0) {
+                    commandSender.sendMessage("[Rivals] Your faction only has " + f.getInfluence() + " influence.");
+                    return true;
+                }
+                if(yay = false) {
+                    amount = -amount;
+                }
+                policy.vote(f.getID(), amount);
+                String vote = yay ? "yay" : "nay";
+                commandSender.sendMessage("[Rivals] Voted " + vote + " on resolution " + policy.getId() + " with " + Math.abs(amount) + " influence.");
                 return true;
-
             }
             else if(args[0].equals("proposals")) {
                 listProposals((Player) commandSender);
@@ -208,7 +213,7 @@ public class PolicyCommand implements CommandExecutor {
             } else if(args[0].equals("help")) {
                 commandSender.sendMessage("[Rivals] Policy Command Help:\n" +
                         "- /policy propose <type> <arg1> <arg2>...: Propose a new policy.\n" +
-                        "- /policy vote <id> <yay|nay>: Vote on a proposed policy.\n" +
+                        "- /policy vote <id> <yay|nay> <influence>: Vote on a proposed policy.\n" +
                         "- /policy get <setting | proposal-id>: Get details on a specific policy, setting, or proposal\n" +
                         "- /policy proposals: List all current proposals\n" +
                         "Types include: denounce, sanction, intervention, custodian, budget, mandate, setting, unsanction.");
@@ -226,7 +231,7 @@ public class PolicyCommand implements CommandExecutor {
     }
 
     public String describePolicy(Policy p) {
-        String s = "" + p.getId() + ": " + (p.support() * 100) + "% support | Proposed by " + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getColor() + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getName() + ChatColor.RESET + " | " + (p.getTimeLeft() / 3600000) + " hours remaining\n";
+        String s = "" + p.getId() + ": " + (p.getSupport()) + " support | Proposed by " + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getColor() + Rivals.getFactionManager().getFactionByID(p.getProposedBy()).getName() + ChatColor.RESET + " | " + (p.getTimeLeft() / 3600000) + " hours remaining\n";
         switch (p.getType()) {
             case denounce -> s += "Denounce Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET + " for " + p.getTime() + " hours";
             case sanction -> s += "Sanction Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET +  " for " + p.getTime() + " hours";
@@ -238,10 +243,6 @@ public class PolicyCommand implements CommandExecutor {
             case budget -> s += "Set Custodian budget to " + (p.getBudget() * 100) + "%";
             case mandate -> s += "Set Custodian mandate to " + p.getMandate();
             case amnesty -> s += "Amnesty for Faction " + p.getTargetFaction().getColor() + p.getTargetFaction().getName() + ChatColor.RESET + " for " + p.getTime() + " hours";
-        }
-        s += "\nSupporters: ";
-        for(int i : p.getYays()) {
-            s += Rivals.getFactionManager().getFactionByID(i).getColor() + Rivals.getFactionManager().getFactionByID(i).getName() + ChatColor.RESET + ", ";
         }
         return s;
     }
