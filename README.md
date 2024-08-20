@@ -40,10 +40,10 @@ This plugin is still under active development, which means the default configura
    - Chance of producing items decays over time
    - When a chunk stops producing resources, it is reset and moved to a new random location
    - Resource types are somewhat biome-specific
-   - **TODO**: Add command to list all resource chunks, with options to filter by item type and distance
+   - `/rivals resource` command to list all resource chunks, with options to filter by item type and distance
 8. **Politics**
    - Factions can vote on resolutions to buff/debuff certain factions or adjust game rules
-   - Vote strength determined by faction influence.
+   - Spend influence for a stronger vote
    - Proposal types:
         - Denounce: Condemn a faction's actions temporarily
         - Sanction: Reduces a faction's power temporarily
